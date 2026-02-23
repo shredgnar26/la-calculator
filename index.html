@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
+    <meta name="description" content="Local anesthetic dose calculator for peripheral nerve blocks">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LA Calc">
+    <link rel="manifest" href="manifest.json">
+    <title>Local Anesthetic Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 12px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .disclaimer {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        .input-group {
+            margin: 12px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .checkbox-row label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .mode-tab {
+            flex: 1;
+            padding: 14px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .mode-tab.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .warning {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            color: #721c24;
+            font-size: 14px;
+        }
+        .agent-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .agent-number {
+            font-weight: 600;
+            color: #007bff;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            margin: 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .status-badge {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 16px 0;
+        }
+        .status-green {
+            background: #d4edda;
+            color: #155724;
+            border: 3px solid #28a745;
+        }
+        .status-yellow {
+            background: #fff3cd;
+            color: #856404;
+            border: 3px solid #ffc107;
+        }
+        .status-red {
+            background: #f8d7da;
+            color: #721c24;
+            border: 3px solid #dc3545;
+        }
+        .result-card {
+            background: white;
+            border-left: 4px solid #007bff;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .result-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .result-value {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 12px;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            padding: 8px 4px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .conc-btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .conc-btn {
+            padding: 8px 12px;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .conc-btn:active {
+            background: #dee2e6;
+        }
+        .install-prompt {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .install-prompt button {
+            background: white;
+            color: #007bff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="installPrompt" class="install-prompt hidden">
+            <span>📱 Install this app for offline use</span>
+            <button id="installBtn">Install</button>
+        </div>
+
+        <h1>Local Anesthetic Calculator</h1>
+        <div class="subtitle">Peripheral Nerve Block Dosing Tool</div>
+        
+        <div class="disclaimer">
+            <strong>⚠️ DISCLAIMER</strong><br>
+            Educational calculator only. Clinician must verify all dosing per institutional policy. Not medical advice.
+        </div>
+
+        <div class="section">
+            <div class="section-title">Patient Information</div>
+            
+            <div class="input-group">
+                <label>Weight (kg) *</label>
+                <input type="number" id="weight" min="0" step="0.1" placeholder="Enter weight">
+                <div class="info-text">Valid range: 20-250 kg</div>
+            </div>
+
+            <div id="weightWarning" class="warning hidden">
+                Weight outside normal range (20-250 kg). 
+                <div class="checkbox-row" style="margin-top: 8px;">
+                    <input type="checkbox" id="proceedAnyway">
+                    <label for="proceedAnyway">Proceed anyway with calculations</label>
+                </div>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="useEpi">
+                <label for="useEpi">Epinephrine added</label>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="age70">
+                <label for="age70">Age ≥ 70 (applies 0.85× reduction)</label>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="highRisk">
+                <label for="highRisk">High-risk physiology (applies 0.80× reduction)</label>
+            </div>
+        </div>
+
+        <div class="mode-tabs">
+            <div class="mode-tab active" data-mode="single">Single</div>
+            <div class="mode-tab" data-mode="mixture">Mixture</div>
+            <div class="mode-tab" data-mode="exparel">Exparel</div>
+        </div>
+
+        <div id="singleMode" class="section">
+            <div class="section-title">Single Agent</div>
+            
+            <div class="input-group">
+                <label>Drug</label>
+                <select id="singleDrug">
+                    <option value="">Select drug...</option>
+                    <option value="lidocaine">Lidocaine</option>
+                    <option value="mepivacaine">Mepivacaine</option>
+                    <option value="bupivacaine">Bupivacaine</option>
+                    <option value="ropivacaine">Ropivacaine</option>
+                    <option value="chloroprocaine">Chloroprocaine</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Concentration (%)</label>
+                <input type="number" id="singleConc" min="0" max="4" step="0.01" placeholder="e.g., 0.5">
+                <div class="conc-btn-group" id="singleConcBtns"></div>
+            </div>
+
+            <div class="input-group">
+                <label>Intended Volume (mL) - Optional</label>
+                <input type="number" id="singleVolume" min="0" step="0.1" placeholder="Optional">
+            </div>
+        </div>
+
+        <div id="mixtureMode" class="section hidden">
+            <div class="section-title">Mixture (1-3 Agents)</div>
+            <div id="mixtureAgents"></div>
+            <button class="btn btn-secondary" id="addAgentBtn">+ Add Agent</button>
+        </div>
+
+        <div id="exparelMode" class="section hidden">
+            <div class="section-title">Exparel Mode</div>
+            
+            <div class="checkbox-row">
+                <input type="checkbox" id="lidocaineRecent">
+                <label for="lidocaineRecent">Lidocaine given locally within last 20 minutes</label>
+            </div>
+
+            <div id="lidocaineStop" class="warning hidden">
+                <strong>⛔ STOP</strong><br>
+                Do NOT administer Exparel if lidocaine was given locally within 20 minutes. Risk of immediate release.
+            </div>
+
+            <div class="input-group">
+                <label>Exparel Volume (mL)</label>
+                <input type="number" id="exparelVolume" min="0" step="0.1" placeholder="Exparel volume">
+                <div class="info-text">Exparel is 1.3% = 13.3 mg/mL | Hard cap: 266 mg (20 mL)</div>
+            </div>
+
+            <div class="input-group">
+                <label>Bupivacaine HCl Concentration (%)</label>
+                <input type="number" id="bupiConc" min="0" max="4" step="0.01" placeholder="e.g., 0.25">
+            </div>
+
+            <div class="input-group">
+                <label>Bupivacaine HCl Volume (mL)</label>
+                <input type="number" id="bupiVolume" min="0" step="0.1" placeholder="Bupi volume">
+            </div>
+        </div>
+
+        <div id="results" class="results hidden">
+            <div class="section-title">Results</div>
+            <div id="resultsContent"></div>
+            <button class="btn btn-success" id="copyBtn">Copy Summary</button>
+        </div>
+    </div>
+
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+
+        // PWA install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.remove('hidden');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.add('hidden');
+            }
+        });
+
+        const DRUGS = {
+            lidocaine: {
+                name: 'Lidocaine',
+                plainMgKg: 4.5,
+                epiMgKg: 7,
+                advisory: { plain: 300, epi: 500 },
+                commonConc: [0.5, 1, 1.5, 2]
+            },
+            mepivacaine: {
+                name: 'Mepivacaine',
+                plainMgKg: 5,
+                epiMgKg: 7,
+                commonConc: [1, 1.5, 2]
+            },
+            bupivacaine: {
+                name: 'Bupivacaine',
+                plainMgKg: 2.5,
+                epiMgKg: 3,
+                hardCap: { plain: 175, epi: 225 },
+                commonConc: [0.25, 0.5, 0.75]
+            },
+            ropivacaine: {
+                name: 'Ropivacaine',
+                plainMgKg: 3,
+                epiMgKg: 3,
+                commonConc: [0.2, 0.5, 0.75, 1]
+            },
+            chloroprocaine: {
+                name: 'Chloroprocaine',
+                plainMgKg: 11,
+                epiMgKg: 14,
+                commonConc: [2, 3]
+            }
+        };
+
+        let currentMode = 'single';
+        let mixtureAgents = [];
+
+        function init() {
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentMode = tab.dataset.mode;
+                    showMode(currentMode);
+                });
+            });
+
+            document.getElementById('weight').addEventListener('input', validateWeight);
+            document.getElementById('proceedAnyway').addEventListener('change', calculate);
+            document.getElementById('useEpi').addEventListener('change', calculate);
+            document.getElementById('age70').addEventListener('change', calculate);
+            document.getElementById('highRisk').addEventListener('change', calculate);
+            document.getElementById('singleDrug').addEventListener('change', () => {
+                updateConcButtons();
+                calculate();
+            });
+            document.getElementById('singleConc').addEventListener('input', calculate);
+            document.getElementById('singleVolume').addEventListener('input', calculate);
+            document.getElementById('addAgentBtn').addEventListener('click', addMixtureAgent);
+            document.getElementById('lidocaineRecent').addEventListener('change', calculate);
+            document.getElementById('exparelVolume').addEventListener('input', calculate);
+            document.getElementById('bupiConc').addEventListener('input', calculate);
+            document.getElementById('bupiVolume').addEventListener('input', calculate);
+            document.getElementById('copyBtn').addEventListener('click', copySummary);
+
+            showMode('single');
+        }
+
+        function showMode(mode) {
+            document.getElementById('singleMode').classList.toggle('hidden', mode !== 'single');
+            document.getElementById('mixtureMode').classList.toggle('hidden', mode !== 'mixture');
+            document.getElementById('exparelMode').classList.toggle('hidden', mode !== 'exparel');
+            
+            if (mode === 'mixture' && mixtureAgents.length === 0) {
+                addMixtureAgent();
+            }
+            
+            calculate();
+        }
+
+        function validateWeight() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const warning = document.getElementById('weightWarning');
+            
+            if (weight && (weight < 20 || weight > 250)) {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+                document.getElementById('proceedAnyway').checked = false;
+            }
+            
+            calculate();
+        }
+
+        function getPatientData() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const useEpi = document.getElementById('useEpi').checked;
+            const age70 = document.getElementById('age70').checked;
+            const highRisk = document.getElementById('highRisk').checked;
+            const proceedAnyway = document.getElementById('proceedAnyway').checked;
+
+            if (!weight) return null;
+            if ((weight < 20 || weight > 250) && !proceedAnyway) return null;
+
+            return { weight, useEpi, age70, highRisk };
+        }
+
+        function calcMaxMg(drugKey, patient) {
+            const drug = DRUGS[drugKey];
+            const mgPerKg = patient.useEpi ? drug.epiMgKg : drug.plainMgKg;
+            let baseMg = patient.weight * mgPerKg;
+
+            if (drug.hardCap) {
+                const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
+                baseMg = Math.min(baseMg, cap);
+            }
+
+            let mult = 1.0;
+            if (patient.age70) mult *= 0.85;
+            if (patient.highRisk) mult *= 0.80;
+            
+            const finalMg = baseMg * mult;
+
+            return { baseMg, finalMg, mgPerKg };
+        }
+
+        function updateConcButtons() {
+            const drugKey = document.getElementById('singleDrug').value;
+            
+            if (drugKey) {
+                const drug = DRUGS[drugKey];
+                const container = document.getElementById('singleConcBtns');
+                container.innerHTML = '';
+                drug.commonConc.forEach(conc => {
+                    const btn = document.createElement('button');
+                    btn.className = 'conc-btn';
+                    btn.textContent = conc + '%';
+                    btn.onclick = () => {
+                        document.getElementById('singleConc').value = conc;
+                        calculate();
+                    };
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function addMixtureAgent() {
+            if (mixtureAgents.length >= 3) return;
+            
+            const id = Date.now();
+            mixtureAgents.push({ id, drug: '', conc: '', volume: '' });
+            renderMixtureAgents();
+        }
+
+        function removeMixtureAgent(id) {
+            mixtureAgents = mixtureAgents.filter(a => a.id !== id);
+            renderMixtureAgents();
+            calculate();
+        }
+
+        function renderMixtureAgents() {
+            const container = document.getElementById('mixtureAgents');
+            
+            if (mixtureAgents.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No agents added</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            mixtureAgents.forEach((agent, idx) => {
+                const card = document.createElement('div');
+                card.className = 'agent-card';
+                card.innerHTML = `
+                    <div class="agent-header">
+                        <span class="agent-number">Agent ${idx + 1}</span>
+                        ${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}
+                    </div>
+                    <div class="input-group">
+                        <label>Drug</label>
+                        <select onchange="updateMixtureAgent(${agent.id}, 'drug', this.value)">
+                            <option value="">Select...</option>
+                            <option value="lidocaine" ${agent.drug === 'lidocaine' ? 'selected' : ''}>Lidocaine</option>
+                            <option value="mepivacaine" ${agent.drug === 'mepivacaine' ? 'selected' : ''}>Mepivacaine</option>
+                            <option value="bupivacaine" ${agent.drug === 'bupivacaine' ? 'selected' : ''}>Bupivacaine</option>
+                            <option value="ropivacaine" ${agent.drug === 'ropivacaine' ? 'selected' : ''}>Ropivacaine</option>
+                            <option value="chloroprocaine" ${agent.drug === 'chloroprocaine' ? 'selected' : ''}>Chloroprocaine</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Concentration (%)</label>
+                        <input type="number" value="${agent.conc}" min="0" max="4" step="0.01" 
+                            onchange="updateMixtureAgent(${agent.id}, 'conc', this.value)">
+                    </div>
+                    <div class="input-group">
+                        <label>Volume (mL)</label>
+                        <input type="number" value="${agent.volume}" min="0" step="0.1" 
+                            onchange="updateMixtureAgent(${agent.id}, 'volume', this.value)">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('addAgentBtn').style.display = mixtureAgents.length >= 3 ? 'none' : 'block';
+        }
+
+        function updateMixtureAgent(id, field, value) {
+            const agent = mixtureAgents.find(a => a.id === id);
+            if (agent) {
+                agent[field] = value;
+                calculate();
+            }
+        }
+
+        function calculate() {
+            const patient = getPatientData();
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+
+            if (!patient) {
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+
+            if (currentMode === 'single') {
+                html = calculateSingle(patient);
+            } else if (currentMode === 'mixture') {
+                html = calculateMixture(patient);
+            } else if (currentMode === 'exparel') {
+                html = calculateExparel(patient);
+            }
+
+            if (html) {
+                resultsContent.innerHTML = html;
+                resultsDiv.classList.remove('hidden');
+            } else {
+                resultsDiv.classList.add('hidden');
+            }
+        }
+
+        function calculateSingle(patient) {
+            const drugKey = document.getElementById('singleDrug').value;
+            const conc = parseFloat(document.getElementById('singleConc').value);
+            const volume = parseFloat(document.getElementById('singleVolume').value);
+
+            if (!drugKey || !conc || conc <= 0 || conc > 4) return '';
+
+            const drug = DRUGS[drugKey];
+            const { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
+            const mgPerMl = conc * 10;
+            const maxMl = finalMg / mgPerMl;
+
+            let html = '<div class="result-card">';
+            html += `<h3>${drug.name} ${conc}%</h3>`;
+            html += `<div class="result-row"><span class="result-label">Mg per kg:</span><span class="result-value">${mgPerKg} mg/kg ${patient.useEpi ? '(with epi)' : '(plain)'}</span></div>`;
+            
+            if (drug.hardCap) {
+                const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
+                html += `<div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">${cap} mg (enforced)</span></div>`;
+            }
+
+            if (drug.advisory) {
+                const adv = patient.useEpi ? drug.advisory.epi : drug.advisory.plain;
+                html += `<div class="result-row"><span class="result-label">Advisory cap:</span><span class="result-value">${adv} mg (display only)</span></div>`;
+            }
+
+            html += `<div class="result-row"><span class="result-label">Base max mg:</span><span class="result-value">${baseMg.toFixed(1)} mg</span></div>`;
+
+            let redFactors = [];
+            if (patient.age70) redFactors.push('0.85× age≥70');
+            if (patient.highRisk) redFactors.push('0.80× high-risk');
+            if (redFactors.length > 0) {
+                html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${redFactors.join(', ')}</span></div>`;
+            }
+
+            html += `<div class="result-row"><span class="result-label">Final max mg:</span><span class="result-value">${finalMg.toFixed(1)} mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${mgPerMl} mg/mL</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Final max mL:</span><span class="result-value">${maxMl.toFixed(1)} mL</span></div>`;
+
+            if (volume > 0) {
+                const usedMg = mgPerMl * volume;
+                const pct = (usedMg / finalMg * 100);
+                html += `<div class="result-row"><span class="result-label">Intended volume:</span><span class="result-value">${volume.toFixed(1)} mL</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Mg used:</span><span class="result-value">${usedMg.toFixed(1)} mg (${pct.toFixed(1)}%)</span></div>`;
+                
+                if (volume > 60) {
+                    html += '<div style="color: #856404; margin-top: 8px; font-size: 13px;">⚠️ Volume >60 mL - verify clinically appropriate</div>';
+                }
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function calculateMixture(patient) {
+            const valid = mixtureAgents.filter(a => a.drug && a.conc && a.volume);
+            if (valid.length === 0) return '';
+
+            let totalFraction = 0;
+            const calcs = [];
+
+            for (const agent of valid) {
+                const conc = parseFloat(agent.conc);
+                const volume = parseFloat(agent.volume);
+                
+                if (conc <= 0 || conc > 4) continue;
+                if (volume < 0) continue;
+
+                const drug = DRUGS[agent.drug];
+                const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
+                const mgPerMl = conc * 10;
+                const actualMg = mgPerMl * volume;
+                const fraction = actualMg / finalMg;
+
+                totalFraction += fraction;
+
+                calcs.push({
+                    name: drug.name,
+                    conc,
+                    mgPerMl,
+                    volume,
+                    actualMg,
+                    baseMg,
+                    finalMg,
+                    fraction
+                });
+            }
+
+            let statusClass, statusText;
+            if (totalFraction > 1.0) {
+                statusClass = 'status-red';
+                statusText = `RED - UNSAFE (${totalFraction.toFixed(3)} / 1.000)`;
+            } else if (totalFraction >= 0.8) {
+                statusClass = 'status-yellow';
+                statusText = `YELLOW - CAUTION (${totalFraction.toFixed(3)} / 1.000)`;
+            } else {
+                statusClass = 'status-green';
+                statusText = `GREEN - SAFE (${totalFraction.toFixed(3)} / 1.000)`;
+            }
+
+            let html = `<div class="status-badge ${statusClass}">${statusText}</div>`;
+
+            html += '<div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th>Max+ mL</th></tr></thead><tbody>';
+            
+            const remaining = Math.max(0, 1.0 - totalFraction);
+            
+            for (const calc of calcs) {
+                const maxAdditional = (remaining * calc.finalMg) / calc.mgPerMl;
+                html += `<tr>
+                    <td>${calc.name}</td>
+                    <td>${calc.conc}</td>
+                    <td>${calc.mgPerMl}</td>
+                    <td>${calc.volume.toFixed(1)}</td>
+                    <td>${calc.actualMg.toFixed(1)}</td>
+                    <td>${calc.baseMg.toFixed(1)}</td>
+                    <td>${calc.finalMg.toFixed(1)}</td>
+                    <td>${calc.fraction.toFixed(3)}</td>
+                    <td>${maxAdditional.toFixed(1)}</td>
+                </tr>`;
+                
+                if (calc.volume > 60) {
+                    html += `<tr><td colspan="9" style="color: #856404; font-size: 12px;">⚠️ ${calc.name} volume >60 mL</td></tr>`;
+                }
+            }
+            
+            html += '</tbody></table></div>';
+
+            html += '<div class="result-card">';
+            html += `<div class="result-row"><span class="result-label">Remaining fraction:</span><span class="result-value">${remaining.toFixed(3)}</span></div>`;
+            html += '</div>';
+
+            return html;
+        }
+
+        function calculateExparel(patient) {
+            const lidoRecent = document.getElementById('lidocaineRecent').checked;
+            const lidoStop = document.getElementById('lidocaineStop');
+            
+            lidoStop.classList.toggle('hidden', !lidoRecent);
+
+            if (lidoRecent) {
+                return '<div class="status-badge status-red">RED - UNSAFE<br>Lidocaine interaction risk - DO NOT PROCEED</div>';
+            }
+
+            const exparelVol = parseFloat(document.getElementById('exparelVolume').value) || 0;
+            const bupiConc = parseFloat(document.getElementById('bupiConc').value) || 0;
+            const bupiVol = parseFloat(document.getElementById('bupiVolume').value) || 0;
+
+            if (exparelVol === 0) return '';
+
+            const EXPAREL_MG_ML = 13.3;
+            const EXPAREL_CAP = 266;
+
+            const exparelMg = exparelVol * EXPAREL_MG_ML;
+            
+            let html = '';
+            let isUnsafe = false;
+
+            if (exparelMg > EXPAREL_CAP) {
+                html += `<div class="status-badge status-red">RED - UNSAFE<br>Exparel exceeds 266 mg cap (${exparelMg.toFixed(1)} mg)</div>`;
+                isUnsafe = true;
+            }
+
+            html += '<div class="result-card">';
+            html += '<h3>Exparel</h3>';
+            html += `<div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${exparelVol.toFixed(1)} mL</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${exparelMg.toFixed(1)} mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">266 mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Status:</span><span class="result-value">${exparelMg <= EXPAREL_CAP ? '✓ Within cap' : '✗ EXCEEDS'}</span></div>`;
+            html += '</div>';
+
+            if (bupiConc > 0 && bupiVol > 0) {
+                if (bupiConc > 4) {
+                    html += '<div class="warning">Bupivacaine concentration >4% - invalid</div>';
+                    return html;
+                }
+
+                const bupiMgMl = bupiConc * 10;
+                const bupiMg = bupiMgMl * bupiVol;
+                const maxBupi = exparelMg * 0.5;
+                const ratioOk = bupiMg <= maxBupi;
+
+                const { baseMg: bupiBaseMg, finalMg: bupiFinalMg } = calcMaxMg('bupivacaine', patient);
+                const bupiCapOk = bupiMg <= bupiFinalMg;
+
+                html += '<div class="result-card">';
+                html += '<h3>Bupivacaine HCl</h3>';
+                html += `<div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${bupiConc}% (${bupiMgMl} mg/mL)</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${bupiVol.toFixed(1)} mL</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${bupiMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Max bupi (50% rule):</span><span class="result-value">${maxBupi.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">50% ratio check:</span><span class="result-value">${ratioOk ? '✓ OK' : '✗ EXCEEDS'}</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Bupi base max mg:</span><span class="result-value">${bupiBaseMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Bupi final max mg:</span><span class="result-value">${bupiFinalMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Hard cap check:</span><span class="result-value">${bupiCapOk ? '✓ OK' : '✗ EXCEEDS'}</span></div>`;
+                html += '</div>';
+
+                if (!ratioOk) {
+                    html += '<div class="warning">Bupivacaine exceeds 50% of Exparel dose</div>';
+                    isUnsafe = true;
+                }
+
+                if (!bupiCapOk) {
+                    html += '<div class="warning">Bupivacaine exceeds hard cap limits</div>';
+                    isUnsafe = true;
+                }
+
+                if (bupiVol > 60) {
+                    html += '<div style="color: #856404; margin: 8px 0; font-size: 13px;">⚠️ Bupi volume >60 mL - verify clinically appropriate</div>';
+                }
+            }
+
+            if (!isUnsafe && exparelMg <= EXPAREL_CAP) {
+                html = `<div class="status-badge status-green">GREEN - SAFE</div>` + html;
+            }
+
+            return html;
+        }
+
+        function copySummary() {
+            const patient = getPatientData();
+            if (!patient) return;
+
+            let summary = '========================================\n';
+            summary += 'LOCAL ANESTHETIC CALCULATOR\n';
+            summary += '========================================\n\n';
+            summary += `Date: ${new Date().toLocaleString()}\n\n`;
+            summary += 'DISCLAIMER: Educational calculator only.\n';
+            summary += 'Verify all dosing per institutional policy.\n\n';
+            summary += '--- PATIENT DATA ---\n';
+            summary += `Weight: ${patient.weight} kg\n`;
+            summary += `Epinephrine: ${patient.useEpi ? 'Yes' : 'No'}\n`;
+            summary += `Age ≥ 70: ${patient.age70 ? 'Yes (0.85× applied)' : 'No'}\n`;
+            summary += `High-risk: ${patient.highRisk ? 'Yes (0.80× applied)' : 'No'}\n\n`;
+
+            if (currentMode === 'single') {
+                const drugKey = document.getElementById('singleDrug').value;
+                const conc = parseFloat(document.getElementById('singleConc').value);
+                const volume = parseFloat(document.getElementById('singleVolume').value);
+
+                if (drugKey && conc) {
+                    const drug = DRUGS[drugKey];
+                    const { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
+                    const mgPerMl = conc * 10;
+                    const maxMl = finalMg / mgPerMl;
+
+                    summary += '--- SINGLE AGENT ---\n';
+                    summary += `Drug: ${drug.name}\n`;
+                    summary += `Concentration: ${conc}% (${mgPerMl} mg/mL)\n`;
+                    summary += `Mg per kg: ${mgPerKg} mg/kg\n`;
+                    summary += `Base max: ${baseMg.toFixed(1)} mg\n`;
+                    summary += `Final max: ${finalMg.toFixed(1)} mg (${maxMl.toFixed(1)} mL)\n`;
+                    
+                    if (volume > 0) {
+                        const usedMg = mgPerMl * volume;
+                        summary += `Intended: ${volume.toFixed(1)} mL (${usedMg.toFixed(1)} mg, ${(usedMg/finalMg*100).toFixed(1)}%)\n`;
+                    }
+                }
+            } else if (currentMode === 'mixture') {
+                const valid = mixtureAgents.filter(a => a.drug && a.conc && a.volume);
+                
+                if (valid.length > 0) {
+                    summary += '--- MIXTURE ---\n\n';
+                    let totalFraction = 0;
+
+                    valid.forEach((agent, idx) => {
+                        const conc = parseFloat(agent.conc);
+                        const volume = parseFloat(agent.volume);
+                        const drug = DRUGS[agent.drug];
+                        const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
+                        const mgPerMl = conc * 10;
+                        const actualMg = mgPerMl * volume;
+                        const fraction = actualMg / finalMg;
+                        totalFraction += fraction;
+
+                        summary += `Agent ${idx + 1}: ${drug.name}\n`;
+                        summary += `  ${conc}% | ${volume.toFixed(1)} mL | ${actualMg.toFixed(1)} mg\n`;
+                        summary += `  Base max: ${baseMg.toFixed(1)} mg | Final max: ${finalMg.toFixed(1)} mg\n`;
+                        summary += `  Fraction: ${fraction.toFixed(3)}\n\n`;
+                    });
+
+                    summary += `TOTAL FRACTION: ${totalFraction.toFixed(3)} / 1.000\n`;
+                    
+                    if (totalFraction > 1.0) {
+                        summary += 'STATUS: RED - UNSAFE\n';
+                    } else if (totalFraction >= 0.8) {
+                        summary += 'STATUS: YELLOW - CAUTION\n';
+                    } else {
+                        summary += 'STATUS: GREEN - SAFE\n';
+                    }
+
+                    const remaining = Math.max(0, 1.0 - totalFraction);
+                    summary += `Remaining fraction: ${remaining.toFixed(3)}\n`;
+                }
+            } else if (currentMode === 'exparel') {
+                const exparelVol = parseFloat(document.getElementById('exparelVolume').value) || 0;
+                const bupiConc = parseFloat(document.getElementById('bupiConc').value) || 0;
+                const bupiVol = parseFloat(document.getElementById('bupiVolume').value) || 0;
+                const lidoRecent = document.getElementById('lidocaineRecent').checked;
+
+                summary += '--- EXPAREL MODE ---\n';
+                summary += `Lidocaine recent: ${lidoRecent ? 'YES - UNSAFE' : 'No'}\n`;
+                
+                if (exparelVol > 0 && !lidoRecent) {
+                    const exparelMg = exparelVol * 13.3;
+                    summary += `Exparel: ${exparelVol.toFixed(1)} mL (${exparelMg.toFixed(1)} mg)\n`;
+                    summary += `Cap: 266 mg | ${exparelMg <= 266 ? 'OK' : 'EXCEEDS'}\n`;
+
+                    if (bupiConc > 0 && bupiVol > 0) {
+                        const bupiMg = bupiConc * 10 * bupiVol;
+                        const maxBupi = exparelMg * 0.5;
+                        const { baseMg, finalMg } = calcMaxMg('bupivacaine', patient);
+                        summary += `Bupi HCl: ${bupiConc}% | ${bupiVol.toFixed(1)} mL (${bupiMg.toFixed(1)} mg)\n`;
+                        summary += `Max bupi (50% rule): ${maxBupi.toFixed(1)} mg | ${bupiMg <= maxBupi ? 'OK' : 'EXCEEDS'}\n`;
+                        summary += `Bupi base max: ${baseMg.toFixed(1)} mg | Final max: ${finalMg.toFixed(1)} mg\n`;
+                        summary += `Hard cap check: ${bupiMg <= finalMg ? 'OK' : 'EXCEEDS'}\n`;
+                    }
+                }
+            }
+
+            summary += '\n========================================\n';
+
+            navigator.clipboard.writeText(summary).then(() => {
+                alert('Summary copied to clipboard!');
+            }).catch(() => {
+                alert('Could not copy. Summary:\n\n' + summary);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
