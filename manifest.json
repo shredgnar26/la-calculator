@@ -2,7 +2,7 @@
   "name": "Local Anesthetic Calculator",
   "short_name": "LA Calc",
   "description": "Peripheral nerve block dose calculator for local anesthetics",
-  "start_url": "/",
+  "start_url": "/la-calculator/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
