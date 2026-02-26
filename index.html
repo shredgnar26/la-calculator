@@ -1,12 +1,3 @@
-Perfect. Building now with:
-
-1. Trade names in parentheses
-2. iOS-style wheel pickers for drugs and concentrations (single + mixture)
-3. Auto-set mixture agents to 0 mL for instant remaining fraction display
-
-One code block coming:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -334,21 +325,11 @@ One code block coming:
         }
         .picker-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 16px;
             padding-bottom: 12px;
             border-bottom: 1px solid #eee;
-        }
-        .picker-cancel {
-            color: #dc3545;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .picker-title {
-            font-weight: 600;
-            font-size: 16px;
         }
         .picker-done {
             color: #007bff;
@@ -363,6 +344,7 @@ One code block coming:
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: y mandatory;
             position: relative;
+            scroll-behavior: smooth;
         }
         .picker-wheel::before,
         .picker-wheel::after {
@@ -378,10 +360,12 @@ One code block coming:
             scroll-snap-align: center;
             font-size: 18px;
             cursor: pointer;
+            transition: all 0.2s;
         }
         .picker-option.selected {
             font-weight: 600;
             color: #007bff;
+            font-size: 20px;
         }
         .picker-highlight {
             position: absolute;
@@ -579,17 +563,12 @@ One code block coming:
             }
         };
 
-        const ALL_CONCENTRATIONS = [0.1, 0.2, 0.25, 0.5, 0.75, 1, 1.5, 2, 3];
-
         let currentMode = 'single';
         let mixtureAgents = [];
         
         // Single mode selections
         let singleDrugValue = '';
         let singleConcValue = '';
-
-        // Picker state
-        let currentPicker = null;
 
         function init() {
             document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -649,11 +628,7 @@ One code block coming:
             
             const header = document.createElement('div');
             header.className = 'picker-header';
-            header.innerHTML = `
-                <div class="picker-cancel">Cancel</div>
-                <div class="picker-title">Select Drug</div>
-                <div class="picker-done">Done</div>
-            `;
+            header.innerHTML = '<div class="picker-done">Done</div>';
             
             const wheelContainer = document.createElement('div');
             wheelContainer.style.position = 'relative';
@@ -666,18 +641,45 @@ One code block coming:
             
             let selectedValue = currentValue;
             
-            Object.keys(DRUGS).forEach(key => {
+            const drugKeys = Object.keys(DRUGS);
+            drugKeys.forEach(key => {
                 const option = document.createElement('div');
                 option.className = 'picker-option';
                 if (key === currentValue) option.classList.add('selected');
                 option.textContent = DRUGS[key].name;
                 option.dataset.value = key;
-                option.addEventListener('click', () => {
-                    wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                    selectedValue = key;
-                });
                 wheel.appendChild(option);
+            });
+            
+            // Update selection on scroll
+            let scrollTimeout;
+            wheel.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const wheelRect = wheel.getBoundingClientRect();
+                    const centerY = wheelRect.top + wheelRect.height / 2;
+                    
+                    let closestOption = null;
+                    let closestDistance = Infinity;
+                    
+                    wheel.querySelectorAll('.picker-option').forEach(option => {
+                        const optionRect = option.getBoundingClientRect();
+                        const optionCenterY = optionRect.top + optionRect.height / 2;
+                        const distance = Math.abs(centerY - optionCenterY);
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestOption = option;
+                        }
+                    });
+                    
+                    if (closestOption) {
+                        wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                        closestOption.classList.add('selected');
+                        selectedValue = closestOption.dataset.value;
+                        callback(selectedValue);
+                    }
+                }, 100);
             });
             
             wheelContainer.appendChild(highlight);
@@ -687,12 +689,17 @@ One code block coming:
             overlay.appendChild(container);
             document.body.appendChild(overlay);
             
-            header.querySelector('.picker-cancel').addEventListener('click', () => {
-                document.body.removeChild(overlay);
-            });
+            // Scroll to selected item
+            if (currentValue) {
+                const selectedOption = wheel.querySelector(`[data-value="${currentValue}"]`);
+                if (selectedOption) {
+                    setTimeout(() => {
+                        selectedOption.scrollIntoView({ block: 'center', behavior: 'auto' });
+                    }, 50);
+                }
+            }
             
             header.querySelector('.picker-done').addEventListener('click', () => {
-                callback(selectedValue);
                 document.body.removeChild(overlay);
             });
             
@@ -712,11 +719,7 @@ One code block coming:
             
             const header = document.createElement('div');
             header.className = 'picker-header';
-            header.innerHTML = `
-                <div class="picker-cancel">Cancel</div>
-                <div class="picker-title">Select Concentration</div>
-                <div class="picker-done">Done</div>
-            `;
+            header.innerHTML = '<div class="picker-done">Done</div>';
             
             const wheelContainer = document.createElement('div');
             wheelContainer.style.position = 'relative';
@@ -735,12 +738,38 @@ One code block coming:
                 if (conc === parseFloat(currentValue)) option.classList.add('selected');
                 option.textContent = conc + '%';
                 option.dataset.value = conc;
-                option.addEventListener('click', () => {
-                    wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                    selectedValue = conc;
-                });
                 wheel.appendChild(option);
+            });
+            
+            // Update selection on scroll
+            let scrollTimeout;
+            wheel.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const wheelRect = wheel.getBoundingClientRect();
+                    const centerY = wheelRect.top + wheelRect.height / 2;
+                    
+                    let closestOption = null;
+                    let closestDistance = Infinity;
+                    
+                    wheel.querySelectorAll('.picker-option').forEach(option => {
+                        const optionRect = option.getBoundingClientRect();
+                        const optionCenterY = optionRect.top + optionRect.height / 2;
+                        const distance = Math.abs(centerY - optionCenterY);
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestOption = option;
+                        }
+                    });
+                    
+                    if (closestOption) {
+                        wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                        closestOption.classList.add('selected');
+                        selectedValue = closestOption.dataset.value;
+                        callback(selectedValue);
+                    }
+                }, 100);
             });
             
             wheelContainer.appendChild(highlight);
@@ -750,12 +779,17 @@ One code block coming:
             overlay.appendChild(container);
             document.body.appendChild(overlay);
             
-            header.querySelector('.picker-cancel').addEventListener('click', () => {
-                document.body.removeChild(overlay);
-            });
+            // Scroll to selected item
+            if (currentValue) {
+                const selectedOption = wheel.querySelector(`[data-value="${currentValue}"]`);
+                if (selectedOption) {
+                    setTimeout(() => {
+                        selectedOption.scrollIntoView({ block: 'center', behavior: 'auto' });
+                    }, 50);
+                }
+            }
             
             header.querySelector('.picker-done').addEventListener('click', () => {
-                callback(selectedValue);
                 document.body.removeChild(overlay);
             });
             
@@ -1283,4 +1317,3 @@ One code block coming:
     </script>
 </body>
 </html>
-```
