@@ -1,3 +1,12 @@
+Perfect. Building now with:
+
+1. Trade names in parentheses
+2. iOS-style wheel pickers for drugs and concentrations (single + mixture)
+3. Auto-set mixture agents to 0 mL for instant remaining fraction display
+
+One code block coming:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,7 +80,7 @@
             font-size: 14px;
             color: #333;
         }
-        input[type="number"], select {
+        input[type="number"] {
             width: 100%;
             padding: 14px;
             font-size: 16px;
@@ -79,7 +88,7 @@
             border-radius: 8px;
             background: white;
         }
-        input[type="number"]:focus, select:focus {
+        input[type="number"]:focus {
             outline: none;
             border-color: #007bff;
         }
@@ -258,23 +267,6 @@
             color: #666;
             margin-top: 4px;
         }
-        .conc-btn-group {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 6px;
-        }
-        .conc-btn {
-            padding: 8px 12px;
-            background: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .conc-btn:active {
-            background: #dee2e6;
-        }
         .install-prompt {
             background: #007bff;
             color: white;
@@ -293,6 +285,115 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
+        }
+        
+        /* Picker Styles */
+        .picker-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .picker-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .picker-input::after {
+            content: '▼';
+            font-size: 12px;
+            color: #666;
+        }
+        .picker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+        }
+        .picker-container {
+            background: white;
+            width: 100%;
+            border-radius: 12px 12px 0 0;
+            padding: 16px;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .picker-cancel {
+            color: #dc3545;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .picker-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .picker-done {
+            color: #007bff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .picker-wheel {
+            height: 200px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: y mandatory;
+            position: relative;
+        }
+        .picker-wheel::before,
+        .picker-wheel::after {
+            content: '';
+            display: block;
+            height: 80px;
+        }
+        .picker-option {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .picker-option.selected {
+            font-weight: 600;
+            color: #007bff;
+        }
+        .picker-highlight {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 40px;
+            transform: translateY(-50%);
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background: rgba(0,123,255,0.05);
+            pointer-events: none;
         }
     </style>
 </head>
@@ -355,20 +456,16 @@
             
             <div class="input-group">
                 <label>Drug</label>
-                <select id="singleDrug">
-                    <option value="">Select drug...</option>
-                    <option value="lidocaine">Lidocaine</option>
-                    <option value="mepivacaine">Mepivacaine</option>
-                    <option value="bupivacaine">Bupivacaine</option>
-                    <option value="ropivacaine">Ropivacaine</option>
-                    <option value="chloroprocaine">Chloroprocaine</option>
-                </select>
+                <div class="picker-input" id="singleDrugPicker">
+                    <span id="singleDrugLabel">Select drug...</span>
+                </div>
             </div>
 
             <div class="input-group">
                 <label>Concentration (%)</label>
-                <input type="number" id="singleConc" min="0" max="4" step="0.01" placeholder="e.g., 0.5">
-                <div class="conc-btn-group" id="singleConcBtns"></div>
+                <div class="picker-input" id="singleConcPicker">
+                    <span id="singleConcLabel">Select concentration...</span>
+                </div>
             </div>
 
             <div class="input-group">
@@ -449,41 +546,50 @@
 
         const DRUGS = {
             lidocaine: {
-                name: 'Lidocaine',
+                name: 'Lidocaine (Xylocaine)',
                 plainMgKg: 4.5,
                 epiMgKg: 7,
                 advisory: { plain: 300, epi: 500 },
                 commonConc: [0.5, 1, 1.5, 2]
             },
             mepivacaine: {
-                name: 'Mepivacaine',
+                name: 'Mepivacaine (Polocaine)',
                 plainMgKg: 5,
                 epiMgKg: 7,
                 commonConc: [1, 1.5, 2]
             },
             bupivacaine: {
-                name: 'Bupivacaine',
+                name: 'Bupivacaine (Marcaine)',
                 plainMgKg: 2.5,
                 epiMgKg: 3,
                 hardCap: { plain: 175, epi: 225 },
                 commonConc: [0.25, 0.5, 0.75]
             },
             ropivacaine: {
-                name: 'Ropivacaine',
+                name: 'Ropivacaine (Naropin)',
                 plainMgKg: 3,
                 epiMgKg: 3,
                 commonConc: [0.2, 0.5, 0.75, 1]
             },
             chloroprocaine: {
-                name: 'Chloroprocaine',
+                name: 'Chloroprocaine (Nesacaine)',
                 plainMgKg: 11,
                 epiMgKg: 14,
                 commonConc: [2, 3]
             }
         };
 
+        const ALL_CONCENTRATIONS = [0.1, 0.2, 0.25, 0.5, 0.75, 1, 1.5, 2, 3];
+
         let currentMode = 'single';
         let mixtureAgents = [];
+        
+        // Single mode selections
+        let singleDrugValue = '';
+        let singleConcValue = '';
+
+        // Picker state
+        let currentPicker = null;
 
         function init() {
             document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -500,11 +606,29 @@
             document.getElementById('useEpi').addEventListener('change', calculate);
             document.getElementById('age70').addEventListener('change', calculate);
             document.getElementById('highRisk').addEventListener('change', calculate);
-            document.getElementById('singleDrug').addEventListener('change', () => {
-                updateConcButtons();
-                calculate();
+            
+            // Single mode pickers
+            document.getElementById('singleDrugPicker').addEventListener('click', () => {
+                showDrugPicker('single', singleDrugValue, (value) => {
+                    singleDrugValue = value;
+                    document.getElementById('singleDrugLabel').textContent = value ? DRUGS[value].name : 'Select drug...';
+                    calculate();
+                });
             });
-            document.getElementById('singleConc').addEventListener('input', calculate);
+            
+            document.getElementById('singleConcPicker').addEventListener('click', () => {
+                if (!singleDrugValue) {
+                    alert('Please select a drug first');
+                    return;
+                }
+                const concentrations = DRUGS[singleDrugValue].commonConc;
+                showConcPicker('single', singleConcValue, concentrations, (value) => {
+                    singleConcValue = value;
+                    document.getElementById('singleConcLabel').textContent = value ? value + '%' : 'Select concentration...';
+                    calculate();
+                });
+            });
+            
             document.getElementById('singleVolume').addEventListener('input', calculate);
             document.getElementById('addAgentBtn').addEventListener('click', addMixtureAgent);
             document.getElementById('lidocaineRecent').addEventListener('change', calculate);
@@ -514,6 +638,132 @@
             document.getElementById('copyBtn').addEventListener('click', copySummary);
 
             showMode('single');
+        }
+
+        function showDrugPicker(context, currentValue, callback) {
+            const overlay = document.createElement('div');
+            overlay.className = 'picker-overlay';
+            
+            const container = document.createElement('div');
+            container.className = 'picker-container';
+            
+            const header = document.createElement('div');
+            header.className = 'picker-header';
+            header.innerHTML = `
+                <div class="picker-cancel">Cancel</div>
+                <div class="picker-title">Select Drug</div>
+                <div class="picker-done">Done</div>
+            `;
+            
+            const wheelContainer = document.createElement('div');
+            wheelContainer.style.position = 'relative';
+            
+            const highlight = document.createElement('div');
+            highlight.className = 'picker-highlight';
+            
+            const wheel = document.createElement('div');
+            wheel.className = 'picker-wheel';
+            
+            let selectedValue = currentValue;
+            
+            Object.keys(DRUGS).forEach(key => {
+                const option = document.createElement('div');
+                option.className = 'picker-option';
+                if (key === currentValue) option.classList.add('selected');
+                option.textContent = DRUGS[key].name;
+                option.dataset.value = key;
+                option.addEventListener('click', () => {
+                    wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedValue = key;
+                });
+                wheel.appendChild(option);
+            });
+            
+            wheelContainer.appendChild(highlight);
+            wheelContainer.appendChild(wheel);
+            container.appendChild(header);
+            container.appendChild(wheelContainer);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            header.querySelector('.picker-cancel').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            header.querySelector('.picker-done').addEventListener('click', () => {
+                callback(selectedValue);
+                document.body.removeChild(overlay);
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        function showConcPicker(context, currentValue, concentrations, callback) {
+            const overlay = document.createElement('div');
+            overlay.className = 'picker-overlay';
+            
+            const container = document.createElement('div');
+            container.className = 'picker-container';
+            
+            const header = document.createElement('div');
+            header.className = 'picker-header';
+            header.innerHTML = `
+                <div class="picker-cancel">Cancel</div>
+                <div class="picker-title">Select Concentration</div>
+                <div class="picker-done">Done</div>
+            `;
+            
+            const wheelContainer = document.createElement('div');
+            wheelContainer.style.position = 'relative';
+            
+            const highlight = document.createElement('div');
+            highlight.className = 'picker-highlight';
+            
+            const wheel = document.createElement('div');
+            wheel.className = 'picker-wheel';
+            
+            let selectedValue = currentValue;
+            
+            concentrations.forEach(conc => {
+                const option = document.createElement('div');
+                option.className = 'picker-option';
+                if (conc === parseFloat(currentValue)) option.classList.add('selected');
+                option.textContent = conc + '%';
+                option.dataset.value = conc;
+                option.addEventListener('click', () => {
+                    wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedValue = conc;
+                });
+                wheel.appendChild(option);
+            });
+            
+            wheelContainer.appendChild(highlight);
+            wheelContainer.appendChild(wheel);
+            container.appendChild(header);
+            container.appendChild(wheelContainer);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            header.querySelector('.picker-cancel').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            header.querySelector('.picker-done').addEventListener('click', () => {
+                callback(selectedValue);
+                document.body.removeChild(overlay);
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
         }
 
         function showMode(mode) {
@@ -574,32 +824,13 @@
             return { baseMg, finalMg, mgPerKg };
         }
 
-        function updateConcButtons() {
-            const drugKey = document.getElementById('singleDrug').value;
-            
-            if (drugKey) {
-                const drug = DRUGS[drugKey];
-                const container = document.getElementById('singleConcBtns');
-                container.innerHTML = '';
-                drug.commonConc.forEach(conc => {
-                    const btn = document.createElement('button');
-                    btn.className = 'conc-btn';
-                    btn.textContent = conc + '%';
-                    btn.onclick = () => {
-                        document.getElementById('singleConc').value = conc;
-                        calculate();
-                    };
-                    container.appendChild(btn);
-                });
-            }
-        }
-
         function addMixtureAgent() {
             if (mixtureAgents.length >= 3) return;
             
             const id = Date.now();
-            mixtureAgents.push({ id, drug: '', conc: '', volume: '' });
+            mixtureAgents.push({ id, drug: '', conc: '', volume: '0' });
             renderMixtureAgents();
+            calculate();
         }
 
         function removeMixtureAgent(id) {
@@ -620,45 +851,75 @@
             mixtureAgents.forEach((agent, idx) => {
                 const card = document.createElement('div');
                 card.className = 'agent-card';
-                card.innerHTML = `
-                    <div class="agent-header">
-                        <span class="agent-number">Agent ${idx + 1}</span>
-                        ${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}
-                    </div>
-                    <div class="input-group">
-                        <label>Drug</label>
-                        <select onchange="updateMixtureAgent(${agent.id}, 'drug', this.value)">
-                            <option value="">Select...</option>
-                            <option value="lidocaine" ${agent.drug === 'lidocaine' ? 'selected' : ''}>Lidocaine</option>
-                            <option value="mepivacaine" ${agent.drug === 'mepivacaine' ? 'selected' : ''}>Mepivacaine</option>
-                            <option value="bupivacaine" ${agent.drug === 'bupivacaine' ? 'selected' : ''}>Bupivacaine</option>
-                            <option value="ropivacaine" ${agent.drug === 'ropivacaine' ? 'selected' : ''}>Ropivacaine</option>
-                            <option value="chloroprocaine" ${agent.drug === 'chloroprocaine' ? 'selected' : ''}>Chloroprocaine</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Concentration (%)</label>
-                        <input type="number" value="${agent.conc}" min="0" max="4" step="0.01" 
-                            onchange="updateMixtureAgent(${agent.id}, 'conc', this.value)">
-                    </div>
-                    <div class="input-group">
-                        <label>Volume (mL)</label>
-                        <input type="number" value="${agent.volume}" min="0" step="0.1" 
-                            onchange="updateMixtureAgent(${agent.id}, 'volume', this.value)">
-                    </div>
+                
+                const header = document.createElement('div');
+                header.className = 'agent-header';
+                header.innerHTML = `
+                    <span class="agent-number">Agent ${idx + 1}</span>
+                    ${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}
                 `;
+                card.appendChild(header);
+                
+                // Drug picker
+                const drugGroup = document.createElement('div');
+                drugGroup.className = 'input-group';
+                drugGroup.innerHTML = '<label>Drug</label>';
+                const drugPicker = document.createElement('div');
+                drugPicker.className = 'picker-input';
+                drugPicker.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
+                drugPicker.addEventListener('click', () => {
+                    showDrugPicker('mixture', agent.drug, (value) => {
+                        agent.drug = value;
+                        agent.conc = '';
+                        renderMixtureAgents();
+                        calculate();
+                    });
+                });
+                drugGroup.appendChild(drugPicker);
+                card.appendChild(drugGroup);
+                
+                // Concentration picker
+                const concGroup = document.createElement('div');
+                concGroup.className = 'input-group';
+                concGroup.innerHTML = '<label>Concentration (%)</label>';
+                const concPicker = document.createElement('div');
+                concPicker.className = 'picker-input';
+                concPicker.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
+                concPicker.addEventListener('click', () => {
+                    if (!agent.drug) {
+                        alert('Please select a drug first');
+                        return;
+                    }
+                    const concentrations = DRUGS[agent.drug].commonConc;
+                    showConcPicker('mixture', agent.conc, concentrations, (value) => {
+                        agent.conc = value;
+                        renderMixtureAgents();
+                        calculate();
+                    });
+                });
+                concGroup.appendChild(concPicker);
+                card.appendChild(concGroup);
+                
+                // Volume input
+                const volGroup = document.createElement('div');
+                volGroup.className = 'input-group';
+                volGroup.innerHTML = '<label>Volume (mL)</label>';
+                const volInput = document.createElement('input');
+                volInput.type = 'number';
+                volInput.min = '0';
+                volInput.step = '0.1';
+                volInput.value = agent.volume;
+                volInput.addEventListener('input', (e) => {
+                    agent.volume = e.target.value;
+                    calculate();
+                });
+                volGroup.appendChild(volInput);
+                card.appendChild(volGroup);
+                
                 container.appendChild(card);
             });
 
             document.getElementById('addAgentBtn').style.display = mixtureAgents.length >= 3 ? 'none' : 'block';
-        }
-
-        function updateMixtureAgent(id, field, value) {
-            const agent = mixtureAgents.find(a => a.id === id);
-            if (agent) {
-                agent[field] = value;
-                calculate();
-            }
         }
 
         function calculate() {
@@ -690,8 +951,8 @@
         }
 
         function calculateSingle(patient) {
-            const drugKey = document.getElementById('singleDrug').value;
-            const conc = parseFloat(document.getElementById('singleConc').value);
+            const drugKey = singleDrugValue;
+            const conc = parseFloat(singleConcValue);
             const volume = parseFloat(document.getElementById('singleVolume').value);
 
             if (!drugKey || !conc || conc <= 0 || conc > 4) return '';
@@ -744,7 +1005,7 @@
         }
 
         function calculateMixture(patient) {
-            const valid = mixtureAgents.filter(a => a.drug && a.conc && a.volume);
+            const valid = mixtureAgents.filter(a => a.drug && a.conc);
             if (valid.length === 0) return '';
 
             let totalFraction = 0;
@@ -752,7 +1013,7 @@
 
             for (const agent of valid) {
                 const conc = parseFloat(agent.conc);
-                const volume = parseFloat(agent.volume);
+                const volume = parseFloat(agent.volume) || 0;
                 
                 if (conc <= 0 || conc > 4) continue;
                 if (volume < 0) continue;
@@ -925,8 +1186,8 @@
             summary += `High-risk: ${patient.highRisk ? 'Yes (0.80× applied)' : 'No'}\n\n`;
 
             if (currentMode === 'single') {
-                const drugKey = document.getElementById('singleDrug').value;
-                const conc = parseFloat(document.getElementById('singleConc').value);
+                const drugKey = singleDrugValue;
+                const conc = parseFloat(singleConcValue);
                 const volume = parseFloat(document.getElementById('singleVolume').value);
 
                 if (drugKey && conc) {
@@ -948,7 +1209,7 @@
                     }
                 }
             } else if (currentMode === 'mixture') {
-                const valid = mixtureAgents.filter(a => a.drug && a.conc && a.volume);
+                const valid = mixtureAgents.filter(a => a.drug && a.conc);
                 
                 if (valid.length > 0) {
                     summary += '--- MIXTURE ---\n\n';
@@ -956,7 +1217,7 @@
 
                     valid.forEach((agent, idx) => {
                         const conc = parseFloat(agent.conc);
-                        const volume = parseFloat(agent.volume);
+                        const volume = parseFloat(agent.volume) || 0;
                         const drug = DRUGS[agent.drug];
                         const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
                         const mgPerMl = conc * 10;
@@ -1022,3 +1283,4 @@
     </script>
 </body>
 </html>
+```
