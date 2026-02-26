@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1146,4 +1147,307 @@
             if (patient.age70) redFactors.push('0.85× age≥70');
             if (patient.highRisk) redFactors.push('0.80× high-risk');
             if (redFactors.length > 0) {
-                html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${redFactors.join('
+                html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${redFactors.join(', ')}</span></div>`;
+            }
+
+            html += `<div class="result-row"><span class="result-label">Final max mg:</span><span class="result-value">${finalMg.toFixed(1)} mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${mgPerMl} mg/mL</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Final max mL:</span><span class="result-value">${maxMl.toFixed(1)} mL</span></div>`;
+
+            if (volume > 0) {
+                const usedMg = mgPerMl * volume;
+                const pct = (usedMg / finalMg * 100);
+                html += `<div class="result-row"><span class="result-label">Intended volume:</span><span class="result-value">${volume.toFixed(1)} mL</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Mg used:</span><span class="result-value">${usedMg.toFixed(1)} mg (${pct.toFixed(1)}%)</span></div>`;
+                
+                if (volume > 60) {
+                    html += '<div style="color: #856404; margin-top: 8px; font-size: 13px;">⚠️ Volume >60 mL - verify clinically appropriate</div>';
+                }
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function calculateMixture(patient) {
+            const valid = mixtureAgents.filter(a => a.drug && a.conc);
+            if (valid.length === 0) return '';
+
+            let totalFraction = 0;
+            const calcs = [];
+
+            for (const agent of valid) {
+                const conc = parseFloat(agent.conc);
+                const volume = parseFloat(agent.volume) || 0;
+                
+                if (conc <= 0 || conc > 4) continue;
+                if (volume < 0) continue;
+
+                const drug = DRUGS[agent.drug];
+                const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
+                const mgPerMl = conc * 10;
+                const actualMg = mgPerMl * volume;
+                const fraction = actualMg / finalMg;
+
+                totalFraction += fraction;
+
+                calcs.push({
+                    name: drug.name,
+                    conc,
+                    mgPerMl,
+                    volume,
+                    actualMg,
+                    baseMg,
+                    finalMg,
+                    fraction
+                });
+            }
+
+            let statusClass, statusText;
+            if (totalFraction > 1.0) {
+                statusClass = 'status-red';
+                statusText = `RED - UNSAFE (${totalFraction.toFixed(3)} / 1.000)`;
+            } else if (totalFraction >= 0.8) {
+                statusClass = 'status-yellow';
+                statusText = `YELLOW - CAUTION (${totalFraction.toFixed(3)} / 1.000)`;
+            } else {
+                statusClass = 'status-green';
+                statusText = `GREEN - SAFE (${totalFraction.toFixed(3)} / 1.000)`;
+            }
+
+            let html = `<div class="status-badge ${statusClass}">${statusText}</div>`;
+
+            html += '<div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th>Max+ mL</th></tr></thead><tbody>';
+            
+            const remaining = Math.max(0, 1.0 - totalFraction);
+            
+            for (const calc of calcs) {
+                const maxAdditional = (remaining * calc.finalMg) / calc.mgPerMl;
+                html += `<tr>
+                    <td>${calc.name}</td>
+                    <td>${calc.conc}</td>
+                    <td>${calc.mgPerMl}</td>
+                    <td>${calc.volume.toFixed(1)}</td>
+                    <td>${calc.actualMg.toFixed(1)}</td>
+                    <td>${calc.baseMg.toFixed(1)}</td>
+                    <td>${calc.finalMg.toFixed(1)}</td>
+                    <td>${calc.fraction.toFixed(3)}</td>
+                    <td>${maxAdditional.toFixed(1)}</td>
+                </tr>`;
+                
+                if (calc.volume > 60) {
+                    html += `<tr><td colspan="9" style="color: #856404; font-size: 12px;">⚠️ ${calc.name} volume >60 mL</td></tr>`;
+                }
+            }
+            
+            html += '</tbody></table></div>';
+
+            html += '<div class="result-card">';
+            html += `<div class="result-row"><span class="result-label">Remaining fraction:</span><span class="result-value">${remaining.toFixed(3)}</span></div>`;
+            html += '</div>';
+
+            return html;
+        }
+
+        function calculateExparel(patient) {
+            const lidoRecent = document.getElementById('lidocaineRecent').checked;
+            const lidoStop = document.getElementById('lidocaineStop');
+            
+            lidoStop.classList.toggle('hidden', !lidoRecent);
+
+            if (lidoRecent) {
+                return '<div class="status-badge status-red">RED - UNSAFE<br>Lidocaine interaction risk - DO NOT PROCEED</div>';
+            }
+
+            const exparelVol = parseFloat(document.getElementById('exparelVolume').value) || 0;
+            const bupiConc = parseFloat(document.getElementById('bupiConc').value) || 0;
+            const bupiVol = parseFloat(document.getElementById('bupiVolume').value) || 0;
+
+            if (exparelVol === 0) return '';
+
+            const EXPAREL_MG_ML = 13.3;
+            const EXPAREL_CAP = 266;
+
+            const exparelMg = exparelVol * EXPAREL_MG_ML;
+            
+            let html = '';
+            let isUnsafe = false;
+
+            if (exparelMg > EXPAREL_CAP) {
+                html += `<div class="status-badge status-red">RED - UNSAFE<br>Exparel exceeds 266 mg cap (${exparelMg.toFixed(1)} mg)</div>`;
+                isUnsafe = true;
+            }
+
+            html += '<div class="result-card">';
+            html += '<h3>Exparel</h3>';
+            html += `<div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${exparelVol.toFixed(1)} mL</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${exparelMg.toFixed(1)} mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">266 mg</span></div>`;
+            html += `<div class="result-row"><span class="result-label">Status:</span><span class="result-value">${exparelMg <= EXPAREL_CAP ? '✓ Within cap' : '✗ EXCEEDS'}</span></div>`;
+            html += '</div>';
+
+            if (bupiConc > 0 && bupiVol > 0) {
+                if (bupiConc > 4) {
+                    html += '<div class="warning">Bupivacaine concentration >4% - invalid</div>';
+                    return html;
+                }
+
+                const bupiMgMl = bupiConc * 10;
+                const bupiMg = bupiMgMl * bupiVol;
+                const maxBupi = exparelMg * 0.5;
+                const ratioOk = bupiMg <= maxBupi;
+
+                const { baseMg: bupiBaseMg, finalMg: bupiFinalMg } = calcMaxMg('bupivacaine', patient);
+                const bupiCapOk = bupiMg <= bupiFinalMg;
+
+                html += '<div class="result-card">';
+                html += '<h3>Bupivacaine HCl</h3>';
+                html += `<div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${bupiConc}% (${bupiMgMl} mg/mL)</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${bupiVol.toFixed(1)} mL</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${bupiMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Max bupi (50% rule):</span><span class="result-value">${maxBupi.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">50% ratio check:</span><span class="result-value">${ratioOk ? '✓ OK' : '✗ EXCEEDS'}</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Bupi base max mg:</span><span class="result-value">${bupiBaseMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Bupi final max mg:</span><span class="result-value">${bupiFinalMg.toFixed(1)} mg</span></div>`;
+                html += `<div class="result-row"><span class="result-label">Hard cap check:</span><span class="result-value">${bupiCapOk ? '✓ OK' : '✗ EXCEEDS'}</span></div>`;
+                html += '</div>';
+
+                if (!ratioOk) {
+                    html += '<div class="warning">Bupivacaine exceeds 50% of Exparel dose</div>';
+                    isUnsafe = true;
+                }
+
+                if (!bupiCapOk) {
+                    html += '<div class="warning">Bupivacaine exceeds hard cap limits</div>';
+                    isUnsafe = true;
+                }
+
+                if (bupiVol > 60) {
+                    html += '<div style="color: #856404; margin: 8px 0; font-size: 13px;">⚠️ Bupi volume >60 mL - verify clinically appropriate</div>';
+                }
+            }
+
+            if (!isUnsafe && exparelMg <= EXPAREL_CAP) {
+                html = `<div class="status-badge status-green">GREEN - SAFE</div>` + html;
+            }
+
+            return html;
+        }
+
+        function copySummary() {
+            const patient = getPatientData();
+            if (!patient) return;
+
+            let summary = '========================================\n';
+            summary += 'LOCAL ANESTHETIC CALCULATOR\n';
+            summary += '========================================\n\n';
+            summary += `Date: ${new Date().toLocaleString()}\n\n`;
+            summary += 'DISCLAIMER: Educational calculator only.\n';
+            summary += 'Verify all dosing per institutional policy.\n\n';
+            summary += '--- PATIENT DATA ---\n';
+            summary += `Weight: ${patient.weight} kg\n`;
+            summary += `Epinephrine: ${patient.useEpi ? 'Yes' : 'No'}\n`;
+            summary += `Age ≥ 70: ${patient.age70 ? 'Yes (0.85× applied)' : 'No'}\n`;
+            summary += `High-risk: ${patient.highRisk ? 'Yes (0.80× applied)' : 'No'}\n\n`;
+
+            if (currentMode === 'single') {
+                const drugKey = singleDrugValue;
+                const conc = parseFloat(singleConcValue);
+                const volume = parseFloat(document.getElementById('singleVolume').value);
+
+                if (drugKey && conc) {
+                    const drug = DRUGS[drugKey];
+                    const { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
+                    const mgPerMl = conc * 10;
+                    const maxMl = finalMg / mgPerMl;
+
+                    summary += '--- SINGLE AGENT ---\n';
+                    summary += `Drug: ${drug.name}\n`;
+                    summary += `Concentration: ${conc}% (${mgPerMl} mg/mL)\n`;
+                    summary += `Mg per kg: ${mgPerKg} mg/kg\n`;
+                    summary += `Base max: ${baseMg.toFixed(1)} mg\n`;
+                    summary += `Final max: ${finalMg.toFixed(1)} mg (${maxMl.toFixed(1)} mL)\n`;
+                    
+                    if (volume > 0) {
+                        const usedMg = mgPerMl * volume;
+                        summary += `Intended: ${volume.toFixed(1)} mL (${usedMg.toFixed(1)} mg, ${(usedMg/finalMg*100).toFixed(1)}%)\n`;
+                    }
+                }
+            } else if (currentMode === 'mixture') {
+                const valid = mixtureAgents.filter(a => a.drug && a.conc);
+                
+                if (valid.length > 0) {
+                    summary += '--- MIXTURE ---\n\n';
+                    let totalFraction = 0;
+
+                    valid.forEach((agent, idx) => {
+                        const conc = parseFloat(agent.conc);
+                        const volume = parseFloat(agent.volume) || 0;
+                        const drug = DRUGS[agent.drug];
+                        const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
+                        const mgPerMl = conc * 10;
+                        const actualMg = mgPerMl * volume;
+                        const fraction = actualMg / finalMg;
+                        totalFraction += fraction;
+
+                        summary += `Agent ${idx + 1}: ${drug.name}\n`;
+                        summary += `  ${conc}% | ${volume.toFixed(1)} mL | ${actualMg.toFixed(1)} mg\n`;
+                        summary += `  Base max: ${baseMg.toFixed(1)} mg | Final max: ${finalMg.toFixed(1)} mg\n`;
+                        summary += `  Fraction: ${fraction.toFixed(3)}\n\n`;
+                    });
+
+                    summary += `TOTAL FRACTION: ${totalFraction.toFixed(3)} / 1.000\n`;
+                    
+                    if (totalFraction > 1.0) {
+                        summary += 'STATUS: RED - UNSAFE\n';
+                    } else if (totalFraction >= 0.8) {
+                        summary += 'STATUS: YELLOW - CAUTION\n';
+                    } else {
+                        summary += 'STATUS: GREEN - SAFE\n';
+                    }
+
+                    const remaining = Math.max(0, 1.0 - totalFraction);
+                    summary += `Remaining fraction: ${remaining.toFixed(3)}\n`;
+                }
+            } else if (currentMode === 'exparel') {
+                const exparelVol = parseFloat(document.getElementById('exparelVolume').value) || 0;
+                const bupiConc = parseFloat(document.getElementById('bupiConc').value) || 0;
+                const bupiVol = parseFloat(document.getElementById('bupiVolume').value) || 0;
+                const lidoRecent = document.getElementById('lidocaineRecent').checked;
+
+                summary += '--- EXPAREL MODE ---\n';
+                summary += `Lidocaine recent: ${lidoRecent ? 'YES - UNSAFE' : 'No'}\n`;
+                
+                if (exparelVol > 0 && !lidoRecent) {
+                    const exparelMg = exparelVol * 13.3;
+                    summary += `Exparel: ${exparelVol.toFixed(1)} mL (${exparelMg.toFixed(1)} mg)\n`;
+                    summary += `Cap: 266 mg | ${exparelMg <= 266 ? 'OK' : 'EXCEEDS'}\n`;
+
+                    if (bupiConc > 0 && bupiVol > 0) {
+                        const bupiMg = bupiConc * 10 * bupiVol;
+                        const maxBupi = exparelMg * 0.5;
+                        const { baseMg, finalMg } = calcMaxMg('bupivacaine', patient);
+                        summary += `Bupi HCl: ${bupiConc}% | ${bupiVol.toFixed(1)} mL (${bupiMg.toFixed(1)} mg)\n`;
+                        summary += `Max bupi (50% rule): ${maxBupi.toFixed(1)} mg | ${bupiMg <= maxBupi ? 'OK' : 'EXCEEDS'}\n`;
+                        summary += `Bupi base max: ${baseMg.toFixed(1)} mg | Final max: ${finalMg.toFixed(1)} mg\n`;
+                        summary += `Hard cap check: ${bupiMg <= finalMg ? 'OK' : 'EXCEEDS'}\n`;
+                    }
+                }
+            }
+
+            summary += '\n========================================\n';
+
+            navigator.clipboard.writeText(summary).then(() => {
+                alert('Summary copied to clipboard!');
+            }).catch(() => {
+                alert('Could not copy. Summary:\n\n' + summary);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
+```
+
+Upload this to GitHub - the info icon should now be visible and tap-able with the popup working properly!
