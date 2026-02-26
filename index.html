@@ -103,19 +103,23 @@
             flex: 1;
         }
         .info-icon {
-            width: 20px;
-            height: 20px;
+            min-width: 28px;
+            min-height: 28px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: #007bff;
+            background: #17a2b8;
             color: white;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-left: 8px;
+            margin-left: 10px;
             flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .mode-tabs {
             display: flex;
@@ -510,7 +514,7 @@
             <div class="checkbox-row">
                 <input type="checkbox" id="highRisk">
                 <label for="highRisk">High-risk physiology (applies 0.80× reduction)</label>
-                <div class="info-icon" id="highRiskInfo">i</div>
+                <span class="info-icon" id="highRiskInfo">i</span>
             </div>
         </div>
 
@@ -580,3 +584,566 @@
         </div>
 
         <div id="results" class="results hidden">
+            <div class="section-title">Results</div>
+            <div id="resultsContent"></div>
+            <button class="btn btn-success" id="copyBtn">Copy Summary</button>
+        </div>
+    </div>
+
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+
+        // PWA install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.remove('hidden');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.add('hidden');
+            }
+        });
+
+        // High Risk Info Popup
+        document.getElementById('highRiskInfo').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showHighRiskInfo();
+        });
+
+        function showHighRiskInfo() {
+            const overlay = document.createElement('div');
+            overlay.className = 'info-popup-overlay';
+            
+            const popup = document.createElement('div');
+            popup.className = 'info-popup';
+            popup.innerHTML = `
+                <h3>High-Risk Physiology for LAST</h3>
+                <p>The following conditions increase risk of Local Anesthetic Systemic Toxicity (LAST) per ASRA guidelines:</p>
+                <ul>
+                    <li><strong>Hepatic dysfunction</strong> – Reduced metabolism of amide local anesthetics</li>
+                    <li><strong>Cardiac disease</strong> – Low cardiac output, heart failure, conduction abnormalities</li>
+                    <li><strong>Severe metabolic acidosis</strong> – Increases unbound (active) fraction of local anesthetic</li>
+                    <li><strong>Pregnancy</strong> – Increased cardiac sensitivity and decreased protein binding</li>
+                    <li><strong>Frail/elderly patients</strong> – Age-related changes in clearance and volume of distribution</li>
+                    <li><strong>Renal dysfunction</strong> – May affect clearance of certain agents and metabolites</li>
+                    <li><strong>Extremes of age</strong> – Neonates and very elderly have altered pharmacokinetics</li>
+                </ul>
+                <div class="note">
+                    <strong>Note:</strong> Multiple risk factors compound. This calculator applies a 0.80× reduction for high-risk physiology and 0.85× for age ≥70. When both apply, reductions multiply (0.80 × 0.85 = 0.68× total reduction).
+                </div>
+                <button class="close-btn" onclick="this.closest('.info-popup-overlay').remove()">Close</button>
+            `;
+            
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+        }
+
+        const DRUGS = {
+            lidocaine: {
+                name: 'Lidocaine (Xylocaine)',
+                plainMgKg: 4.5,
+                epiMgKg: 7,
+                advisory: { plain: 300, epi: 500 },
+                commonConc: [0.5, 1, 1.5, 2]
+            },
+            mepivacaine: {
+                name: 'Mepivacaine (Polocaine)',
+                plainMgKg: 5,
+                epiMgKg: 7,
+                commonConc: [1, 1.5, 2]
+            },
+            bupivacaine: {
+                name: 'Bupivacaine (Marcaine)',
+                plainMgKg: 2.5,
+                epiMgKg: 3,
+                hardCap: { plain: 175, epi: 225 },
+                commonConc: [0.25, 0.5, 0.75]
+            },
+            ropivacaine: {
+                name: 'Ropivacaine (Naropin)',
+                plainMgKg: 3,
+                epiMgKg: 3,
+                commonConc: [0.2, 0.5, 0.75, 1]
+            },
+            chloroprocaine: {
+                name: 'Chloroprocaine (Nesacaine)',
+                plainMgKg: 11,
+                epiMgKg: 14,
+                commonConc: [2, 3]
+            }
+        };
+
+        let currentMode = 'single';
+        let mixtureAgents = [];
+        
+        // Single mode selections
+        let singleDrugValue = '';
+        let singleConcValue = '';
+
+        function init() {
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentMode = tab.dataset.mode;
+                    showMode(currentMode);
+                });
+            });
+
+            document.getElementById('weight').addEventListener('input', validateWeight);
+            document.getElementById('proceedAnyway').addEventListener('change', calculate);
+            document.getElementById('useEpi').addEventListener('change', calculate);
+            document.getElementById('age70').addEventListener('change', calculate);
+            document.getElementById('highRisk').addEventListener('change', calculate);
+            
+            // Single mode pickers
+            document.getElementById('singleDrugPicker').addEventListener('click', () => {
+                showDrugPicker('single', singleDrugValue, (value) => {
+                    singleDrugValue = value;
+                    document.getElementById('singleDrugLabel').textContent = value ? DRUGS[value].name : 'Select drug...';
+                    calculate();
+                });
+            });
+            
+            document.getElementById('singleConcPicker').addEventListener('click', () => {
+                if (!singleDrugValue) {
+                    alert('Please select a drug first');
+                    return;
+                }
+                const concentrations = DRUGS[singleDrugValue].commonConc;
+                showConcPicker('single', singleConcValue, concentrations, (value) => {
+                    singleConcValue = value;
+                    document.getElementById('singleConcLabel').textContent = value ? value + '%' : 'Select concentration...';
+                    calculate();
+                });
+            });
+            
+            document.getElementById('singleVolume').addEventListener('input', calculate);
+            document.getElementById('addAgentBtn').addEventListener('click', addMixtureAgent);
+            document.getElementById('lidocaineRecent').addEventListener('change', calculate);
+            document.getElementById('exparelVolume').addEventListener('input', calculate);
+            document.getElementById('bupiConc').addEventListener('input', calculate);
+            document.getElementById('bupiVolume').addEventListener('input', calculate);
+            document.getElementById('copyBtn').addEventListener('click', copySummary);
+
+            showMode('single');
+        }
+
+        function showDrugPicker(context, currentValue, callback) {
+            const overlay = document.createElement('div');
+            overlay.className = 'picker-overlay';
+            
+            const container = document.createElement('div');
+            container.className = 'picker-container';
+            
+            const header = document.createElement('div');
+            header.className = 'picker-header';
+            header.innerHTML = '<div class="picker-done">Done</div>';
+            
+            const wheelContainer = document.createElement('div');
+            wheelContainer.style.position = 'relative';
+            
+            const highlight = document.createElement('div');
+            highlight.className = 'picker-highlight';
+            
+            const wheel = document.createElement('div');
+            wheel.className = 'picker-wheel';
+            
+            let selectedValue = currentValue;
+            
+            const drugKeys = Object.keys(DRUGS);
+            drugKeys.forEach(key => {
+                const option = document.createElement('div');
+                option.className = 'picker-option';
+                if (key === currentValue) option.classList.add('selected');
+                option.textContent = DRUGS[key].name;
+                option.dataset.value = key;
+                wheel.appendChild(option);
+            });
+            
+            // Update selection on scroll
+            let scrollTimeout;
+            wheel.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const wheelRect = wheel.getBoundingClientRect();
+                    const centerY = wheelRect.top + wheelRect.height / 2;
+                    
+                    let closestOption = null;
+                    let closestDistance = Infinity;
+                    
+                    wheel.querySelectorAll('.picker-option').forEach(option => {
+                        const optionRect = option.getBoundingClientRect();
+                        const optionCenterY = optionRect.top + optionRect.height / 2;
+                        const distance = Math.abs(centerY - optionCenterY);
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestOption = option;
+                        }
+                    });
+                    
+                    if (closestOption) {
+                        wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                        closestOption.classList.add('selected');
+                        selectedValue = closestOption.dataset.value;
+                        callback(selectedValue);
+                    }
+                }, 100);
+            });
+            
+            wheelContainer.appendChild(highlight);
+            wheelContainer.appendChild(wheel);
+            container.appendChild(header);
+            container.appendChild(wheelContainer);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            // Scroll to selected item
+            if (currentValue) {
+                const selectedOption = wheel.querySelector(`[data-value="${currentValue}"]`);
+                if (selectedOption) {
+                    setTimeout(() => {
+                        selectedOption.scrollIntoView({ block: 'center', behavior: 'auto' });
+                    }, 50);
+                }
+            }
+            
+            header.querySelector('.picker-done').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        function showConcPicker(context, currentValue, concentrations, callback) {
+            const overlay = document.createElement('div');
+            overlay.className = 'picker-overlay';
+            
+            const container = document.createElement('div');
+            container.className = 'picker-container';
+            
+            const header = document.createElement('div');
+            header.className = 'picker-header';
+            header.innerHTML = '<div class="picker-done">Done</div>';
+            
+            const wheelContainer = document.createElement('div');
+            wheelContainer.style.position = 'relative';
+            
+            const highlight = document.createElement('div');
+            highlight.className = 'picker-highlight';
+            
+            const wheel = document.createElement('div');
+            wheel.className = 'picker-wheel';
+            
+            let selectedValue = currentValue;
+            
+            concentrations.forEach(conc => {
+                const option = document.createElement('div');
+                option.className = 'picker-option';
+                if (conc === parseFloat(currentValue)) option.classList.add('selected');
+                option.textContent = conc + '%';
+                option.dataset.value = conc;
+                wheel.appendChild(option);
+            });
+            
+            // Update selection on scroll
+            let scrollTimeout;
+            wheel.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const wheelRect = wheel.getBoundingClientRect();
+                    const centerY = wheelRect.top + wheelRect.height / 2;
+                    
+                    let closestOption = null;
+                    let closestDistance = Infinity;
+                    
+                    wheel.querySelectorAll('.picker-option').forEach(option => {
+                        const optionRect = option.getBoundingClientRect();
+                        const optionCenterY = optionRect.top + optionRect.height / 2;
+                        const distance = Math.abs(centerY - optionCenterY);
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestOption = option;
+                        }
+                    });
+                    
+                    if (closestOption) {
+                        wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
+                        closestOption.classList.add('selected');
+                        selectedValue = closestOption.dataset.value;
+                        callback(selectedValue);
+                    }
+                }, 100);
+            });
+            
+            wheelContainer.appendChild(highlight);
+            wheelContainer.appendChild(wheel);
+            container.appendChild(header);
+            container.appendChild(wheelContainer);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            // Scroll to selected item
+            if (currentValue) {
+                const selectedOption = wheel.querySelector(`[data-value="${currentValue}"]`);
+                if (selectedOption) {
+                    setTimeout(() => {
+                        selectedOption.scrollIntoView({ block: 'center', behavior: 'auto' });
+                    }, 50);
+                }
+            }
+            
+            header.querySelector('.picker-done').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        function showMode(mode) {
+            document.getElementById('singleMode').classList.toggle('hidden', mode !== 'single');
+            document.getElementById('mixtureMode').classList.toggle('hidden', mode !== 'mixture');
+            document.getElementById('exparelMode').classList.toggle('hidden', mode !== 'exparel');
+            
+            if (mode === 'mixture' && mixtureAgents.length === 0) {
+                addMixtureAgent();
+            }
+            
+            calculate();
+        }
+
+        function validateWeight() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const warning = document.getElementById('weightWarning');
+            
+            if (weight && (weight < 20 || weight > 250)) {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+                document.getElementById('proceedAnyway').checked = false;
+            }
+            
+            calculate();
+        }
+
+        function getPatientData() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const useEpi = document.getElementById('useEpi').checked;
+            const age70 = document.getElementById('age70').checked;
+            const highRisk = document.getElementById('highRisk').checked;
+            const proceedAnyway = document.getElementById('proceedAnyway').checked;
+
+            if (!weight) return null;
+            if ((weight < 20 || weight > 250) && !proceedAnyway) return null;
+
+            return { weight, useEpi, age70, highRisk };
+        }
+
+        function calcMaxMg(drugKey, patient) {
+            const drug = DRUGS[drugKey];
+            const mgPerKg = patient.useEpi ? drug.epiMgKg : drug.plainMgKg;
+            let baseMg = patient.weight * mgPerKg;
+
+            if (drug.hardCap) {
+                const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
+                baseMg = Math.min(baseMg, cap);
+            }
+
+            let mult = 1.0;
+            if (patient.age70) mult *= 0.85;
+            if (patient.highRisk) mult *= 0.80;
+            
+            const finalMg = baseMg * mult;
+
+            return { baseMg, finalMg, mgPerKg };
+        }
+
+        function addMixtureAgent() {
+            if (mixtureAgents.length >= 3) return;
+            
+            const id = Date.now();
+            mixtureAgents.push({ id, drug: '', conc: '', volume: '0' });
+            renderMixtureAgents();
+            calculate();
+        }
+
+        function removeMixtureAgent(id) {
+            mixtureAgents = mixtureAgents.filter(a => a.id !== id);
+            renderMixtureAgents();
+            calculate();
+        }
+
+        function renderMixtureAgents() {
+            const container = document.getElementById('mixtureAgents');
+            
+            if (mixtureAgents.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No agents added</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            mixtureAgents.forEach((agent, idx) => {
+                const card = document.createElement('div');
+                card.className = 'agent-card';
+                
+                const header = document.createElement('div');
+                header.className = 'agent-header';
+                header.innerHTML = `
+                    <span class="agent-number">Agent ${idx + 1}</span>
+                    ${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}
+                `;
+                card.appendChild(header);
+                
+                // Drug picker
+                const drugGroup = document.createElement('div');
+                drugGroup.className = 'input-group';
+                drugGroup.innerHTML = '<label>Drug</label>';
+                const drugPicker = document.createElement('div');
+                drugPicker.className = 'picker-input';
+                drugPicker.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
+                drugPicker.addEventListener('click', () => {
+                    showDrugPicker('mixture', agent.drug, (value) => {
+                        agent.drug = value;
+                        agent.conc = '';
+                        renderMixtureAgents();
+                        calculate();
+                    });
+                });
+                drugGroup.appendChild(drugPicker);
+                card.appendChild(drugGroup);
+                
+                // Concentration picker
+                const concGroup = document.createElement('div');
+                concGroup.className = 'input-group';
+                concGroup.innerHTML = '<label>Concentration (%)</label>';
+                const concPicker = document.createElement('div');
+                concPicker.className = 'picker-input';
+                concPicker.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
+                concPicker.addEventListener('click', () => {
+                    if (!agent.drug) {
+                        alert('Please select a drug first');
+                        return;
+                    }
+                    const concentrations = DRUGS[agent.drug].commonConc;
+                    showConcPicker('mixture', agent.conc, concentrations, (value) => {
+                        agent.conc = value;
+                        renderMixtureAgents();
+                        calculate();
+                    });
+                });
+                concGroup.appendChild(concPicker);
+                card.appendChild(concGroup);
+                
+                // Volume input
+                const volGroup = document.createElement('div');
+                volGroup.className = 'input-group';
+                volGroup.innerHTML = '<label>Volume (mL)</label>';
+                const volInput = document.createElement('input');
+                volInput.type = 'number';
+                volInput.min = '0';
+                volInput.step = '0.1';
+                volInput.value = agent.volume;
+                volInput.addEventListener('input', (e) => {
+                    agent.volume = e.target.value;
+                    calculate();
+                });
+                volGroup.appendChild(volInput);
+                card.appendChild(volGroup);
+                
+                container.appendChild(card);
+            });
+
+            document.getElementById('addAgentBtn').style.display = mixtureAgents.length >= 3 ? 'none' : 'block';
+        }
+
+        function calculate() {
+            const patient = getPatientData();
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+
+            if (!patient) {
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+
+            if (currentMode === 'single') {
+                html = calculateSingle(patient);
+            } else if (currentMode === 'mixture') {
+                html = calculateMixture(patient);
+            } else if (currentMode === 'exparel') {
+                html = calculateExparel(patient);
+            }
+
+            if (html) {
+                resultsContent.innerHTML = html;
+                resultsDiv.classList.remove('hidden');
+            } else {
+                resultsDiv.classList.add('hidden');
+            }
+        }
+
+        function calculateSingle(patient) {
+            const drugKey = singleDrugValue;
+            const conc = parseFloat(singleConcValue);
+            const volume = parseFloat(document.getElementById('singleVolume').value);
+
+            if (!drugKey || !conc || conc <= 0 || conc > 4) return '';
+
+            const drug = DRUGS[drugKey];
+            const { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
+            const mgPerMl = conc * 10;
+            const maxMl = finalMg / mgPerMl;
+
+            let html = '<div class="result-card">';
+            html += `<h3>${drug.name} ${conc}%</h3>`;
+            html += `<div class="result-row"><span class="result-label">Mg per kg:</span><span class="result-value">${mgPerKg} mg/kg ${patient.useEpi ? '(with epi)' : '(plain)'}</span></div>`;
+            
+            if (drug.hardCap) {
+                const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
+                html += `<div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">${cap} mg (enforced)</span></div>`;
+            }
+
+            if (drug.advisory) {
+                const adv = patient.useEpi ? drug.advisory.epi : drug.advisory.plain;
+                html += `<div class="result-row"><span class="result-label">Advisory cap:</span><span class="result-value">${adv} mg (display only)</span></div>`;
+            }
+
+            html += `<div class="result-row"><span class="result-label">Base max mg:</span><span class="result-value">${baseMg.toFixed(1)} mg</span></div>`;
+
+            let redFactors = [];
+            if (patient.age70) redFactors.push('0.85× age≥70');
+            if (patient.highRisk) redFactors.push('0.80× high-risk');
+            if (redFactors.length > 0) {
+                html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${redFactors.join('
