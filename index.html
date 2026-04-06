@@ -27,45 +27,47 @@
 ```
     /* ── TOP NAV ── */
     .app-nav {
-        background: #1a1a2e;
-        padding: 14px 16px 0;
+        background: #fff;
+        padding: 12px 16px 14px;
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        border-bottom: 1px solid #e0e0e0;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
     .app-nav-title {
-        color: #fff;
-        font-size: 15px;
+        color: #1a1a1a;
+        font-size: 17px;
         font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 12px;
-        opacity: 0.9;
+        letter-spacing: -0.01em;
+        margin-bottom: 10px;
     }
+    /* Apple-style segmented control */
     .nav-tabs {
         display: flex;
-        gap: 2px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        background: #e9e9eb;
+        border-radius: 10px;
+        padding: 3px;
+        gap: 0;
     }
-    .nav-tabs::-webkit-scrollbar { display: none; }
     .nav-tab {
-        flex-shrink: 0;
-        padding: 9px 14px;
+        flex: 1;
+        padding: 7px 4px;
         font-size: 13px;
         font-weight: 600;
-        color: rgba(255,255,255,0.55);
+        color: #555;
         cursor: pointer;
-        border-bottom: 3px solid transparent;
+        border-radius: 8px;
+        text-align: center;
         white-space: nowrap;
-        transition: color 0.2s, border-color 0.2s;
+        transition: all 0.18s ease;
         user-select: none;
+        letter-spacing: -0.01em;
     }
     .nav-tab.active {
+        background: #007aff;
         color: #fff;
-        border-bottom-color: #007bff;
+        box-shadow: 0 1px 4px rgba(0,122,255,0.35);
     }
 
     /* ── PAGE PANELS ── */
