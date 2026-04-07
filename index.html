@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,388 +23,412 @@
             line-height: 1.5;
         }
 
-```
-    /* ── TOP NAV ── */
-    .app-nav {
-        background: #fff;
-        padding: 12px 16px 14px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        border-bottom: 1px solid #e0e0e0;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-    }
-    .app-nav-title {
-        color: #1a1a1a;
-        font-size: 17px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        margin-bottom: 10px;
-    }
-    /* Apple-style segmented control */
-    .nav-tabs {
-        display: flex;
-        background: #e9e9eb;
-        border-radius: 10px;
-        padding: 3px;
-        gap: 0;
-    }
-    .nav-tab {
-        flex: 1;
-        padding: 7px 4px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #555;
-        cursor: pointer;
-        border-radius: 8px;
-        text-align: center;
-        white-space: nowrap;
-        transition: all 0.18s ease;
-        user-select: none;
-        letter-spacing: -0.01em;
-    }
-    .nav-tab.active {
-        background: #007aff;
-        color: #fff;
-        box-shadow: 0 1px 4px rgba(0,122,255,0.35);
-    }
+        /* ── TOP NAV ── */
+        .app-nav {
+            background: #fff;
+            padding: 12px 16px 14px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+        .app-nav-title {
+            color: #1a1a1a;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 10px;
+        }
+        /* Apple-style segmented control */
+        .nav-tabs {
+            display: flex;
+            background: #e9e9eb;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 0;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 7px 4px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: center;
+            white-space: nowrap;
+            transition: all 0.18s ease;
+            user-select: none;
+            letter-spacing: -0.01em;
+        }
+        .nav-tab.active {
+            background: #007aff;
+            color: #fff;
+            box-shadow: 0 1px 4px rgba(0,122,255,0.35);
+        }
 
-    /* ── PAGE PANELS ── */
-    .page-panel {
-        display: none;
-        padding: 12px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    .page-panel.active { display: block; }
+        /* ── PAGE PANELS ── */
+        .page-panel {
+            display: none;
+            padding: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .page-panel.active { display: block; }
 
-    /* ── SHARED COMPONENTS ── */
-    .container {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 12px;
-    }
-    h1 {
-        font-size: 20px;
-        margin-bottom: 4px;
-        color: #1a1a1a;
-    }
-    .subtitle {
-        color: #666;
-        font-size: 13px;
-        margin-bottom: 16px;
-    }
-    .disclaimer {
-        background: #fff3cd;
-        border: 2px solid #ffc107;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 16px;
-        font-size: 13px;
-        color: #856404;
-    }
-    .section {
-        margin: 16px 0;
-        padding: 16px;
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
-    .section-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: #2c3e50;
-    }
-    .input-group {
-        margin: 12px 0;
-    }
-    label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 500;
-        font-size: 14px;
-        color: #333;
-    }
-    input[type="number"] {
-        width: 100%;
-        padding: 14px;
-        font-size: 16px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        background: white;
-        -moz-appearance: textfield;
-    }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-    input[type="number"]:focus {
-        outline: none;
-        border-color: #007bff;
-    }
-    .checkbox-row {
-        display: flex;
-        align-items: center;
-        margin: 10px 0;
-        padding: 10px;
-        background: white;
-        border-radius: 6px;
-    }
-    .checkbox-row input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
-        margin-right: 10px;
-        cursor: pointer;
-    }
-    .checkbox-row label {
-        margin: 0;
-        cursor: pointer;
-        flex: 1;
-    }
-    .info-icon {
-        min-width: 28px; min-height: 28px; width: 28px; height: 28px;
-        border-radius: 50%; background: #17a2b8; color: white;
-        display: inline-flex; align-items: center; justify-content: center;
-        font-size: 16px; font-weight: bold; cursor: pointer;
-        margin-left: 10px; flex-shrink: 0;
-        border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .mode-tabs {
-        display: flex; gap: 8px; margin: 16px 0;
-    }
-    .mode-tab {
-        flex: 1; padding: 14px; background: white;
-        border: 2px solid #ddd; border-radius: 8px;
-        cursor: pointer; text-align: center; font-weight: 600; font-size: 14px;
-    }
-    .mode-tab.active { background: #007bff; color: white; border-color: #007bff; }
-    .warning {
-        background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px;
-        padding: 12px; margin: 12px 0; color: #721c24; font-size: 14px;
-    }
-    .agent-card {
-        background: white; border: 2px solid #ddd; border-radius: 8px;
-        padding: 16px; margin: 12px 0;
-    }
-    .agent-header {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-    }
-    .agent-number { font-weight: 600; color: #007bff; }
-    .remove-btn {
-        background: #dc3545; color: white; border: none;
-        padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
-    }
-    .btn {
-        width: 100%; padding: 16px; margin: 8px 0;
-        font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer;
-    }
-    .btn-secondary { background: #6c757d; color: white; }
-    .btn-success { background: #28a745; color: white; }
-    .btn-primary { background: #007bff; color: white; }
-    .results { margin-top: 20px; }
-    .status-badge {
-        padding: 16px; border-radius: 8px; text-align: center;
-        font-size: 18px; font-weight: 700; margin: 16px 0;
-    }
-    .status-green { background: #d4edda; color: #155724; border: 3px solid #28a745; }
-    .status-yellow { background: #fff3cd; color: #856404; border: 3px solid #ffc107; }
-    .status-red { background: #f8d7da; color: #721c24; border: 3px solid #dc3545; }
-    .status-blue { background: #cce5ff; color: #004085; border: 3px solid #007bff; }
-    .result-card {
-        background: white; border-left: 4px solid #007bff;
-        padding: 12px; margin: 10px 0; border-radius: 4px;
-    }
-    .result-card h3 { font-size: 16px; margin-bottom: 10px; }
-    .result-row {
-        display: flex; justify-content: space-between;
-        padding: 6px 0; border-bottom: 1px solid #eee;
-    }
-    .result-row:last-child { border-bottom: none; }
-    .result-label { color: #666; font-size: 14px; }
-    .result-value { font-weight: 600; color: #1a1a1a; font-size: 14px; }
-    table {
-        width: 100%; border-collapse: collapse; margin: 12px 0;
-        font-size: 12px; overflow-x: auto; display: block;
-    }
-    th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #ddd; }
-    th { background: #f8f9fa; font-weight: 600; position: sticky; top: 0; }
-    .hidden { display: none; }
-    .info-text { font-size: 12px; color: #666; margin-top: 4px; }
-    /* ── TOGGLE SWITCH ── */
-    .toggle-group {
-        display: flex; background: #f0f0f0; border-radius: 8px;
-        padding: 4px; margin: 12px 0; gap: 4px;
-    }
-    .toggle-btn {
-        flex: 1; padding: 10px; text-align: center; border-radius: 6px;
-        font-size: 14px; font-weight: 600; cursor: pointer;
-        border: none; background: transparent; color: #666; transition: all 0.2s;
-    }
-    .toggle-btn.active { background: #007bff; color: white; }
+        /* ── SHARED COMPONENTS ── */
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        .disclaimer {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .section {
+            margin: 16px 0;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        .input-group {
+            margin: 12px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .checkbox-row label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+        .info-icon {
+            min-width: 28px; min-height: 28px; width: 28px; height: 28px;
+            border-radius: 50%; background: #17a2b8; color: white;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            margin-left: 10px; flex-shrink: 0;
+            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .mode-tabs {
+            display: flex; gap: 8px; margin: 16px 0;
+        }
+        .mode-tab {
+            flex: 1; padding: 14px; background: white;
+            border: 2px solid #ddd; border-radius: 8px;
+            cursor: pointer; text-align: center; font-weight: 600; font-size: 14px;
+        }
+        .mode-tab.active { background: #007bff; color: white; border-color: #007bff; }
+        .warning {
+            background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px;
+            padding: 12px; margin: 12px 0; color: #721c24; font-size: 14px;
+        }
+        .agent-card {
+            background: white; border: 2px solid #ddd; border-radius: 8px;
+            padding: 16px; margin: 12px 0;
+        }
+        .agent-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
+        .agent-number { font-weight: 600; color: #007bff; }
+        .remove-btn {
+            background: #dc3545; color: white; border: none;
+            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+        }
+        .btn {
+            width: 100%; padding: 16px; margin: 8px 0;
+            font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer;
+        }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-primary { background: #007bff; color: white; }
+        .results { margin-top: 20px; }
+        .status-badge {
+            padding: 16px; border-radius: 8px; text-align: center;
+            font-size: 18px; font-weight: 700; margin: 16px 0;
+        }
+        .status-green { background: #d4edda; color: #155724; border: 3px solid #28a745; }
+        .status-yellow { background: #fff3cd; color: #856404; border: 3px solid #ffc107; }
+        .status-red { background: #f8d7da; color: #721c24; border: 3px solid #dc3545; }
+        .status-blue { background: #cce5ff; color: #004085; border: 3px solid #007bff; }
+        .result-card {
+            background: white; border-left: 4px solid #007bff;
+            padding: 12px; margin: 10px 0; border-radius: 4px;
+        }
+        .result-card h3 { font-size: 16px; margin-bottom: 10px; }
+        .result-row {
+            display: flex; justify-content: space-between;
+            padding: 6px 0; border-bottom: 1px solid #eee;
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-label { color: #666; font-size: 14px; }
+        .result-value { font-weight: 600; color: #1a1a1a; font-size: 14px; }
+        table {
+            width: 100%; border-collapse: collapse; margin: 12px 0;
+            font-size: 12px; overflow-x: auto; display: block;
+        }
+        th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: 600; position: sticky; top: 0; }
+        .hidden { display: none; }
+        .info-text { font-size: 12px; color: #666; margin-top: 4px; }
+        /* ── TOGGLE SWITCH ── */
+        .toggle-group {
+            display: flex; background: #f0f0f0; border-radius: 8px;
+            padding: 4px; margin: 12px 0; gap: 4px;
+        }
+        .toggle-btn {
+            flex: 1; padding: 10px; text-align: center; border-radius: 6px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            border: none; background: transparent; color: #666; transition: all 0.2s;
+        }
+        .toggle-btn.active { background: #007bff; color: white; }
 
-    /* ── BMI GAUGE ── */
-    .bmi-display {
-        text-align: center; padding: 20px; margin: 16px 0;
-    }
-    .bmi-number {
-        font-size: 56px; font-weight: 700; line-height: 1;
-    }
-    .bmi-category {
-        font-size: 18px; font-weight: 600; margin-top: 6px;
-    }
-    .bmi-bar-wrapper {
-        margin: 16px 0; position: relative;
-    }
-    .bmi-bar {
-        height: 14px; border-radius: 7px;
-        background: linear-gradient(to right, #17a2b8 0%, #28a745 18.5%, #ffc107 47.7%, #fd7e14 70%, #dc3545 100%);
-        position: relative;
-    }
-    .bmi-marker {
-        position: absolute; top: -4px;
-        width: 22px; height: 22px; border-radius: 50%;
-        background: white; border: 3px solid #1a1a1a;
-        transform: translateX(-50%);
-        transition: left 0.4s ease;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .bmi-labels {
-        display: flex; justify-content: space-between;
-        font-size: 11px; color: #888; margin-top: 6px;
-    }
-    .bmi-categories-grid {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 8px; margin-top: 12px;
-    }
-    .bmi-cat-item {
-        padding: 8px 10px; border-radius: 6px; font-size: 12px;
-    }
-    .bmi-cat-item span { font-weight: 700; display: block; font-size: 13px; }
+        /* ── BMI GAUGE ── */
+        .bmi-display {
+            text-align: center; padding: 20px; margin: 16px 0;
+        }
+        .bmi-number {
+            font-size: 56px; font-weight: 700; line-height: 1;
+        }
+        .bmi-category {
+            font-size: 18px; font-weight: 600; margin-top: 6px;
+        }
+        .bmi-bar-wrapper {
+            margin: 16px 0; position: relative;
+        }
+        .bmi-bar {
+            height: 14px; border-radius: 7px;
+            background: linear-gradient(to right, #17a2b8 0%, #28a745 18.5%, #ffc107 47.7%, #fd7e14 70%, #dc3545 100%);
+            position: relative;
+        }
+        .bmi-marker {
+            position: absolute; top: -4px;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: white; border: 3px solid #1a1a1a;
+            transform: translateX(-50%);
+            transition: left 0.4s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .bmi-labels {
+            display: flex; justify-content: space-between;
+            font-size: 11px; color: #888; margin-top: 6px;
+        }
+        .bmi-categories-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-top: 12px;
+        }
+        .bmi-cat-item {
+            padding: 8px 10px; border-radius: 6px; font-size: 12px;
+        }
+        .bmi-cat-item span { font-weight: 700; display: block; font-size: 13px; }
 
-    /* ── PARKLAND ── */
-    .parkland-fluid-block {
-        background: white; border-radius: 8px; padding: 16px; margin: 10px 0;
-        border-left: 5px solid #007bff;
-    }
-    .parkland-fluid-block.first-8 { border-left-color: #dc3545; }
-    .parkland-fluid-block.next-16 { border-left-color: #ffc107; }
-    .parkland-fluid-block.pre-hospital { border-left-color: #28a745; }
-    .fluid-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 4px; }
-    .fluid-block-value { font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.1; }
-    .fluid-block-sub { font-size: 13px; color: #555; margin-top: 2px; }
-    .body-diagram {
-        display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0;
-    }
-    .body-part-btn {
-        padding: 10px 12px; border-radius: 8px; border: 2px solid #ddd;
-        font-size: 13px; font-weight: 500; cursor: pointer; background: white;
-        transition: all 0.15s; flex: 1; min-width: 80px; text-align: center;
-    }
-    .body-part-btn.active {
-        background: #dc3545; color: white; border-color: #dc3545;
-    }
-    .tbsa-display {
-        text-align: center; padding: 12px;
-        font-size: 22px; font-weight: 700; color: #1a1a1a;
-    }
+        /* ── PARKLAND ── */
+        .parkland-fluid-block {
+            background: white; border-radius: 8px; padding: 16px; margin: 10px 0;
+            border-left: 5px solid #007bff;
+        }
+        .parkland-fluid-block.first-8 { border-left-color: #dc3545; }
+        .parkland-fluid-block.next-16 { border-left-color: #ffc107; }
+        .parkland-fluid-block.pre-hospital { border-left-color: #28a745; }
+        .fluid-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 4px; }
+        .fluid-block-value { font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.1; }
+        .fluid-block-sub { font-size: 13px; color: #555; margin-top: 2px; }
+        .body-diagram {
+            display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0;
+        }
+        .body-part-btn {
+            padding: 10px 12px; border-radius: 8px; border: 2px solid #ddd;
+            font-size: 13px; font-weight: 500; cursor: pointer; background: white;
+            transition: all 0.15s; flex: 1; min-width: 80px; text-align: center;
+        }
+        .body-part-btn.active {
+            background: #dc3545; color: white; border-color: #dc3545;
+        }
+        .tbsa-display {
+            text-align: center; padding: 12px;
+            font-size: 22px; font-weight: 700; color: #1a1a1a;
+        }
 
-    /* ── 4-2-1 RULE ── */
-    .rate-display {
-        text-align: center; padding: 20px;
-    }
-    .rate-number {
-        font-size: 52px; font-weight: 700; color: #007bff; line-height: 1;
-    }
-    .rate-unit { font-size: 18px; color: #555; margin-top: 4px; }
-    .fluid-breakdown {
-        display: grid; grid-template-columns: 1fr 1fr 1fr;
-        gap: 8px; margin: 12px 0;
-    }
-    .breakdown-item {
-        background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center;
-    }
-    .breakdown-item .bd-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; }
-    .breakdown-item .bd-value { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
-    .breakdown-item .bd-sub { font-size: 11px; color: #666; margin-top: 1px; }
+        /* ── 4-2-1 RULE ── */
+        .rate-display {
+            text-align: center; padding: 20px;
+        }
+        .rate-number {
+            font-size: 52px; font-weight: 700; color: #007bff; line-height: 1;
+        }
+        .rate-unit { font-size: 18px; color: #555; margin-top: 4px; }
+        .fluid-breakdown {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px; margin: 12px 0;
+        }
+        .breakdown-item {
+            background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center;
+        }
+        .breakdown-item .bd-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; }
+        .breakdown-item .bd-value { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
+        .breakdown-item .bd-sub { font-size: 11px; color: #666; margin-top: 1px; }
 
-    /* ── INFO POPUP ── */
-    .info-popup-overlay {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5); z-index: 2000;
-        display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
-    .info-popup {
-        background: white; border-radius: 12px; padding: 24px;
-        max-width: 500px; max-height: 80vh; overflow-y: auto;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: popIn 0.3s ease-out;
-    }
-    @keyframes popIn {
-        from { transform: scale(0.8); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    .info-popup h3 { font-size: 18px; margin-bottom: 12px; color: #2c3e50; }
-    .info-popup p { margin-bottom: 12px; color: #333; font-size: 14px; line-height: 1.6; }
-    .info-popup ul { margin: 12px 0; padding-left: 20px; }
-    .info-popup li { margin: 8px 0; color: #333; font-size: 14px; line-height: 1.5; }
-    .info-popup .note {
-        background: #e7f3ff; border-left: 4px solid #007bff;
-        padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px;
-    }
-    .info-popup .close-btn {
-        background: #007bff; color: white; border: none;
-        padding: 12px 24px; border-radius: 8px; font-weight: 600;
-        cursor: pointer; width: 100%; margin-top: 16px;
-    }
+        /* ── INFO POPUP ── */
+        .info-popup-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        .info-popup {
+            background: white; border-radius: 12px; padding: 24px;
+            max-width: 500px; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .info-popup h3 { font-size: 18px; margin-bottom: 12px; color: #2c3e50; }
+        .info-popup p { margin-bottom: 12px; color: #333; font-size: 14px; line-height: 1.6; }
+        .info-popup ul { margin: 12px 0; padding-left: 20px; }
+        .info-popup li { margin: 8px 0; color: #333; font-size: 14px; line-height: 1.5; }
+        .info-popup .note {
+            background: #e7f3ff; border-left: 4px solid #007bff;
+            padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px;
+        }
+        .info-popup .close-btn {
+            background: #007bff; color: white; border: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: 600;
+            cursor: pointer; width: 100%; margin-top: 16px;
+        }
 
-    /* ── PICKER ── */
-    .picker-input {
-        width: 100%; padding: 14px; font-size: 16px;
-        border: 2px solid #ddd; border-radius: 8px; background: white;
-        cursor: pointer; text-align: left;
-        display: flex; justify-content: space-between; align-items: center;
-    }
-    .picker-input:focus { outline: none; border-color: #007bff; }
-    .picker-input::after { content: '▼'; font-size: 12px; color: #666; }
-    .picker-overlay {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: flex-end;
-    }
-    .picker-container {
-        background: white; width: 100%; border-radius: 12px 12px 0 0;
-        padding: 16px; animation: slideUp 0.3s ease-out;
-    }
-    @keyframes slideUp {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
-    }
-    .picker-header {
-        display: flex; justify-content: flex-end; align-items: center;
-        margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;
-    }
-    .picker-done { color: #007bff; font-size: 16px; font-weight: 600; cursor: pointer; padding: 8px; }
-    .picker-wheel {
-        height: 200px; overflow-y: scroll; -webkit-overflow-scrolling: touch;
-        scroll-snap-type: y mandatory; position: relative; scroll-behavior: smooth;
-    }
-    .picker-wheel::before, .picker-wheel::after { content: ''; display: block; height: 80px; }
-    .picker-option {
-        height: 40px; display: flex; align-items: center; justify-content: center;
-        scroll-snap-align: center; font-size: 18px; cursor: pointer; transition: all 0.2s;
-    }
-    .picker-option.selected { font-weight: 600; color: #007bff; font-size: 20px; }
-    .picker-highlight {
-        position: absolute; top: 50%; left: 0; right: 0; height: 40px;
-        transform: translateY(-50%); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
-        background: rgba(0,123,255,0.05); pointer-events: none;
-    }
-</style>
-```
+        /* ── NATIVE SELECT (desktop) ── */
+        select.native-select {
+            width: 100%; padding: 14px; font-size: 16px;
+            border: 2px solid #ddd; border-radius: 8px; background: white;
+            cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+            color: #1a1a1a;
+        }
+        select.native-select:focus { outline: none; border-color: #007bff; }
+        select.native-select option[value=""] { color: #999; }
 
+        /* ── PICKER (mobile only) ── */
+        .picker-input {
+            width: 100%; padding: 14px; font-size: 16px;
+            border: 2px solid #ddd; border-radius: 8px; background: white;
+            cursor: pointer; text-align: left;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .picker-input:focus { outline: none; border-color: #007bff; }
+        .picker-input::after { content: '▼'; font-size: 12px; color: #666; }
+
+        /* ── MAX+ ML HIGHLIGHT ── */
+        td.max-ml-cell {
+            background: #e8f4ff;
+            color: #004085;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+        th.max-ml-header {
+            background: #cce5ff !important;
+            color: #004085;
+            font-weight: 700;
+        }
+        .picker-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: flex-end;
+        }
+        .picker-container {
+            background: white; width: 100%; border-radius: 12px 12px 0 0;
+            padding: 16px; animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .picker-header {
+            display: flex; justify-content: flex-end; align-items: center;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;
+        }
+        .picker-done { color: #007bff; font-size: 16px; font-weight: 600; cursor: pointer; padding: 8px; }
+        .picker-wheel {
+            height: 200px; overflow-y: scroll; -webkit-overflow-scrolling: touch;
+            scroll-snap-type: y mandatory; position: relative; scroll-behavior: smooth;
+        }
+        .picker-wheel::before, .picker-wheel::after { content: ''; display: block; height: 80px; }
+        .picker-option {
+            height: 40px; display: flex; align-items: center; justify-content: center;
+            scroll-snap-align: center; font-size: 18px; cursor: pointer; transition: all 0.2s;
+        }
+        .picker-option.selected { font-weight: 600; color: #007bff; font-size: 20px; }
+        .picker-highlight {
+            position: absolute; top: 50%; left: 0; right: 0; height: 40px;
+            transform: translateY(-50%); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
+            background: rgba(0,123,255,0.05); pointer-events: none;
+        }
+    </style>
 </head>
 <body>
 
 <!-- -->
-
 <nav class="app-nav">
     <div class="app-nav-title">BlockCalc</div>
     <div class="nav-tabs">
@@ -417,121 +440,112 @@
 </nav>
 
 <!-- panel -->
-
 <div id="panel-la" class="page-panel active">
     <div class="container">
         <h1>Local Anesthetic Calculator</h1>
         <div class="subtitle">Peripheral Nerve Block Dosing Tool</div>
-
-```
-    <div class="disclaimer">
-        <strong>⚠️ DISCLAIMER</strong><br>
-        Educational calculator only. Clinician must verify all dosing per institutional policy. Not medical advice.
-    </div>
-
-    <div class="section">
-        <div class="section-title">Patient Information</div>
         
-        <div class="input-group">
-            <label>Weight (kg) *</label>
-            <input type="number" id="weight" min="0" step="0.1" placeholder="Enter weight">
-            <div class="info-text">Valid range: 20-250 kg</div>
+        <div class="disclaimer">
+            <strong>⚠️ DISCLAIMER</strong><br>
+            Educational calculator only. Clinician must verify all dosing per institutional policy. Not medical advice.
         </div>
 
-        <div id="weightWarning" class="warning hidden">
-            Weight outside normal range (20-250 kg). 
-            <div class="checkbox-row" style="margin-top: 8px;">
-                <input type="checkbox" id="proceedAnyway">
-                <label for="proceedAnyway">Proceed anyway with calculations</label>
+        <div class="section">
+            <div class="section-title">Patient Information</div>
+            
+            <div class="input-group">
+                <label>Weight (kg) *</label>
+                <input type="number" id="weight" min="0" step="0.1" placeholder="Enter weight">
+                <div class="info-text">Valid range: 20-250 kg</div>
+            </div>
+
+            <div id="weightWarning" class="warning hidden">
+                Weight outside normal range (20-250 kg). 
+                <div class="checkbox-row" style="margin-top: 8px;">
+                    <input type="checkbox" id="proceedAnyway">
+                    <label for="proceedAnyway">Proceed anyway with calculations</label>
+                </div>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="useEpi">
+                <label for="useEpi">Epinephrine added</label>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="age70">
+                <label for="age70">Age ≥ 70 (applies 0.85× reduction)</label>
+            </div>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="highRisk">
+                <label for="highRisk">High-risk physiology (applies 0.80× reduction)</label>
+                <span class="info-icon" id="highRiskInfo">i</span>
             </div>
         </div>
 
-        <div class="checkbox-row">
-            <input type="checkbox" id="useEpi">
-            <label for="useEpi">Epinephrine added</label>
+        <div class="mode-tabs">
+            <div class="mode-tab active" data-mode="single">Single</div>
+            <div class="mode-tab" data-mode="mixture">Mixture</div>
+            <div class="mode-tab" data-mode="exparel">Exparel</div>
         </div>
 
-        <div class="checkbox-row">
-            <input type="checkbox" id="age70">
-            <label for="age70">Age ≥ 70 (applies 0.85× reduction)</label>
-        </div>
-
-        <div class="checkbox-row">
-            <input type="checkbox" id="highRisk">
-            <label for="highRisk">High-risk physiology (applies 0.80× reduction)</label>
-            <span class="info-icon" id="highRiskInfo">i</span>
-        </div>
-    </div>
-
-    <div class="mode-tabs">
-        <div class="mode-tab active" data-mode="single">Single</div>
-        <div class="mode-tab" data-mode="mixture">Mixture</div>
-        <div class="mode-tab" data-mode="exparel">Exparel</div>
-    </div>
-
-    <div id="singleMode" class="section">
-        <div class="section-title">Single Agent</div>
-        <div class="input-group">
-            <label>Drug</label>
-            <div class="picker-input" id="singleDrugPicker">
-                <span id="singleDrugLabel">Select drug...</span>
+        <div id="singleMode" class="section">
+            <div class="section-title">Single Agent</div>
+            <div class="input-group">
+                <label>Drug</label>
+                <div id="singleDrugPickerWrap"></div>
+            </div>
+            <div class="input-group">
+                <label>Concentration (%)</label>
+                <div id="singleConcPickerWrap"></div>
+            </div>
+            <div class="input-group">
+                <label>Intended Volume (mL) - Optional</label>
+                <input type="number" id="singleVolume" min="0" step="0.1" placeholder="Optional">
             </div>
         </div>
-        <div class="input-group">
-            <label>Concentration (%)</label>
-            <div class="picker-input" id="singleConcPicker">
-                <span id="singleConcLabel">Select concentration...</span>
+
+        <div id="mixtureMode" class="section hidden">
+            <div class="section-title">Mixture (1-3 Agents)</div>
+            <div id="mixtureAgents"></div>
+            <button class="btn btn-secondary" id="addAgentBtn">+ Add Agent</button>
+        </div>
+
+        <div id="exparelMode" class="section hidden">
+            <div class="section-title">Exparel Mode</div>
+            <div class="checkbox-row">
+                <input type="checkbox" id="lidocaineRecent">
+                <label for="lidocaineRecent">Lidocaine given locally within last 20 minutes</label>
+            </div>
+            <div id="lidocaineStop" class="warning hidden">
+                <strong>⛔ STOP</strong><br>
+                Do NOT administer Exparel if lidocaine was given locally within 20 minutes. Risk of immediate release.
+            </div>
+            <div class="input-group">
+                <label>Exparel Volume (mL)</label>
+                <input type="number" id="exparelVolume" min="0" step="0.1" placeholder="Exparel volume">
+                <div class="info-text">Exparel is 1.3% = 13.3 mg/mL | Hard cap: 266 mg (20 mL)</div>
+            </div>
+            <div class="input-group">
+                <label>Bupivacaine HCl Concentration (%)</label>
+                <input type="number" id="bupiConc" min="0" max="4" step="0.01" placeholder="e.g., 0.25">
+            </div>
+            <div class="input-group">
+                <label>Bupivacaine HCl Volume (mL)</label>
+                <input type="number" id="bupiVolume" min="0" step="0.1" placeholder="Bupi volume">
             </div>
         </div>
-        <div class="input-group">
-            <label>Intended Volume (mL) - Optional</label>
-            <input type="number" id="singleVolume" min="0" step="0.1" placeholder="Optional">
+
+        <div id="results" class="results hidden">
+            <div class="section-title">Results</div>
+            <div id="resultsContent"></div>
+            <button class="btn btn-success" id="copyBtn">Copy Summary</button>
         </div>
     </div>
-
-    <div id="mixtureMode" class="section hidden">
-        <div class="section-title">Mixture (1-3 Agents)</div>
-        <div id="mixtureAgents"></div>
-        <button class="btn btn-secondary" id="addAgentBtn">+ Add Agent</button>
-    </div>
-
-    <div id="exparelMode" class="section hidden">
-        <div class="section-title">Exparel Mode</div>
-        <div class="checkbox-row">
-            <input type="checkbox" id="lidocaineRecent">
-            <label for="lidocaineRecent">Lidocaine given locally within last 20 minutes</label>
-        </div>
-        <div id="lidocaineStop" class="warning hidden">
-            <strong>⛔ STOP</strong><br>
-            Do NOT administer Exparel if lidocaine was given locally within 20 minutes. Risk of immediate release.
-        </div>
-        <div class="input-group">
-            <label>Exparel Volume (mL)</label>
-            <input type="number" id="exparelVolume" min="0" step="0.1" placeholder="Exparel volume">
-            <div class="info-text">Exparel is 1.3% = 13.3 mg/mL | Hard cap: 266 mg (20 mL)</div>
-        </div>
-        <div class="input-group">
-            <label>Bupivacaine HCl Concentration (%)</label>
-            <input type="number" id="bupiConc" min="0" max="4" step="0.01" placeholder="e.g., 0.25">
-        </div>
-        <div class="input-group">
-            <label>Bupivacaine HCl Volume (mL)</label>
-            <input type="number" id="bupiVolume" min="0" step="0.1" placeholder="Bupi volume">
-        </div>
-    </div>
-
-    <div id="results" class="results hidden">
-        <div class="section-title">Results</div>
-        <div id="resultsContent"></div>
-        <button class="btn btn-success" id="copyBtn">Copy Summary</button>
-    </div>
-</div>
-```
-
 </div>
 
 <!-- panel -->
-
 <div id="panel-bmi" class="page-panel">
     <div class="container">
         <h1>BMI Calculator</h1>
@@ -541,93 +555,89 @@
             Educational tool only. BMI does not account for body composition, ethnicity, age, or clinical context.
         </div>
 
-```
-    <div class="toggle-group">
-        <button class="toggle-btn active" data-unit="metric" onclick="setBMIUnit('metric')">Metric (kg/cm)</button>
-        <button class="toggle-btn" data-unit="imperial" onclick="setBMIUnit('imperial')">Imperial (lb/in)</button>
-    </div>
-
-    <div class="section">
-        <div id="bmi-metric-inputs">
-            <div class="input-group">
-                <label>Weight (kg)</label>
-                <input type="number" id="bmi-weight-kg" min="1" step="0.1" placeholder="e.g. 80" oninput="calcBMI()">
-            </div>
-            <div class="input-group">
-                <label>Height (cm)</label>
-                <input type="number" id="bmi-height-cm" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
-            </div>
+        <div class="toggle-group">
+            <button class="toggle-btn active" data-unit="metric" onclick="setBMIUnit('metric')">Metric (kg/cm)</button>
+            <button class="toggle-btn" data-unit="imperial" onclick="setBMIUnit('imperial')">Imperial (lb/in)</button>
         </div>
-        <div id="bmi-imperial-inputs" class="hidden">
-            <div class="input-group">
-                <label>Weight (lbs)</label>
-                <input type="number" id="bmi-weight-lb" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
-            </div>
-            <div style="display:flex; gap:8px;">
-                <div class="input-group" style="flex:1;">
-                    <label>Height — Feet</label>
-                    <input type="number" id="bmi-height-ft" min="1" max="9" step="1" placeholder="e.g. 5" oninput="calcBMI()">
+
+        <div class="section">
+            <div id="bmi-metric-inputs">
+                <div class="input-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="bmi-weight-kg" min="1" step="0.1" placeholder="e.g. 80" oninput="calcBMI()">
                 </div>
-                <div class="input-group" style="flex:1;">
-                    <label>Inches</label>
-                    <input type="number" id="bmi-height-in" min="0" max="11" step="0.1" placeholder="e.g. 9" oninput="calcBMI()">
+                <div class="input-group">
+                    <label>Height (cm)</label>
+                    <input type="number" id="bmi-height-cm" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
                 </div>
             </div>
+            <div id="bmi-imperial-inputs" class="hidden">
+                <div class="input-group">
+                    <label>Weight (lbs)</label>
+                    <input type="number" id="bmi-weight-lb" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <div class="input-group" style="flex:1;">
+                        <label>Height — Feet</label>
+                        <input type="number" id="bmi-height-ft" min="1" max="9" step="1" placeholder="e.g. 5" oninput="calcBMI()">
+                    </div>
+                    <div class="input-group" style="flex:1;">
+                        <label>Inches</label>
+                        <input type="number" id="bmi-height-in" min="0" max="11" step="0.1" placeholder="e.g. 9" oninput="calcBMI()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="bmi-results" class="hidden">
+            <div class="bmi-display">
+                <div class="bmi-number" id="bmi-value">--</div>
+                <div class="bmi-category" id="bmi-category">--</div>
+            </div>
+
+            <div class="bmi-bar-wrapper">
+                <div class="bmi-bar">
+                    <div class="bmi-marker" id="bmi-marker" style="left:0%"></div>
+                </div>
+                <div class="bmi-labels">
+                    <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span>
+                </div>
+            </div>
+
+            <div class="bmi-categories-grid">
+                <div class="bmi-cat-item" style="background:#e0f7fa;"><span style="color:#006064;">Underweight</span>&lt; 18.5</div>
+                <div class="bmi-cat-item" style="background:#e8f5e9;"><span style="color:#1b5e20;">Normal</span>18.5 – 24.9</div>
+                <div class="bmi-cat-item" style="background:#fff8e1;"><span style="color:#f57f17;">Overweight</span>25 – 29.9</div>
+                <div class="bmi-cat-item" style="background:#fbe9e7;"><span style="color:#bf360c;">Obese</span>≥ 30</div>
+            </div>
+
+            <div class="result-card" style="margin-top:12px;">
+                <div class="result-row">
+                    <span class="result-label">IBW (Devine)</span>
+                    <span class="result-value" id="bmi-ibw">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Lean Body Weight</span>
+                    <span class="result-value" id="bmi-lbw">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Adjusted Body Weight</span>
+                    <span class="result-value" id="bmi-abw">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">BMI Category</span>
+                    <span class="result-value" id="bmi-cat-label">--</span>
+                </div>
+            </div>
+            <div class="info-text" style="margin-top:6px; padding: 0 4px;">
+                IBW (Devine): Males = 50 + 2.3×(in over 5ft) | Females = 45.5 + 2.3×(in over 5ft)<br>
+                LBW: Janmahasatian formula. ABW = IBW + 0.4×(actual − IBW) when BMI &gt; 30.
+            </div>
         </div>
     </div>
-
-    <div id="bmi-results" class="hidden">
-        <div class="bmi-display">
-            <div class="bmi-number" id="bmi-value">--</div>
-            <div class="bmi-category" id="bmi-category">--</div>
-        </div>
-
-        <div class="bmi-bar-wrapper">
-            <div class="bmi-bar">
-                <div class="bmi-marker" id="bmi-marker" style="left:0%"></div>
-            </div>
-            <div class="bmi-labels">
-                <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span>
-            </div>
-        </div>
-
-        <div class="bmi-categories-grid">
-            <div class="bmi-cat-item" style="background:#e0f7fa;"><span style="color:#006064;">Underweight</span>&lt; 18.5</div>
-            <div class="bmi-cat-item" style="background:#e8f5e9;"><span style="color:#1b5e20;">Normal</span>18.5 – 24.9</div>
-            <div class="bmi-cat-item" style="background:#fff8e1;"><span style="color:#f57f17;">Overweight</span>25 – 29.9</div>
-            <div class="bmi-cat-item" style="background:#fbe9e7;"><span style="color:#bf360c;">Obese</span>≥ 30</div>
-        </div>
-
-        <div class="result-card" style="margin-top:12px;">
-            <div class="result-row">
-                <span class="result-label">IBW (Devine)</span>
-                <span class="result-value" id="bmi-ibw">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Lean Body Weight</span>
-                <span class="result-value" id="bmi-lbw">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Adjusted Body Weight</span>
-                <span class="result-value" id="bmi-abw">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">BMI Category</span>
-                <span class="result-value" id="bmi-cat-label">--</span>
-            </div>
-        </div>
-        <div class="info-text" style="margin-top:6px; padding: 0 4px;">
-            IBW (Devine): Males = 50 + 2.3×(in over 5ft) | Females = 45.5 + 2.3×(in over 5ft)<br>
-            LBW: Janmahasatian formula. ABW = IBW + 0.4×(actual − IBW) when BMI &gt; 30.
-        </div>
-    </div>
-</div>
-```
-
 </div>
 
 <!-- panel -->
-
 <div id="panel-parkland" class="page-panel">
     <div class="container">
         <h1>Parkland Formula</h1>
@@ -637,108 +647,104 @@
             Educational only. Fluid rates must be titrated to clinical response (urine output 0.5–1 mL/kg/hr adults, 1 mL/kg/hr peds). Consult burn surgery.
         </div>
 
-```
-    <div class="toggle-group">
-        <button class="toggle-btn active" data-ptype="adult" onclick="setParklandType('adult')">Adult</button>
-        <button class="toggle-btn" data-ptype="peds" onclick="setParklandType('peds')">Pediatric</button>
+        <div class="toggle-group">
+            <button class="toggle-btn active" data-ptype="adult" onclick="setParklandType('adult')">Adult</button>
+            <button class="toggle-btn" data-ptype="peds" onclick="setParklandType('peds')">Pediatric</button>
+        </div>
+
+        <div class="section">
+            <div class="input-group">
+                <label>Patient Weight (kg)</label>
+                <input type="number" id="pk-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcParkland()">
+            </div>
+
+            <!-- TBSA input -->
+            <div class="section-title" style="margin-top:12px;">% TBSA Burned</div>
+            <div class="info-text" style="margin-bottom:10px;" id="pk-tbsa-hint">
+                Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%
+            </div>
+
+            <!-- Body part selector -->
+            <div id="pk-body-parts" class="body-diagram"></div>
+
+            <div class="tbsa-display">
+                TBSA: <span id="pk-tbsa-value">0</span>%
+                <span style="font-size:13px; color:#666; margin-left:8px;">(tap to toggle burned areas)</span>
+            </div>
+
+            <div class="input-group">
+                <label>Or enter TBSA manually (%)</label>
+                <input type="number" id="pk-tbsa-manual" min="0" max="100" step="1" placeholder="0–100" oninput="calcParkland()">
+            </div>
+        </div>
+
+        <div id="pk-results" class="hidden">
+            <div class="section-title">Fluid Plan</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div class="parkland-fluid-block">
+                    <div class="fluid-block-label">Total 24 hr</div>
+                    <div class="fluid-block-value" id="pk-total">--</div>
+                    <div class="fluid-block-sub">mL LR</div>
+                </div>
+                <div class="parkland-fluid-block pre-hospital">
+                    <div class="fluid-block-label">Before Hospital</div>
+                    <div class="fluid-block-value" id="pk-prehosp">--</div>
+                    <div class="fluid-block-sub">mL (total ÷ 8)</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div class="parkland-fluid-block first-8">
+                    <div class="fluid-block-label">First 8 hr</div>
+                    <div class="fluid-block-value" id="pk-first8-vol">--</div>
+                    <div class="fluid-block-sub" id="pk-first8-rate">-- mL/hr</div>
+                </div>
+                <div class="parkland-fluid-block next-16">
+                    <div class="fluid-block-label">Next 16 hr</div>
+                    <div class="fluid-block-value" id="pk-next16-vol">--</div>
+                    <div class="fluid-block-sub" id="pk-next16-rate">-- mL/hr</div>
+                </div>
+            </div>
+
+            <div id="pk-peds-extra" class="hidden">
+                <div class="parkland-fluid-block" style="border-left-color:#17a2b8;">
+                    <div class="fluid-block-label">Maintenance (peds, D5LR or D5 0.45NS)</div>
+                    <div class="fluid-block-value" id="pk-maintenance">--</div>
+                    <div class="fluid-block-sub" id="pk-maintenance-rate">mL/hr (4-2-1 rule)</div>
+                </div>
+            </div>
+
+            <div class="result-card" style="margin-top:12px;">
+                <div class="result-row">
+                    <span class="result-label">Formula</span>
+                    <span class="result-value">4 mL × kg × %TBSA</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Weight</span>
+                    <span class="result-value" id="pk-res-weight">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">TBSA</span>
+                    <span class="result-value" id="pk-res-tbsa">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Type</span>
+                    <span class="result-value" id="pk-res-type">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Solution</span>
+                    <span class="result-value">Lactated Ringer's</span>
+                </div>
+            </div>
+            <div class="info-text" style="margin-top:8px; padding:0 4px;">
+                First 8 hr counted from time of injury, not arrival. If delayed presentation, adjust rate accordingly.
+            </div>
+        </div>
     </div>
-
-    <div class="section">
-        <div class="input-group">
-            <label>Patient Weight (kg)</label>
-            <input type="number" id="pk-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcParkland()">
-        </div>
-
-        <!-- TBSA input -->
-        <div class="section-title" style="margin-top:12px;">% TBSA Burned</div>
-        <div class="info-text" style="margin-bottom:10px;" id="pk-tbsa-hint">
-            Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%
-        </div>
-
-        <!-- Body part selector -->
-        <div id="pk-body-parts" class="body-diagram"></div>
-
-        <div class="tbsa-display">
-            TBSA: <span id="pk-tbsa-value">0</span>%
-            <span style="font-size:13px; color:#666; margin-left:8px;">(tap to toggle burned areas)</span>
-        </div>
-
-        <div class="input-group">
-            <label>Or enter TBSA manually (%)</label>
-            <input type="number" id="pk-tbsa-manual" min="0" max="100" step="1" placeholder="0–100" oninput="calcParkland()">
-        </div>
-    </div>
-
-    <div id="pk-results" class="hidden">
-        <div class="section-title">Fluid Plan</div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-            <div class="parkland-fluid-block">
-                <div class="fluid-block-label">Total 24 hr</div>
-                <div class="fluid-block-value" id="pk-total">--</div>
-                <div class="fluid-block-sub">mL LR</div>
-            </div>
-            <div class="parkland-fluid-block pre-hospital">
-                <div class="fluid-block-label">Before Hospital</div>
-                <div class="fluid-block-value" id="pk-prehosp">--</div>
-                <div class="fluid-block-sub">mL (total ÷ 8)</div>
-            </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-            <div class="parkland-fluid-block first-8">
-                <div class="fluid-block-label">First 8 hr</div>
-                <div class="fluid-block-value" id="pk-first8-vol">--</div>
-                <div class="fluid-block-sub" id="pk-first8-rate">-- mL/hr</div>
-            </div>
-            <div class="parkland-fluid-block next-16">
-                <div class="fluid-block-label">Next 16 hr</div>
-                <div class="fluid-block-value" id="pk-next16-vol">--</div>
-                <div class="fluid-block-sub" id="pk-next16-rate">-- mL/hr</div>
-            </div>
-        </div>
-
-        <div id="pk-peds-extra" class="hidden">
-            <div class="parkland-fluid-block" style="border-left-color:#17a2b8;">
-                <div class="fluid-block-label">Maintenance (peds, D5LR or D5 0.45NS)</div>
-                <div class="fluid-block-value" id="pk-maintenance">--</div>
-                <div class="fluid-block-sub" id="pk-maintenance-rate">mL/hr (4-2-1 rule)</div>
-            </div>
-        </div>
-
-        <div class="result-card" style="margin-top:12px;">
-            <div class="result-row">
-                <span class="result-label">Formula</span>
-                <span class="result-value">4 mL × kg × %TBSA</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Weight</span>
-                <span class="result-value" id="pk-res-weight">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">TBSA</span>
-                <span class="result-value" id="pk-res-tbsa">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Type</span>
-                <span class="result-value" id="pk-res-type">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Solution</span>
-                <span class="result-value">Lactated Ringer's</span>
-            </div>
-        </div>
-        <div class="info-text" style="margin-top:8px; padding:0 4px;">
-            First 8 hr counted from time of injury, not arrival. If delayed presentation, adjust rate accordingly.
-        </div>
-    </div>
-</div>
-```
-
 </div>
 
 <!-- panel -->
-
 <div id="panel-421" class="page-panel">
     <div class="container">
         <h1>4-2-1 Rule</h1>
@@ -748,128 +754,125 @@
             Educational only. Adjust per clinical status, electrolytes, and ongoing losses. Not a substitute for clinical judgment.
         </div>
 
-```
-    <div class="section">
-        <div class="section-title">Patient</div>
-        <div class="input-group">
-            <label>Weight (kg)</label>
-            <input type="number" id="f421-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calc421()">
+        <div class="section">
+            <div class="section-title">Patient</div>
+            <div class="input-group">
+                <label>Weight (kg)</label>
+                <input type="number" id="f421-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calc421()">
+            </div>
+
+            <div class="section-title" style="margin-top:16px;">NPO Deficit</div>
+            <div class="input-group">
+                <label>NPO Duration (hours)</label>
+                <input type="number" id="f421-npo" min="0" step="0.5" placeholder="e.g. 8" oninput="calc421()">
+                <div class="info-text">Standard: 8 hr NPO after midnight. Actual deficit = maintenance rate × NPO hours.</div>
+            </div>
+
+            <div class="section-title" style="margin-top:16px;">Surgical Losses</div>
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-surgical="minimal" onclick="setSurgicalLoss('minimal')">Minimal</button>
+                <button class="toggle-btn" data-surgical="moderate" onclick="setSurgicalLoss('moderate')">Moderate</button>
+                <button class="toggle-btn" data-surgical="major" onclick="setSurgicalLoss('major')">Major</button>
+            </div>
+            <div class="info-text" style="margin-top:4px;" id="f421-surgical-hint">
+                Minimal: superficial/laparoscopic — 2–4 mL/kg/hr
+            </div>
+
+            <div class="section-title" style="margin-top:16px;">Additional Blood Loss</div>
+            <div class="input-group">
+                <label>EBL (mL)</label>
+                <input type="number" id="f421-ebl" min="0" step="10" placeholder="Estimated blood loss (optional)" oninput="calc421()">
+            </div>
+
+            <div class="section-title" style="margin-top:16px;">Case Duration</div>
+            <div class="input-group">
+                <label>Duration (hours)</label>
+                <input type="number" id="f421-duration" min="0" step="0.25" placeholder="e.g. 2.5" oninput="calc421()">
+            </div>
         </div>
 
-        <div class="section-title" style="margin-top:16px;">NPO Deficit</div>
-        <div class="input-group">
-            <label>NPO Duration (hours)</label>
-            <input type="number" id="f421-npo" min="0" step="0.5" placeholder="e.g. 8" oninput="calc421()">
-            <div class="info-text">Standard: 8 hr NPO after midnight. Actual deficit = maintenance rate × NPO hours.</div>
-        </div>
+        <div id="f421-results" class="hidden">
+            <div class="section-title">Maintenance Rate</div>
+            <div class="rate-display">
+                <div class="rate-number" id="f421-rate">--</div>
+                <div class="rate-unit">mL / hr</div>
+            </div>
 
-        <div class="section-title" style="margin-top:16px;">Surgical Losses</div>
-        <div class="toggle-group">
-            <button class="toggle-btn active" data-surgical="minimal" onclick="setSurgicalLoss('minimal')">Minimal</button>
-            <button class="toggle-btn" data-surgical="moderate" onclick="setSurgicalLoss('moderate')">Moderate</button>
-            <button class="toggle-btn" data-surgical="major" onclick="setSurgicalLoss('major')">Major</button>
-        </div>
-        <div class="info-text" style="margin-top:4px;" id="f421-surgical-hint">
-            Minimal: superficial/laparoscopic — 2–4 mL/kg/hr
-        </div>
+            <div class="fluid-breakdown">
+                <div class="breakdown-item">
+                    <div class="bd-label">First 10 kg</div>
+                    <div class="bd-value" id="f421-first10">--</div>
+                    <div class="bd-sub">4 mL/kg/hr</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="bd-label">Next 10 kg</div>
+                    <div class="bd-value" id="f421-next10">--</div>
+                    <div class="bd-sub">2 mL/kg/hr</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="bd-label">Remainder</div>
+                    <div class="bd-value" id="f421-remainder">--</div>
+                    <div class="bd-sub">1 mL/kg/hr</div>
+                </div>
+            </div>
 
-        <div class="section-title" style="margin-top:16px;">Additional Blood Loss</div>
-        <div class="input-group">
-            <label>EBL (mL)</label>
-            <input type="number" id="f421-ebl" min="0" step="10" placeholder="Estimated blood loss (optional)" oninput="calc421()">
-        </div>
+            <div class="result-card">
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">NPO Deficit</div>
+                <div class="result-row">
+                    <span class="result-label">Total deficit</span>
+                    <span class="result-value" id="f421-deficit-total">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Hour 1 (50%)</span>
+                    <span class="result-value" id="f421-deficit-h1">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Hour 2 (25%)</span>
+                    <span class="result-value" id="f421-deficit-h2">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Hour 3+ (25%)</span>
+                    <span class="result-value" id="f421-deficit-h3">--</span>
+                </div>
+            </div>
 
-        <div class="section-title" style="margin-top:16px;">Case Duration</div>
-        <div class="input-group">
-            <label>Duration (hours)</label>
-            <input type="number" id="f421-duration" min="0" step="0.25" placeholder="e.g. 2.5" oninput="calc421()">
+            <div class="result-card" id="f421-surgical-card">
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">Surgical Replacement</div>
+                <div class="result-row">
+                    <span class="result-label">3rd space loss rate</span>
+                    <span class="result-value" id="f421-3rd-rate">--</span>
+                </div>
+                <div class="result-row" id="f421-duration-row" class="hidden">
+                    <span class="result-label">Total over case</span>
+                    <span class="result-value" id="f421-3rd-total">--</span>
+                </div>
+            </div>
+
+            <div class="result-card" id="f421-ebl-card">
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">Blood Loss Replacement</div>
+                <div class="result-row">
+                    <span class="result-label">EBL</span>
+                    <span class="result-value" id="f421-ebl-display">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Crystalloid (3:1)</span>
+                    <span class="result-value" id="f421-crystalloid">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Colloid / blood (1:1)</span>
+                    <span class="result-value" id="f421-colloid">--</span>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">Estimated Total Intraop</div>
+                <div class="result-row">
+                    <span class="result-label">Total (if duration entered)</span>
+                    <span class="result-value" id="f421-total">--</span>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div id="f421-results" class="hidden">
-        <div class="section-title">Maintenance Rate</div>
-        <div class="rate-display">
-            <div class="rate-number" id="f421-rate">--</div>
-            <div class="rate-unit">mL / hr</div>
-        </div>
-
-        <div class="fluid-breakdown">
-            <div class="breakdown-item">
-                <div class="bd-label">First 10 kg</div>
-                <div class="bd-value" id="f421-first10">--</div>
-                <div class="bd-sub">4 mL/kg/hr</div>
-            </div>
-            <div class="breakdown-item">
-                <div class="bd-label">Next 10 kg</div>
-                <div class="bd-value" id="f421-next10">--</div>
-                <div class="bd-sub">2 mL/kg/hr</div>
-            </div>
-            <div class="breakdown-item">
-                <div class="bd-label">Remainder</div>
-                <div class="bd-value" id="f421-remainder">--</div>
-                <div class="bd-sub">1 mL/kg/hr</div>
-            </div>
-        </div>
-
-        <div class="result-card">
-            <div class="section-title" style="font-size:14px; margin-bottom:8px;">NPO Deficit</div>
-            <div class="result-row">
-                <span class="result-label">Total deficit</span>
-                <span class="result-value" id="f421-deficit-total">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Hour 1 (50%)</span>
-                <span class="result-value" id="f421-deficit-h1">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Hour 2 (25%)</span>
-                <span class="result-value" id="f421-deficit-h2">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Hour 3+ (25%)</span>
-                <span class="result-value" id="f421-deficit-h3">--</span>
-            </div>
-        </div>
-
-        <div class="result-card" id="f421-surgical-card">
-            <div class="section-title" style="font-size:14px; margin-bottom:8px;">Surgical Replacement</div>
-            <div class="result-row">
-                <span class="result-label">3rd space loss rate</span>
-                <span class="result-value" id="f421-3rd-rate">--</span>
-            </div>
-            <div class="result-row" id="f421-duration-row" class="hidden">
-                <span class="result-label">Total over case</span>
-                <span class="result-value" id="f421-3rd-total">--</span>
-            </div>
-        </div>
-
-        <div class="result-card" id="f421-ebl-card">
-            <div class="section-title" style="font-size:14px; margin-bottom:8px;">Blood Loss Replacement</div>
-            <div class="result-row">
-                <span class="result-label">EBL</span>
-                <span class="result-value" id="f421-ebl-display">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Crystalloid (3:1)</span>
-                <span class="result-value" id="f421-crystalloid">--</span>
-            </div>
-            <div class="result-row">
-                <span class="result-label">Colloid / blood (1:1)</span>
-                <span class="result-value" id="f421-colloid">--</span>
-            </div>
-        </div>
-
-        <div class="result-card">
-            <div class="section-title" style="font-size:14px; margin-bottom:8px;">Estimated Total Intraop</div>
-            <div class="result-row">
-                <span class="result-label">Total (if duration entered)</span>
-                <span class="result-value" id="f421-total">--</span>
-            </div>
-        </div>
-    </div>
-</div>
-```
-
 </div>
 
 <script>
@@ -940,6 +943,65 @@ let mixtureAgents = [];
 let singleDrugValue = '';
 let singleConcValue = '';
 
+// Detect touch device
+const isTouchDevice = () => ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+function buildDrugSelect(wrap, currentVal, onChange) {
+    if (isTouchDevice()) {
+        // Mobile: custom scroll picker trigger
+        const div = document.createElement('div');
+        div.className = 'picker-input';
+        div.id = 'singleDrugPicker';
+        div.innerHTML = `<span id="singleDrugLabel">${currentVal ? DRUGS[currentVal].name : 'Select drug...'}</span>`;
+        div.addEventListener('click', () => {
+            showDrugPicker(currentVal, (value) => { onChange(value); buildDrugSelect(wrap, value, onChange); });
+        });
+        wrap.innerHTML = '';
+        wrap.appendChild(div);
+    } else {
+        // Desktop: native select
+        const sel = document.createElement('select');
+        sel.className = 'native-select';
+        sel.id = 'singleDrugPicker';
+        sel.innerHTML = '<option value="">Select drug...</option>' +
+            Object.keys(DRUGS).map(k => `<option value="${k}" ${k === currentVal ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
+        sel.addEventListener('change', () => onChange(sel.value));
+        wrap.innerHTML = '';
+        wrap.appendChild(sel);
+    }
+}
+
+function buildConcSelect(wrap, currentVal, drugKey, onChange) {
+    wrap.innerHTML = '';
+    if (!drugKey) {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'picker-input';
+        placeholder.style.color = '#999';
+        placeholder.innerHTML = '<span>Select drug first...</span>';
+        wrap.appendChild(placeholder);
+        return;
+    }
+    const concs = DRUGS[drugKey].commonConc;
+    if (isTouchDevice()) {
+        const div = document.createElement('div');
+        div.className = 'picker-input';
+        div.id = 'singleConcPicker';
+        div.innerHTML = `<span id="singleConcLabel">${currentVal ? currentVal + '%' : 'Select concentration...'}</span>`;
+        div.addEventListener('click', () => {
+            showConcPicker(currentVal, concs, (value) => { onChange(value); buildConcSelect(wrap, value, drugKey, onChange); });
+        });
+        wrap.appendChild(div);
+    } else {
+        const sel = document.createElement('select');
+        sel.className = 'native-select';
+        sel.id = 'singleConcPicker';
+        sel.innerHTML = '<option value="">Select concentration...</option>' +
+            concs.map(c => `<option value="${c}" ${String(c) === String(currentVal) ? 'selected' : ''}>${c}%</option>`).join('');
+        sel.addEventListener('change', () => onChange(sel.value));
+        wrap.appendChild(sel);
+    }
+}
+
 function initLA() {
     document.querySelectorAll('.mode-tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -954,21 +1016,22 @@ function initLA() {
     document.getElementById('useEpi').addEventListener('change', calculate);
     document.getElementById('age70').addEventListener('change', calculate);
     document.getElementById('highRisk').addEventListener('change', calculate);
-    document.getElementById('singleDrugPicker').addEventListener('click', () => {
-        showDrugPicker('single', singleDrugValue, (value) => {
-            singleDrugValue = value;
-            document.getElementById('singleDrugLabel').textContent = value ? DRUGS[value].name : 'Select drug...';
-            calculate();
-        });
+
+    // Build single mode pickers
+    const drugWrap = document.getElementById('singleDrugPickerWrap');
+    const concWrap = document.getElementById('singleConcPickerWrap');
+
+    buildDrugSelect(drugWrap, singleDrugValue, (value) => {
+        singleDrugValue = value;
+        singleConcValue = '';
+        buildConcSelect(concWrap, '', value, (cv) => { singleConcValue = cv; calculate(); });
+        calculate();
     });
-    document.getElementById('singleConcPicker').addEventListener('click', () => {
-        if (!singleDrugValue) { alert('Please select a drug first'); return; }
-        showConcPicker('single', singleConcValue, DRUGS[singleDrugValue].commonConc, (value) => {
-            singleConcValue = value;
-            document.getElementById('singleConcLabel').textContent = value ? value + '%' : 'Select concentration...';
-            calculate();
-        });
+    buildConcSelect(concWrap, singleConcValue, singleDrugValue, (value) => {
+        singleConcValue = value;
+        calculate();
     });
+
     document.getElementById('singleVolume').addEventListener('input', calculate);
     document.getElementById('addAgentBtn').addEventListener('click', addMixtureAgent);
     document.getElementById('lidocaineRecent').addEventListener('change', calculate);
@@ -979,7 +1042,7 @@ function initLA() {
     showMode('single');
 }
 
-function showDrugPicker(context, currentValue, callback) {
+function showDrugPicker(currentValue, callback) {
     const overlay = document.createElement('div');
     overlay.className = 'picker-overlay';
     const container = document.createElement('div');
@@ -1036,7 +1099,7 @@ function showDrugPicker(context, currentValue, callback) {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) document.body.removeChild(overlay); });
 }
 
-function showConcPicker(context, currentValue, concentrations, callback) {
+function showConcPicker(currentValue, concentrations, callback) {
     const overlay = document.createElement('div');
     overlay.className = 'picker-overlay';
     const container = document.createElement('div');
@@ -1163,29 +1226,54 @@ function renderMixtureAgents() {
         header.className = 'agent-header';
         header.innerHTML = `<span class="agent-number">Agent ${idx + 1}</span>${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}`;
         card.appendChild(header);
+
+        // Drug selector
         const drugGroup = document.createElement('div');
         drugGroup.className = 'input-group';
         drugGroup.innerHTML = '<label>Drug</label>';
-        const drugPicker = document.createElement('div');
-        drugPicker.className = 'picker-input';
-        drugPicker.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
-        drugPicker.addEventListener('click', () => {
-            showDrugPicker('mixture', agent.drug, (value) => { agent.drug = value; agent.conc = ''; renderMixtureAgents(); calculate(); });
-        });
-        drugGroup.appendChild(drugPicker);
+        if (isTouchDevice()) {
+            const drugPicker = document.createElement('div');
+            drugPicker.className = 'picker-input';
+            drugPicker.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
+            drugPicker.addEventListener('click', () => {
+                showDrugPicker(agent.drug, (value) => { agent.drug = value; agent.conc = ''; renderMixtureAgents(); calculate(); });
+            });
+            drugGroup.appendChild(drugPicker);
+        } else {
+            const sel = document.createElement('select');
+            sel.className = 'native-select';
+            sel.innerHTML = '<option value="">Select drug...</option>' +
+                Object.keys(DRUGS).map(k => `<option value="${k}" ${k === agent.drug ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
+            sel.addEventListener('change', () => { agent.drug = sel.value; agent.conc = ''; renderMixtureAgents(); calculate(); });
+            drugGroup.appendChild(sel);
+        }
         card.appendChild(drugGroup);
+
+        // Concentration selector
         const concGroup = document.createElement('div');
         concGroup.className = 'input-group';
         concGroup.innerHTML = '<label>Concentration (%)</label>';
-        const concPicker = document.createElement('div');
-        concPicker.className = 'picker-input';
-        concPicker.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
-        concPicker.addEventListener('click', () => {
-            if (!agent.drug) { alert('Please select a drug first'); return; }
-            showConcPicker('mixture', agent.conc, DRUGS[agent.drug].commonConc, (value) => { agent.conc = value; renderMixtureAgents(); calculate(); });
-        });
-        concGroup.appendChild(concPicker);
+        if (isTouchDevice()) {
+            const concPicker = document.createElement('div');
+            concPicker.className = 'picker-input';
+            concPicker.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
+            concPicker.addEventListener('click', () => {
+                if (!agent.drug) { alert('Please select a drug first'); return; }
+                showConcPicker(agent.conc, DRUGS[agent.drug].commonConc, (value) => { agent.conc = value; renderMixtureAgents(); calculate(); });
+            });
+            concGroup.appendChild(concPicker);
+        } else {
+            const sel = document.createElement('select');
+            sel.className = 'native-select';
+            const concs = agent.drug ? DRUGS[agent.drug].commonConc : [];
+            sel.innerHTML = '<option value="">Select concentration...</option>' +
+                concs.map(c => `<option value="${c}" ${String(c) === String(agent.conc) ? 'selected' : ''}>${c}%</option>`).join('');
+            if (!agent.drug) sel.disabled = true;
+            sel.addEventListener('change', () => { agent.conc = sel.value; renderMixtureAgents(); calculate(); });
+            concGroup.appendChild(sel);
+        }
         card.appendChild(concGroup);
+
         const volGroup = document.createElement('div');
         volGroup.className = 'input-group';
         volGroup.innerHTML = '<label>Volume (mL)</label>';
@@ -1213,6 +1301,13 @@ function calculate() {
 }
 
 function calculateSingle(patient) {
+    // Read from native selects on desktop, stored values on mobile
+    if (!isTouchDevice()) {
+        const drugEl = document.querySelector('#singleDrugPickerWrap select');
+        const concEl = document.querySelector('#singleConcPickerWrap select');
+        if (drugEl) singleDrugValue = drugEl.value;
+        if (concEl) singleConcValue = concEl.value;
+    }
     const drugKey = singleDrugValue;
     const conc = parseFloat(singleConcValue);
     const volume = parseFloat(document.getElementById('singleVolume').value);
@@ -1264,11 +1359,11 @@ function calculateMixture(patient) {
     let statusClass = totalFraction > 1.0 ? 'status-red' : totalFraction >= 0.8 ? 'status-yellow' : 'status-green';
     let statusText = totalFraction > 1.0 ? `RED - UNSAFE (${totalFraction.toFixed(3)} / 1.000)` : totalFraction >= 0.8 ? `YELLOW - CAUTION (${totalFraction.toFixed(3)} / 1.000)` : `GREEN - SAFE (${totalFraction.toFixed(3)} / 1.000)`;
     let html = `<div class="status-badge ${statusClass}">${statusText}</div>`;
-    html += '<div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th>Max+ mL</th></tr></thead><tbody>';
+    html += '<div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th class="max-ml-header">Max+ mL</th></tr></thead><tbody>';
     const remaining = Math.max(0, 1.0 - totalFraction);
     for (const calc of calcs) {
         const maxAdditional = (remaining * calc.finalMg) / calc.mgPerMl;
-        html += `<tr><td>${calc.name}</td><td>${calc.conc}</td><td>${calc.mgPerMl}</td><td>${calc.volume.toFixed(1)}</td><td>${calc.actualMg.toFixed(1)}</td><td>${calc.baseMg.toFixed(1)}</td><td>${calc.finalMg.toFixed(1)}</td><td>${calc.fraction.toFixed(3)}</td><td>${maxAdditional.toFixed(1)}</td></tr>`;
+        html += `<tr><td>${calc.name}</td><td>${calc.conc}</td><td>${calc.mgPerMl}</td><td>${calc.volume.toFixed(1)}</td><td>${calc.actualMg.toFixed(1)}</td><td>${calc.baseMg.toFixed(1)}</td><td>${calc.finalMg.toFixed(1)}</td><td>${calc.fraction.toFixed(3)}</td><td class="max-ml-cell">${maxAdditional.toFixed(1)}</td></tr>`;
         if (calc.volume > 60) html += `<tr><td colspan="9" style="color:#856404;font-size:12px;">⚠️ ${calc.name} volume >60 mL</td></tr>`;
     }
     html += `</tbody></table></div><div class="result-card"><div class="result-row"><span class="result-label">Remaining fraction:</span><span class="result-value">${remaining.toFixed(3)}</span></div></div>`;
@@ -1586,6 +1681,5 @@ window.onload = () => {
     renderBodyParts();
 };
 </script>
-
 </body>
 </html>
