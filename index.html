@@ -331,13 +331,35 @@
         <div class="section">
             <div class="section-title">Allowable Blood Loss (ABL)</div>
             <div class="input-group">
-                <label>Preop Hemoglobin (g/dL)</label>
-                <input type="number" id="abl-hgb-start" min="1" max="25" step="0.1" placeholder="e.g. 14.0" oninput="calc421()">
+                <label>Patient Weight</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="abl-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calc421()" style="flex:1;">
+                    <select id="abl-weight-unit" class="native-select" onchange="calc421()" style="width:90px; flex-shrink:0;">
+                        <option value="kg">kg</option>
+                        <option value="lbs">lbs</option>
+                    </select>
+                </div>
             </div>
             <div class="input-group">
-                <label>Minimum Acceptable Hgb (g/dL)</label>
-                <input type="number" id="abl-hgb-min" min="1" max="20" step="0.1" placeholder="e.g. 8.0" oninput="calc421()">
-                <div class="info-text">Typical transfusion trigger: 7–8 g/dL. Adjust per patient physiology.</div>
+                <label>Average Blood Volume</label>
+                <select id="abl-ebv-select" class="native-select" onchange="calc421()">
+                    <option value="">Select patient type...</option>
+                    <option value="95">Preterm neonate — 95 mL/kg</option>
+                    <option value="85">Term neonate (37 wk) — 85 mL/kg</option>
+                    <option value="80">&lt; 12 months — 80 mL/kg</option>
+                    <option value="77">1–6 years — 77 mL/kg</option>
+                    <option value="75">Adult Male — 75 mL/kg</option>
+                    <option value="65">Adult Female — 65 mL/kg</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Starting HCT (%)</label>
+                <input type="number" id="abl-hct-start" min="1" max="70" step="0.1" placeholder="e.g. 42" oninput="calc421()">
+            </div>
+            <div class="input-group">
+                <label>Lowest Allowable HCT (%)</label>
+                <input type="number" id="abl-hct-min" min="1" max="60" step="0.1" placeholder="e.g. 21" oninput="calc421()">
+                <div class="info-text">Typical trigger: 21–24%. Adjust per clinical context.</div>
             </div>
         </div>
 
@@ -381,15 +403,17 @@
 
             <div class="result-card" id="f421-abl-card" style="border-left-color:#dc3545;">
                 <div class="section-title" style="font-size:14px; margin-bottom:8px;">Allowable Blood Loss</div>
+                <div class="result-row"><span class="result-label">Weight used</span><span class="result-value" id="abl-weight-display">--</span></div>
+                <div class="result-row"><span class="result-label">Blood volume (mL/kg)</span><span class="result-value" id="abl-mlkg-display">--</span></div>
                 <div class="result-row"><span class="result-label">Est. Blood Volume (EBV)</span><span class="result-value" id="abl-ebv">--</span></div>
-                <div class="result-row"><span class="result-label">Starting Hgb</span><span class="result-value" id="abl-hgb-start-display">--</span></div>
-                <div class="result-row"><span class="result-label">Minimum Hgb</span><span class="result-value" id="abl-hgb-min-display">--</span></div>
+                <div class="result-row"><span class="result-label">Starting HCT</span><span class="result-value" id="abl-hct-start-display">--</span></div>
+                <div class="result-row"><span class="result-label">Lowest Allowable HCT</span><span class="result-value" id="abl-hct-min-display">--</span></div>
                 <div class="result-row highlight-row">
                     <span class="result-label">Max Allowable Blood Loss</span>
                     <span class="result-value" id="abl-result">--</span>
                 </div>
                 <div class="result-row"><span class="result-label">Equiv. pRBC units (~250 mL each)</span><span class="result-value" id="abl-units">--</span></div>
-                <div class="info-text" style="margin-top:8px;">ABL = EBV × (Starting Hgb − Min Hgb) / Starting Hgb. EBV: 70 mL/kg.</div>
+                <div class="info-text" style="margin-top:8px;">ABL = EBV x (HCT_start - HCT_min) / HCT_start</div>
             </div>
 
             <div class="result-card">
@@ -827,16 +851,23 @@ function calc421() {
         document.getElementById('f421-ebl-card').classList.remove('hidden');
     } else { document.getElementById('f421-ebl-card').classList.add('hidden'); }
 
-    // ABL
-    const hgbStart = parseFloat(document.getElementById('abl-hgb-start').value);
-    const hgbMin = parseFloat(document.getElementById('abl-hgb-min').value);
+    // ABL — independent weight input with kg/lbs toggle
+    const ablWeightRaw = parseFloat(document.getElementById('abl-weight').value);
+    const ablWeightUnit = document.getElementById('abl-weight-unit').value;
+    const ablWeightKg = ablWeightUnit === 'lbs' ? ablWeightRaw / 2.2046 : ablWeightRaw;
+    const ablMlKg = parseFloat(document.getElementById('abl-ebv-select').value);
+    const hctStart = parseFloat(document.getElementById('abl-hct-start').value);
+    const hctMin = parseFloat(document.getElementById('abl-hct-min').value);
     const ablCard = document.getElementById('f421-abl-card');
-    if (hgbStart > 0 && hgbMin > 0 && hgbStart > hgbMin) {
-        const ebv = weight * 70;
-        const abl = ebv * (hgbStart - hgbMin) / hgbStart;
-        document.getElementById('abl-ebv').textContent = `${Math.round(ebv)} mL (70 mL/kg)`;
-        document.getElementById('abl-hgb-start-display').textContent = `${hgbStart.toFixed(1)} g/dL`;
-        document.getElementById('abl-hgb-min-display').textContent = `${hgbMin.toFixed(1)} g/dL`;
+    if (ablWeightKg > 0 && ablMlKg > 0 && hctStart > 0 && hctMin > 0 && hctStart > hctMin) {
+        const ebv = ablWeightKg * ablMlKg;
+        const abl = ebv * (hctStart - hctMin) / hctStart;
+        const weightLabel = ablWeightUnit === 'lbs' ? `${ablWeightRaw.toFixed(1)} lbs (${ablWeightKg.toFixed(1)} kg)` : `${ablWeightKg.toFixed(1)} kg`;
+        document.getElementById('abl-weight-display').textContent = weightLabel;
+        document.getElementById('abl-mlkg-display').textContent = `${ablMlKg} mL/kg`;
+        document.getElementById('abl-ebv').textContent = `${Math.round(ebv)} mL`;
+        document.getElementById('abl-hct-start-display').textContent = `${hctStart.toFixed(1)}%`;
+        document.getElementById('abl-hct-min-display').textContent = `${hctMin.toFixed(1)}%`;
         document.getElementById('abl-result').textContent = `${Math.round(abl)} mL`;
         document.getElementById('abl-units').textContent = `~${(abl / 250).toFixed(1)} units`;
         ablCard.classList.remove('hidden');
