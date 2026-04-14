@@ -11,424 +11,137 @@
     <link rel="manifest" href="manifest.json">
     <title>BlockCalc</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 0;
-            line-height: 1.5;
+            background: #f5f5f5; padding: 0; line-height: 1.5;
         }
-
-        /* ── TOP NAV ── */
         .app-nav {
-            background: #fff;
-            padding: 12px 16px 14px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: #fff; padding: 12px 16px 14px;
+            position: sticky; top: 0; z-index: 100;
             border-bottom: 1px solid #e0e0e0;
             box-shadow: 0 1px 6px rgba(0,0,0,0.08);
         }
-        .app-nav-title {
-            color: #1a1a1a;
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            margin-bottom: 10px;
-        }
-        /* Apple-style segmented control */
-        .nav-tabs {
-            display: flex;
-            background: #e9e9eb;
-            border-radius: 10px;
-            padding: 3px;
-            gap: 0;
-        }
+        .app-nav-title { color: #1a1a1a; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 10px; }
+        .nav-tabs { display: flex; background: #e9e9eb; border-radius: 10px; padding: 3px; gap: 0; }
         .nav-tab {
-            flex: 1;
-            padding: 7px 4px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-            cursor: pointer;
-            border-radius: 8px;
-            text-align: center;
-            white-space: nowrap;
-            transition: all 0.18s ease;
-            user-select: none;
-            letter-spacing: -0.01em;
+            flex: 1; padding: 7px 4px; font-size: 13px; font-weight: 600; color: #555;
+            cursor: pointer; border-radius: 8px; text-align: center; white-space: nowrap;
+            transition: all 0.18s ease; user-select: none; letter-spacing: -0.01em;
         }
-        .nav-tab.active {
-            background: #007aff;
-            color: #fff;
-            box-shadow: 0 1px 4px rgba(0,122,255,0.35);
-        }
-
-        /* ── PAGE PANELS ── */
-        .page-panel {
-            display: none;
-            padding: 12px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .nav-tab.active { background: #007aff; color: #fff; box-shadow: 0 1px 4px rgba(0,122,255,0.35); }
+        .page-panel { display: none; padding: 12px; max-width: 600px; margin: 0 auto; }
         .page-panel.active { display: block; }
-
-        /* ── SHARED COMPONENTS ── */
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 12px;
-        }
-        h1 {
-            font-size: 20px;
-            margin-bottom: 4px;
-            color: #1a1a1a;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 16px;
-        }
-        .disclaimer {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            color: #856404;
-        }
-        .section {
-            margin: 16px 0;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #2c3e50;
-        }
-        .input-group {
-            margin: 12px 0;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            font-size: 14px;
-            color: #333;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            -moz-appearance: textfield;
-        }
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        .checkbox-row {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-        }
-        .checkbox-row input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-        .checkbox-row label {
-            margin: 0;
-            cursor: pointer;
-            flex: 1;
-        }
-        .info-icon {
-            min-width: 28px; min-height: 28px; width: 28px; height: 28px;
-            border-radius: 50%; background: #17a2b8; color: white;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            margin-left: 10px; flex-shrink: 0;
-            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .mode-tabs {
-            display: flex; gap: 8px; margin: 16px 0;
-        }
-        .mode-tab {
-            flex: 1; padding: 14px; background: white;
-            border: 2px solid #ddd; border-radius: 8px;
-            cursor: pointer; text-align: center; font-weight: 600; font-size: 14px;
-        }
+        .container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 12px; }
+        h1 { font-size: 20px; margin-bottom: 4px; color: #1a1a1a; }
+        .subtitle { color: #666; font-size: 13px; margin-bottom: 16px; }
+        .disclaimer { background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; color: #856404; }
+        .section { margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 8px; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #2c3e50; }
+        .input-group { margin: 12px 0; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #333; }
+        input[type="number"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; background: white; -moz-appearance: textfield; }
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input[type="number"]:focus { outline: none; border-color: #007bff; }
+        .checkbox-row { display: flex; align-items: center; margin: 10px 0; padding: 10px; background: white; border-radius: 6px; }
+        .checkbox-row input[type="checkbox"] { width: 22px; height: 22px; margin-right: 10px; cursor: pointer; }
+        .checkbox-row label { margin: 0; cursor: pointer; flex: 1; }
+        .info-icon { min-width: 28px; min-height: 28px; width: 28px; height: 28px; border-radius: 50%; background: #17a2b8; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; cursor: pointer; margin-left: 10px; flex-shrink: 0; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .mode-tabs { display: flex; gap: 8px; margin: 16px 0; }
+        .mode-tab { flex: 1; padding: 14px; background: white; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; font-size: 14px; }
         .mode-tab.active { background: #007bff; color: white; border-color: #007bff; }
-        .warning {
-            background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px;
-            padding: 12px; margin: 12px 0; color: #721c24; font-size: 14px;
-        }
-        .agent-card {
-            background: white; border: 2px solid #ddd; border-radius: 8px;
-            padding: 16px; margin: 12px 0;
-        }
-        .agent-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-        }
+        .warning { background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px; padding: 12px; margin: 12px 0; color: #721c24; font-size: 14px; }
+        .agent-card { background: white; border: 2px solid #ddd; border-radius: 8px; padding: 16px; margin: 12px 0; }
+        .agent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .agent-number { font-weight: 600; color: #007bff; }
-        .remove-btn {
-            background: #dc3545; color: white; border: none;
-            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
-        }
-        .btn {
-            width: 100%; padding: 16px; margin: 8px 0;
-            font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer;
-        }
+        .remove-btn { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+        .btn { width: 100%; padding: 16px; margin: 8px 0; font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; }
         .btn-secondary { background: #6c757d; color: white; }
         .btn-success { background: #28a745; color: white; }
         .btn-primary { background: #007bff; color: white; }
         .results { margin-top: 20px; }
-        .status-badge {
-            padding: 16px; border-radius: 8px; text-align: center;
-            font-size: 18px; font-weight: 700; margin: 16px 0;
-        }
+        .status-badge { padding: 16px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: 700; margin: 16px 0; }
         .status-green { background: #d4edda; color: #155724; border: 3px solid #28a745; }
         .status-yellow { background: #fff3cd; color: #856404; border: 3px solid #ffc107; }
         .status-red { background: #f8d7da; color: #721c24; border: 3px solid #dc3545; }
-        .status-blue { background: #cce5ff; color: #004085; border: 3px solid #007bff; }
-        .result-card {
-            background: white; border-left: 4px solid #007bff;
-            padding: 12px; margin: 10px 0; border-radius: 4px;
-        }
+        .result-card { background: white; border-left: 4px solid #007bff; padding: 12px; margin: 10px 0; border-radius: 4px; }
         .result-card h3 { font-size: 16px; margin-bottom: 10px; }
-        .result-row {
-            display: flex; justify-content: space-between;
-            padding: 6px 0; border-bottom: 1px solid #eee;
-        }
+        .result-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
         .result-row:last-child { border-bottom: none; }
         .result-label { color: #666; font-size: 14px; }
         .result-value { font-weight: 600; color: #1a1a1a; font-size: 14px; }
-        table {
-            width: 100%; border-collapse: collapse; margin: 12px 0;
-            font-size: 12px; overflow-x: auto; display: block;
-        }
+        .result-row.highlight-row { background: #e8f4ff; border-radius: 4px; padding: 8px 6px; margin: 2px -6px; }
+        .result-row.highlight-row .result-label { color: #004085; font-weight: 600; }
+        .result-row.highlight-row .result-value { color: #004085; font-size: 15px; }
+        .result-divider { border: none; border-top: 2px dashed #ddd; margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; overflow-x: auto; display: block; }
         th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background: #f8f9fa; font-weight: 600; position: sticky; top: 0; }
         .hidden { display: none; }
         .info-text { font-size: 12px; color: #666; margin-top: 4px; }
-        /* ── TOGGLE SWITCH ── */
-        .toggle-group {
-            display: flex; background: #f0f0f0; border-radius: 8px;
-            padding: 4px; margin: 12px 0; gap: 4px;
-        }
-        .toggle-btn {
-            flex: 1; padding: 10px; text-align: center; border-radius: 6px;
-            font-size: 14px; font-weight: 600; cursor: pointer;
-            border: none; background: transparent; color: #666; transition: all 0.2s;
-        }
+        .toggle-group { display: flex; background: #f0f0f0; border-radius: 8px; padding: 4px; margin: 12px 0; gap: 4px; }
+        .toggle-btn { flex: 1; padding: 10px; text-align: center; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #666; transition: all 0.2s; }
         .toggle-btn.active { background: #007bff; color: white; }
-
-        /* ── BMI GAUGE ── */
-        .bmi-display {
-            text-align: center; padding: 20px; margin: 16px 0;
-        }
-        .bmi-number {
-            font-size: 56px; font-weight: 700; line-height: 1;
-        }
-        .bmi-category {
-            font-size: 18px; font-weight: 600; margin-top: 6px;
-        }
-        .bmi-bar-wrapper {
-            margin: 16px 0; position: relative;
-        }
-        .bmi-bar {
-            height: 14px; border-radius: 7px;
-            background: linear-gradient(to right, #17a2b8 0%, #28a745 18.5%, #ffc107 47.7%, #fd7e14 70%, #dc3545 100%);
-            position: relative;
-        }
-        .bmi-marker {
-            position: absolute; top: -4px;
-            width: 22px; height: 22px; border-radius: 50%;
-            background: white; border: 3px solid #1a1a1a;
-            transform: translateX(-50%);
-            transition: left 0.4s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        .bmi-labels {
-            display: flex; justify-content: space-between;
-            font-size: 11px; color: #888; margin-top: 6px;
-        }
-        .bmi-categories-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 8px; margin-top: 12px;
-        }
-        .bmi-cat-item {
-            padding: 8px 10px; border-radius: 6px; font-size: 12px;
-        }
+        .bmi-display { text-align: center; padding: 20px; margin: 16px 0; }
+        .bmi-number { font-size: 56px; font-weight: 700; line-height: 1; }
+        .bmi-category { font-size: 18px; font-weight: 600; margin-top: 6px; }
+        .bmi-bar-wrapper { margin: 16px 0; position: relative; }
+        .bmi-bar { height: 14px; border-radius: 7px; background: linear-gradient(to right, #17a2b8 0%, #28a745 18.5%, #ffc107 47.7%, #fd7e14 70%, #dc3545 100%); position: relative; }
+        .bmi-marker { position: absolute; top: -4px; width: 22px; height: 22px; border-radius: 50%; background: white; border: 3px solid #1a1a1a; transform: translateX(-50%); transition: left 0.4s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .bmi-labels { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 6px; }
+        .bmi-categories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .bmi-cat-item { padding: 8px 10px; border-radius: 6px; font-size: 12px; }
         .bmi-cat-item span { font-weight: 700; display: block; font-size: 13px; }
-
-        /* ── PARKLAND ── */
-        .parkland-fluid-block {
-            background: white; border-radius: 8px; padding: 16px; margin: 10px 0;
-            border-left: 5px solid #007bff;
-        }
+        .parkland-fluid-block { background: white; border-radius: 8px; padding: 16px; margin: 10px 0; border-left: 5px solid #007bff; }
         .parkland-fluid-block.first-8 { border-left-color: #dc3545; }
         .parkland-fluid-block.next-16 { border-left-color: #ffc107; }
         .parkland-fluid-block.pre-hospital { border-left-color: #28a745; }
         .fluid-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 4px; }
         .fluid-block-value { font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.1; }
         .fluid-block-sub { font-size: 13px; color: #555; margin-top: 2px; }
-        .body-diagram {
-            display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0;
-        }
-        .body-part-btn {
-            padding: 10px 12px; border-radius: 8px; border: 2px solid #ddd;
-            font-size: 13px; font-weight: 500; cursor: pointer; background: white;
-            transition: all 0.15s; flex: 1; min-width: 80px; text-align: center;
-        }
-        .body-part-btn.active {
-            background: #dc3545; color: white; border-color: #dc3545;
-        }
-        .tbsa-display {
-            text-align: center; padding: 12px;
-            font-size: 22px; font-weight: 700; color: #1a1a1a;
-        }
-
-        /* ── 4-2-1 RULE ── */
-        .rate-display {
-            text-align: center; padding: 20px;
-        }
-        .rate-number {
-            font-size: 52px; font-weight: 700; color: #007bff; line-height: 1;
-        }
+        .body-diagram { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+        .body-part-btn { padding: 10px 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 13px; font-weight: 500; cursor: pointer; background: white; transition: all 0.15s; flex: 1; min-width: 80px; text-align: center; }
+        .body-part-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
+        .tbsa-display { text-align: center; padding: 12px; font-size: 22px; font-weight: 700; color: #1a1a1a; }
+        .rate-display { text-align: center; padding: 20px; }
+        .rate-number { font-size: 52px; font-weight: 700; color: #007bff; line-height: 1; }
         .rate-unit { font-size: 18px; color: #555; margin-top: 4px; }
-        .fluid-breakdown {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px; margin: 12px 0;
-        }
-        .breakdown-item {
-            background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center;
-        }
+        .fluid-breakdown { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
+        .breakdown-item { background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center; }
         .breakdown-item .bd-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; }
         .breakdown-item .bd-value { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
         .breakdown-item .bd-sub { font-size: 11px; color: #666; margin-top: 1px; }
-
-        /* ── INFO POPUP ── */
-        .info-popup-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-        .info-popup {
-            background: white; border-radius: 12px; padding: 24px;
-            max-width: 500px; max-height: 80vh; overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: popIn 0.3s ease-out;
-        }
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        .info-popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .info-popup { background: white; border-radius: 12px; padding: 24px; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: popIn 0.3s ease-out; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .info-popup h3 { font-size: 18px; margin-bottom: 12px; color: #2c3e50; }
         .info-popup p { margin-bottom: 12px; color: #333; font-size: 14px; line-height: 1.6; }
         .info-popup ul { margin: 12px 0; padding-left: 20px; }
         .info-popup li { margin: 8px 0; color: #333; font-size: 14px; line-height: 1.5; }
-        .info-popup .note {
-            background: #e7f3ff; border-left: 4px solid #007bff;
-            padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px;
-        }
-        .info-popup .close-btn {
-            background: #007bff; color: white; border: none;
-            padding: 12px 24px; border-radius: 8px; font-weight: 600;
-            cursor: pointer; width: 100%; margin-top: 16px;
-        }
-
-        /* ── NATIVE SELECT (desktop) ── */
-        select.native-select {
-            width: 100%; padding: 14px; font-size: 16px;
-            border: 2px solid #ddd; border-radius: 8px; background: white;
-            cursor: pointer; appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 36px;
-            color: #1a1a1a;
-        }
+        .info-popup .note { background: #e7f3ff; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px; }
+        .info-popup .close-btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 16px; }
+        select.native-select { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; color: #1a1a1a; }
         select.native-select:focus { outline: none; border-color: #007bff; }
         select.native-select option[value=""] { color: #999; }
-
-        /* ── PICKER (mobile only) ── */
-        .picker-input {
-            width: 100%; padding: 14px; font-size: 16px;
-            border: 2px solid #ddd; border-radius: 8px; background: white;
-            cursor: pointer; text-align: left;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .picker-input { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .picker-input:focus { outline: none; border-color: #007bff; }
         .picker-input::after { content: '▼'; font-size: 12px; color: #666; }
-
-        /* ── MAX+ ML HIGHLIGHT ── */
-        td.max-ml-cell {
-            background: #e8f4ff;
-            color: #004085;
-            font-weight: 700;
-            font-size: 13px;
-            border-radius: 4px;
-        }
-        th.max-ml-header {
-            background: #cce5ff !important;
-            color: #004085;
-            font-weight: 700;
-        }
-        .picker-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: flex-end;
-        }
-        .picker-container {
-            background: white; width: 100%; border-radius: 12px 12px 0 0;
-            padding: 16px; animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .picker-header {
-            display: flex; justify-content: flex-end; align-items: center;
-            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;
-        }
+        td.max-ml-cell { background: #e8f4ff; color: #004085; font-weight: 700; font-size: 13px; border-radius: 4px; }
+        th.max-ml-header { background: #cce5ff !important; color: #004085; font-weight: 700; }
+        .picker-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: flex-end; }
+        .picker-container { background: white; width: 100%; border-radius: 12px 12px 0 0; padding: 16px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .picker-header { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
         .picker-done { color: #007bff; font-size: 16px; font-weight: 600; cursor: pointer; padding: 8px; }
-        .picker-wheel {
-            height: 200px; overflow-y: scroll; -webkit-overflow-scrolling: touch;
-            scroll-snap-type: y mandatory; position: relative; scroll-behavior: smooth;
-        }
+        .picker-wheel { height: 200px; overflow-y: scroll; -webkit-overflow-scrolling: touch; scroll-snap-type: y mandatory; position: relative; scroll-behavior: smooth; }
         .picker-wheel::before, .picker-wheel::after { content: ''; display: block; height: 80px; }
-        .picker-option {
-            height: 40px; display: flex; align-items: center; justify-content: center;
-            scroll-snap-align: center; font-size: 18px; cursor: pointer; transition: all 0.2s;
-        }
+        .picker-option { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font-size: 18px; cursor: pointer; transition: all 0.2s; }
         .picker-option.selected { font-weight: 600; color: #007bff; font-size: 20px; }
-        .picker-highlight {
-            position: absolute; top: 50%; left: 0; right: 0; height: 40px;
-            transform: translateY(-50%); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
-            background: rgba(0,123,255,0.05); pointer-events: none;
-        }
+        .picker-highlight { position: absolute; top: 50%; left: 0; right: 0; height: 40px; transform: translateY(-50%); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; background: rgba(0,123,255,0.05); pointer-events: none; }
     </style>
 </head>
 <body>
 
-<!-- -->
 <nav class="app-nav">
     <div class="app-nav-title">BlockCalc</div>
     <div class="nav-tabs">
@@ -439,104 +152,53 @@
     </div>
 </nav>
 
-<!-- panel -->
 <div id="panel-la" class="page-panel active">
     <div class="container">
         <h1>Local Anesthetic Calculator</h1>
         <div class="subtitle">Peripheral Nerve Block Dosing Tool</div>
-        
-        <div class="disclaimer">
-            <strong>⚠️ DISCLAIMER</strong><br>
-            Educational calculator only. Clinician must verify all dosing per institutional policy. Not medical advice.
-        </div>
-
+        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational calculator only. Clinician must verify all dosing per institutional policy. Not medical advice.</div>
         <div class="section">
             <div class="section-title">Patient Information</div>
-            
             <div class="input-group">
                 <label>Weight (kg) *</label>
                 <input type="number" id="weight" min="0" step="0.1" placeholder="Enter weight">
                 <div class="info-text">Valid range: 20-250 kg</div>
             </div>
-
             <div id="weightWarning" class="warning hidden">
-                Weight outside normal range (20-250 kg). 
+                Weight outside normal range (20-250 kg).
                 <div class="checkbox-row" style="margin-top: 8px;">
                     <input type="checkbox" id="proceedAnyway">
                     <label for="proceedAnyway">Proceed anyway with calculations</label>
                 </div>
             </div>
-
-            <div class="checkbox-row">
-                <input type="checkbox" id="useEpi">
-                <label for="useEpi">Epinephrine added</label>
-            </div>
-
-            <div class="checkbox-row">
-                <input type="checkbox" id="age70">
-                <label for="age70">Age ≥ 70 (applies 0.85× reduction)</label>
-            </div>
-
-            <div class="checkbox-row">
-                <input type="checkbox" id="highRisk">
-                <label for="highRisk">High-risk physiology (applies 0.80× reduction)</label>
-                <span class="info-icon" id="highRiskInfo">i</span>
-            </div>
+            <div class="checkbox-row"><input type="checkbox" id="useEpi"><label for="useEpi">Epinephrine added</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="age70"><label for="age70">Age ≥ 70 (applies 0.85× reduction)</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="highRisk"><label for="highRisk">High-risk physiology (applies 0.80× reduction)</label><span class="info-icon" id="highRiskInfo">i</span></div>
         </div>
-
         <div class="mode-tabs">
             <div class="mode-tab active" data-mode="single">Single</div>
             <div class="mode-tab" data-mode="mixture">Mixture</div>
             <div class="mode-tab" data-mode="exparel">Exparel</div>
         </div>
-
         <div id="singleMode" class="section">
             <div class="section-title">Single Agent</div>
-            <div class="input-group">
-                <label>Drug</label>
-                <div id="singleDrugPickerWrap"></div>
-            </div>
-            <div class="input-group">
-                <label>Concentration (%)</label>
-                <div id="singleConcPickerWrap"></div>
-            </div>
-            <div class="input-group">
-                <label>Intended Volume (mL) - Optional</label>
-                <input type="number" id="singleVolume" min="0" step="0.1" placeholder="Optional">
-            </div>
+            <div class="input-group"><label>Drug</label><div id="singleDrugPickerWrap"></div></div>
+            <div class="input-group"><label>Concentration (%)</label><div id="singleConcPickerWrap"></div></div>
+            <div class="input-group"><label>Intended Volume (mL) - Optional</label><input type="number" id="singleVolume" min="0" step="0.1" placeholder="Optional"></div>
         </div>
-
         <div id="mixtureMode" class="section hidden">
             <div class="section-title">Mixture (1-3 Agents)</div>
             <div id="mixtureAgents"></div>
             <button class="btn btn-secondary" id="addAgentBtn">+ Add Agent</button>
         </div>
-
         <div id="exparelMode" class="section hidden">
             <div class="section-title">Exparel Mode</div>
-            <div class="checkbox-row">
-                <input type="checkbox" id="lidocaineRecent">
-                <label for="lidocaineRecent">Lidocaine given locally within last 20 minutes</label>
-            </div>
-            <div id="lidocaineStop" class="warning hidden">
-                <strong>⛔ STOP</strong><br>
-                Do NOT administer Exparel if lidocaine was given locally within 20 minutes. Risk of immediate release.
-            </div>
-            <div class="input-group">
-                <label>Exparel Volume (mL)</label>
-                <input type="number" id="exparelVolume" min="0" step="0.1" placeholder="Exparel volume">
-                <div class="info-text">Exparel is 1.3% = 13.3 mg/mL | Hard cap: 266 mg (20 mL)</div>
-            </div>
-            <div class="input-group">
-                <label>Bupivacaine HCl Concentration (%)</label>
-                <input type="number" id="bupiConc" min="0" max="4" step="0.01" placeholder="e.g., 0.25">
-            </div>
-            <div class="input-group">
-                <label>Bupivacaine HCl Volume (mL)</label>
-                <input type="number" id="bupiVolume" min="0" step="0.1" placeholder="Bupi volume">
-            </div>
+            <div class="checkbox-row"><input type="checkbox" id="lidocaineRecent"><label for="lidocaineRecent">Lidocaine given locally within last 20 minutes</label></div>
+            <div id="lidocaineStop" class="warning hidden"><strong>⛔ STOP</strong><br>Do NOT administer Exparel if lidocaine was given locally within 20 minutes. Risk of immediate release.</div>
+            <div class="input-group"><label>Exparel Volume (mL)</label><input type="number" id="exparelVolume" min="0" step="0.1" placeholder="Exparel volume"><div class="info-text">Exparel is 1.3% = 13.3 mg/mL | Hard cap: 266 mg (20 mL)</div></div>
+            <div class="input-group"><label>Bupivacaine HCl Concentration (%)</label><input type="number" id="bupiConc" min="0" max="4" step="0.01" placeholder="e.g., 0.25"></div>
+            <div class="input-group"><label>Bupivacaine HCl Volume (mL)</label><input type="number" id="bupiVolume" min="0" step="0.1" placeholder="Bupi volume"></div>
         </div>
-
         <div id="results" class="results hidden">
             <div class="section-title">Results</div>
             <div id="resultsContent"></div>
@@ -545,214 +207,95 @@
     </div>
 </div>
 
-<!-- panel -->
 <div id="panel-bmi" class="page-panel">
     <div class="container">
         <h1>BMI Calculator</h1>
         <div class="subtitle">Body Mass Index</div>
-        <div class="disclaimer">
-            <strong>⚠️ DISCLAIMER</strong><br>
-            Educational tool only. BMI does not account for body composition, ethnicity, age, or clinical context.
-        </div>
-
+        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational tool only. BMI does not account for body composition, ethnicity, age, or clinical context.</div>
         <div class="toggle-group">
             <button class="toggle-btn active" data-unit="metric" onclick="setBMIUnit('metric')">Metric (kg/cm)</button>
             <button class="toggle-btn" data-unit="imperial" onclick="setBMIUnit('imperial')">Imperial (lb/in)</button>
         </div>
-
         <div class="section">
             <div id="bmi-metric-inputs">
-                <div class="input-group">
-                    <label>Weight (kg)</label>
-                    <input type="number" id="bmi-weight-kg" min="1" step="0.1" placeholder="e.g. 80" oninput="calcBMI()">
-                </div>
-                <div class="input-group">
-                    <label>Height (cm)</label>
-                    <input type="number" id="bmi-height-cm" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
-                </div>
+                <div class="input-group"><label>Weight (kg)</label><input type="number" id="bmi-weight-kg" min="1" step="0.1" placeholder="e.g. 80" oninput="calcBMI()"></div>
+                <div class="input-group"><label>Height (cm)</label><input type="number" id="bmi-height-cm" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()"></div>
             </div>
             <div id="bmi-imperial-inputs" class="hidden">
-                <div class="input-group">
-                    <label>Weight (lbs)</label>
-                    <input type="number" id="bmi-weight-lb" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()">
-                </div>
+                <div class="input-group"><label>Weight (lbs)</label><input type="number" id="bmi-weight-lb" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()"></div>
                 <div style="display:flex; gap:8px;">
-                    <div class="input-group" style="flex:1;">
-                        <label>Height — Feet</label>
-                        <input type="number" id="bmi-height-ft" min="1" max="9" step="1" placeholder="e.g. 5" oninput="calcBMI()">
-                    </div>
-                    <div class="input-group" style="flex:1;">
-                        <label>Inches</label>
-                        <input type="number" id="bmi-height-in" min="0" max="11" step="0.1" placeholder="e.g. 9" oninput="calcBMI()">
-                    </div>
+                    <div class="input-group" style="flex:1;"><label>Height — Feet</label><input type="number" id="bmi-height-ft" min="1" max="9" step="1" placeholder="e.g. 5" oninput="calcBMI()"></div>
+                    <div class="input-group" style="flex:1;"><label>Inches</label><input type="number" id="bmi-height-in" min="0" max="11" step="0.1" placeholder="e.g. 9" oninput="calcBMI()"></div>
                 </div>
             </div>
         </div>
-
         <div id="bmi-results" class="hidden">
-            <div class="bmi-display">
-                <div class="bmi-number" id="bmi-value">--</div>
-                <div class="bmi-category" id="bmi-category">--</div>
-            </div>
-
-            <div class="bmi-bar-wrapper">
-                <div class="bmi-bar">
-                    <div class="bmi-marker" id="bmi-marker" style="left:0%"></div>
-                </div>
-                <div class="bmi-labels">
-                    <span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span>
-                </div>
-            </div>
-
+            <div class="bmi-display"><div class="bmi-number" id="bmi-value">--</div><div class="bmi-category" id="bmi-category">--</div></div>
+            <div class="bmi-bar-wrapper"><div class="bmi-bar"><div class="bmi-marker" id="bmi-marker" style="left:0%"></div></div><div class="bmi-labels"><span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span></div></div>
             <div class="bmi-categories-grid">
                 <div class="bmi-cat-item" style="background:#e0f7fa;"><span style="color:#006064;">Underweight</span>&lt; 18.5</div>
                 <div class="bmi-cat-item" style="background:#e8f5e9;"><span style="color:#1b5e20;">Normal</span>18.5 – 24.9</div>
                 <div class="bmi-cat-item" style="background:#fff8e1;"><span style="color:#f57f17;">Overweight</span>25 – 29.9</div>
                 <div class="bmi-cat-item" style="background:#fbe9e7;"><span style="color:#bf360c;">Obese</span>≥ 30</div>
             </div>
-
             <div class="result-card" style="margin-top:12px;">
-                <div class="result-row">
-                    <span class="result-label">IBW (Devine)</span>
-                    <span class="result-value" id="bmi-ibw">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Lean Body Weight</span>
-                    <span class="result-value" id="bmi-lbw">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Adjusted Body Weight</span>
-                    <span class="result-value" id="bmi-abw">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">BMI Category</span>
-                    <span class="result-value" id="bmi-cat-label">--</span>
-                </div>
+                <div class="result-row"><span class="result-label">IBW (Devine)</span><span class="result-value" id="bmi-ibw">--</span></div>
+                <div class="result-row"><span class="result-label">Lean Body Weight</span><span class="result-value" id="bmi-lbw">--</span></div>
+                <div class="result-row"><span class="result-label">Adjusted Body Weight</span><span class="result-value" id="bmi-abw">--</span></div>
+                <div class="result-row"><span class="result-label">BMI Category</span><span class="result-value" id="bmi-cat-label">--</span></div>
             </div>
-            <div class="info-text" style="margin-top:6px; padding: 0 4px;">
-                IBW (Devine): Males = 50 + 2.3×(in over 5ft) | Females = 45.5 + 2.3×(in over 5ft)<br>
-                LBW: Janmahasatian formula. ABW = IBW + 0.4×(actual − IBW) when BMI &gt; 30.
-            </div>
+            <div class="info-text" style="margin-top:6px; padding: 0 4px;">IBW (Devine): Males = 50 + 2.3×(in over 5ft) | Females = 45.5 + 2.3×(in over 5ft)<br>LBW: Janmahasatian formula. ABW = IBW + 0.4×(actual − IBW) when BMI &gt; 30.</div>
         </div>
     </div>
 </div>
 
-<!-- panel -->
 <div id="panel-parkland" class="page-panel">
     <div class="container">
         <h1>Parkland Formula</h1>
         <div class="subtitle">Burn Fluid Resuscitation</div>
-        <div class="disclaimer">
-            <strong>⚠️ DISCLAIMER</strong><br>
-            Educational only. Fluid rates must be titrated to clinical response (urine output 0.5–1 mL/kg/hr adults, 1 mL/kg/hr peds). Consult burn surgery.
-        </div>
-
+        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational only. Fluid rates must be titrated to clinical response (urine output 0.5–1 mL/kg/hr adults, 1 mL/kg/hr peds). Consult burn surgery.</div>
         <div class="toggle-group">
             <button class="toggle-btn active" data-ptype="adult" onclick="setParklandType('adult')">Adult</button>
             <button class="toggle-btn" data-ptype="peds" onclick="setParklandType('peds')">Pediatric</button>
         </div>
-
         <div class="section">
-            <div class="input-group">
-                <label>Patient Weight (kg)</label>
-                <input type="number" id="pk-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcParkland()">
-            </div>
-
-            <!-- TBSA input -->
+            <div class="input-group"><label>Patient Weight (kg)</label><input type="number" id="pk-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcParkland()"></div>
             <div class="section-title" style="margin-top:12px;">% TBSA Burned</div>
-            <div class="info-text" style="margin-bottom:10px;" id="pk-tbsa-hint">
-                Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%
-            </div>
-
-            <!-- Body part selector -->
+            <div class="info-text" style="margin-bottom:10px;" id="pk-tbsa-hint">Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%</div>
             <div id="pk-body-parts" class="body-diagram"></div>
-
-            <div class="tbsa-display">
-                TBSA: <span id="pk-tbsa-value">0</span>%
-                <span style="font-size:13px; color:#666; margin-left:8px;">(tap to toggle burned areas)</span>
-            </div>
-
-            <div class="input-group">
-                <label>Or enter TBSA manually (%)</label>
-                <input type="number" id="pk-tbsa-manual" min="0" max="100" step="1" placeholder="0–100" oninput="calcParkland()">
-            </div>
+            <div class="tbsa-display">TBSA: <span id="pk-tbsa-value">0</span>%<span style="font-size:13px; color:#666; margin-left:8px;">(tap to toggle burned areas)</span></div>
+            <div class="input-group"><label>Or enter TBSA manually (%)</label><input type="number" id="pk-tbsa-manual" min="0" max="100" step="1" placeholder="0–100" oninput="calcParkland()"></div>
         </div>
-
         <div id="pk-results" class="hidden">
             <div class="section-title">Fluid Plan</div>
-
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-                <div class="parkland-fluid-block">
-                    <div class="fluid-block-label">Total 24 hr</div>
-                    <div class="fluid-block-value" id="pk-total">--</div>
-                    <div class="fluid-block-sub">mL LR</div>
-                </div>
-                <div class="parkland-fluid-block pre-hospital">
-                    <div class="fluid-block-label">Before Hospital</div>
-                    <div class="fluid-block-value" id="pk-prehosp">--</div>
-                    <div class="fluid-block-sub">mL (total ÷ 8)</div>
-                </div>
+                <div class="parkland-fluid-block"><div class="fluid-block-label">Total 24 hr</div><div class="fluid-block-value" id="pk-total">--</div><div class="fluid-block-sub">mL LR</div></div>
+                <div class="parkland-fluid-block pre-hospital"><div class="fluid-block-label">Before Hospital</div><div class="fluid-block-value" id="pk-prehosp">--</div><div class="fluid-block-sub">mL (total ÷ 8)</div></div>
             </div>
-
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-                <div class="parkland-fluid-block first-8">
-                    <div class="fluid-block-label">First 8 hr</div>
-                    <div class="fluid-block-value" id="pk-first8-vol">--</div>
-                    <div class="fluid-block-sub" id="pk-first8-rate">-- mL/hr</div>
-                </div>
-                <div class="parkland-fluid-block next-16">
-                    <div class="fluid-block-label">Next 16 hr</div>
-                    <div class="fluid-block-value" id="pk-next16-vol">--</div>
-                    <div class="fluid-block-sub" id="pk-next16-rate">-- mL/hr</div>
-                </div>
+                <div class="parkland-fluid-block first-8"><div class="fluid-block-label">First 8 hr</div><div class="fluid-block-value" id="pk-first8-vol">--</div><div class="fluid-block-sub" id="pk-first8-rate">-- mL/hr</div></div>
+                <div class="parkland-fluid-block next-16"><div class="fluid-block-label">Next 16 hr</div><div class="fluid-block-value" id="pk-next16-vol">--</div><div class="fluid-block-sub" id="pk-next16-rate">-- mL/hr</div></div>
             </div>
-
             <div id="pk-peds-extra" class="hidden">
-                <div class="parkland-fluid-block" style="border-left-color:#17a2b8;">
-                    <div class="fluid-block-label">Maintenance (peds, D5LR or D5 0.45NS)</div>
-                    <div class="fluid-block-value" id="pk-maintenance">--</div>
-                    <div class="fluid-block-sub" id="pk-maintenance-rate">mL/hr (4-2-1 rule)</div>
-                </div>
+                <div class="parkland-fluid-block" style="border-left-color:#17a2b8;"><div class="fluid-block-label">Maintenance (peds, D5LR or D5 0.45NS)</div><div class="fluid-block-value" id="pk-maintenance">--</div><div class="fluid-block-sub" id="pk-maintenance-rate">mL/hr (4-2-1 rule)</div></div>
             </div>
-
             <div class="result-card" style="margin-top:12px;">
-                <div class="result-row">
-                    <span class="result-label">Formula</span>
-                    <span class="result-value">4 mL × kg × %TBSA</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Weight</span>
-                    <span class="result-value" id="pk-res-weight">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">TBSA</span>
-                    <span class="result-value" id="pk-res-tbsa">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Type</span>
-                    <span class="result-value" id="pk-res-type">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Solution</span>
-                    <span class="result-value">Lactated Ringer's</span>
-                </div>
+                <div class="result-row"><span class="result-label">Formula</span><span class="result-value">4 mL × kg × %TBSA</span></div>
+                <div class="result-row"><span class="result-label">Weight</span><span class="result-value" id="pk-res-weight">--</span></div>
+                <div class="result-row"><span class="result-label">TBSA</span><span class="result-value" id="pk-res-tbsa">--</span></div>
+                <div class="result-row"><span class="result-label">Type</span><span class="result-value" id="pk-res-type">--</span></div>
+                <div class="result-row"><span class="result-label">Solution</span><span class="result-value">Lactated Ringer's</span></div>
             </div>
-            <div class="info-text" style="margin-top:8px; padding:0 4px;">
-                First 8 hr counted from time of injury, not arrival. If delayed presentation, adjust rate accordingly.
-            </div>
+            <div class="info-text" style="margin-top:8px; padding:0 4px;">First 8 hr counted from time of injury, not arrival. If delayed presentation, adjust rate accordingly.</div>
         </div>
     </div>
 </div>
 
-<!-- panel -->
 <div id="panel-421" class="page-panel">
     <div class="container">
         <h1>4-2-1 Rule</h1>
         <div class="subtitle">Maintenance Fluid Rate + Deficit + Replacement</div>
-        <div class="disclaimer">
-            <strong>⚠️ DISCLAIMER</strong><br>
-            Educational only. Adjust per clinical status, electrolytes, and ongoing losses. Not a substitute for clinical judgment.
-        </div>
+        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational only. Adjust per clinical status, electrolytes, and ongoing losses. Not a substitute for clinical judgment.</div>
 
         <div class="section">
             <div class="section-title">Patient</div>
@@ -760,34 +303,41 @@
                 <label>Weight (kg)</label>
                 <input type="number" id="f421-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calc421()">
             </div>
-
             <div class="section-title" style="margin-top:16px;">NPO Deficit</div>
             <div class="input-group">
                 <label>NPO Duration (hours)</label>
                 <input type="number" id="f421-npo" min="0" step="0.5" placeholder="e.g. 8" oninput="calc421()">
-                <div class="info-text">Standard: 8 hr NPO after midnight. Actual deficit = maintenance rate × NPO hours.</div>
+                <div class="info-text">Actual deficit = maintenance rate × NPO hours.</div>
             </div>
-
             <div class="section-title" style="margin-top:16px;">Surgical Losses</div>
             <div class="toggle-group">
                 <button class="toggle-btn active" data-surgical="minimal" onclick="setSurgicalLoss('minimal')">Minimal</button>
                 <button class="toggle-btn" data-surgical="moderate" onclick="setSurgicalLoss('moderate')">Moderate</button>
                 <button class="toggle-btn" data-surgical="major" onclick="setSurgicalLoss('major')">Major</button>
             </div>
-            <div class="info-text" style="margin-top:4px;" id="f421-surgical-hint">
-                Minimal: superficial/laparoscopic — 2–4 mL/kg/hr
-            </div>
-
+            <div class="info-text" style="margin-top:4px;" id="f421-surgical-hint">Minimal: superficial/laparoscopic — 2–4 mL/kg/hr</div>
             <div class="section-title" style="margin-top:16px;">Additional Blood Loss</div>
             <div class="input-group">
                 <label>EBL (mL)</label>
                 <input type="number" id="f421-ebl" min="0" step="10" placeholder="Estimated blood loss (optional)" oninput="calc421()">
             </div>
-
             <div class="section-title" style="margin-top:16px;">Case Duration</div>
             <div class="input-group">
                 <label>Duration (hours)</label>
                 <input type="number" id="f421-duration" min="0" step="0.25" placeholder="e.g. 2.5" oninput="calc421()">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Allowable Blood Loss (ABL)</div>
+            <div class="input-group">
+                <label>Preop Hemoglobin (g/dL)</label>
+                <input type="number" id="abl-hgb-start" min="1" max="25" step="0.1" placeholder="e.g. 14.0" oninput="calc421()">
+            </div>
+            <div class="input-group">
+                <label>Minimum Acceptable Hgb (g/dL)</label>
+                <input type="number" id="abl-hgb-min" min="1" max="20" step="0.1" placeholder="e.g. 8.0" oninput="calc421()">
+                <div class="info-text">Typical transfusion trigger: 7–8 g/dL. Adjust per patient physiology.</div>
             </div>
         </div>
 
@@ -797,88 +347,60 @@
                 <div class="rate-number" id="f421-rate">--</div>
                 <div class="rate-unit">mL / hr</div>
             </div>
-
             <div class="fluid-breakdown">
-                <div class="breakdown-item">
-                    <div class="bd-label">First 10 kg</div>
-                    <div class="bd-value" id="f421-first10">--</div>
-                    <div class="bd-sub">4 mL/kg/hr</div>
-                </div>
-                <div class="breakdown-item">
-                    <div class="bd-label">Next 10 kg</div>
-                    <div class="bd-value" id="f421-next10">--</div>
-                    <div class="bd-sub">2 mL/kg/hr</div>
-                </div>
-                <div class="breakdown-item">
-                    <div class="bd-label">Remainder</div>
-                    <div class="bd-value" id="f421-remainder">--</div>
-                    <div class="bd-sub">1 mL/kg/hr</div>
-                </div>
+                <div class="breakdown-item"><div class="bd-label">First 10 kg</div><div class="bd-value" id="f421-first10">--</div><div class="bd-sub">4 mL/kg/hr</div></div>
+                <div class="breakdown-item"><div class="bd-label">Next 10 kg</div><div class="bd-value" id="f421-next10">--</div><div class="bd-sub">2 mL/kg/hr</div></div>
+                <div class="breakdown-item"><div class="bd-label">Remainder</div><div class="bd-value" id="f421-remainder">--</div><div class="bd-sub">1 mL/kg/hr</div></div>
             </div>
 
             <div class="result-card">
-                <div class="section-title" style="font-size:14px; margin-bottom:8px;">NPO Deficit</div>
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">NPO Deficit Replacement</div>
+                <div class="result-row"><span class="result-label">Total deficit</span><span class="result-value" id="f421-deficit-total">--</span></div>
+                <div class="result-row"><span class="result-label">Hour 1 (50%)</span><span class="result-value" id="f421-deficit-h1">--</span></div>
+                <div class="result-row"><span class="result-label">Hour 2 (25%)</span><span class="result-value" id="f421-deficit-h2">--</span></div>
+                <div class="result-row"><span class="result-label">Hour 3 (25%)</span><span class="result-value" id="f421-deficit-h3">--</span></div>
+                <hr class="result-divider">
                 <div class="result-row">
-                    <span class="result-label">Total deficit</span>
-                    <span class="result-value" id="f421-deficit-total">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Hour 1 (50%)</span>
-                    <span class="result-value" id="f421-deficit-h1">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Hour 2 (25%)</span>
-                    <span class="result-value" id="f421-deficit-h2">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Hour 3+ (25%)</span>
-                    <span class="result-value" id="f421-deficit-h3">--</span>
+                    <span class="result-label" style="color:#555; font-style:italic;">Hour 4+ maintenance only</span>
+                    <span class="result-value" id="f421-maint-ongoing" style="color:#007bff;">--</span>
                 </div>
             </div>
 
             <div class="result-card" id="f421-surgical-card">
                 <div class="section-title" style="font-size:14px; margin-bottom:8px;">Surgical Replacement</div>
-                <div class="result-row">
-                    <span class="result-label">3rd space loss rate</span>
-                    <span class="result-value" id="f421-3rd-rate">--</span>
-                </div>
-                <div class="result-row" id="f421-duration-row" class="hidden">
-                    <span class="result-label">Total over case</span>
-                    <span class="result-value" id="f421-3rd-total">--</span>
-                </div>
+                <div class="result-row"><span class="result-label">3rd space loss rate</span><span class="result-value" id="f421-3rd-rate">--</span></div>
+                <div class="result-row"><span class="result-label">Total over case</span><span class="result-value" id="f421-3rd-total">--</span></div>
             </div>
 
             <div class="result-card" id="f421-ebl-card">
                 <div class="section-title" style="font-size:14px; margin-bottom:8px;">Blood Loss Replacement</div>
-                <div class="result-row">
-                    <span class="result-label">EBL</span>
-                    <span class="result-value" id="f421-ebl-display">--</span>
+                <div class="result-row"><span class="result-label">EBL</span><span class="result-value" id="f421-ebl-display">--</span></div>
+                <div class="result-row"><span class="result-label">Crystalloid (3:1)</span><span class="result-value" id="f421-crystalloid">--</span></div>
+                <div class="result-row"><span class="result-label">Colloid / blood (1:1)</span><span class="result-value" id="f421-colloid">--</span></div>
+            </div>
+
+            <div class="result-card" id="f421-abl-card" style="border-left-color:#dc3545;">
+                <div class="section-title" style="font-size:14px; margin-bottom:8px;">Allowable Blood Loss</div>
+                <div class="result-row"><span class="result-label">Est. Blood Volume (EBV)</span><span class="result-value" id="abl-ebv">--</span></div>
+                <div class="result-row"><span class="result-label">Starting Hgb</span><span class="result-value" id="abl-hgb-start-display">--</span></div>
+                <div class="result-row"><span class="result-label">Minimum Hgb</span><span class="result-value" id="abl-hgb-min-display">--</span></div>
+                <div class="result-row highlight-row">
+                    <span class="result-label">Max Allowable Blood Loss</span>
+                    <span class="result-value" id="abl-result">--</span>
                 </div>
-                <div class="result-row">
-                    <span class="result-label">Crystalloid (3:1)</span>
-                    <span class="result-value" id="f421-crystalloid">--</span>
-                </div>
-                <div class="result-row">
-                    <span class="result-label">Colloid / blood (1:1)</span>
-                    <span class="result-value" id="f421-colloid">--</span>
-                </div>
+                <div class="result-row"><span class="result-label">Equiv. pRBC units (~250 mL each)</span><span class="result-value" id="abl-units">--</span></div>
+                <div class="info-text" style="margin-top:8px;">ABL = EBV × (Starting Hgb − Min Hgb) / Starting Hgb. EBV: 70 mL/kg.</div>
             </div>
 
             <div class="result-card">
                 <div class="section-title" style="font-size:14px; margin-bottom:8px;">Estimated Total Intraop</div>
-                <div class="result-row">
-                    <span class="result-label">Total (if duration entered)</span>
-                    <span class="result-value" id="f421-total">--</span>
-                </div>
+                <div class="result-row"><span class="result-label">Total (if duration entered)</span><span class="result-value" id="f421-total">--</span></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// TOP NAV
-// ═══════════════════════════════════════════
 document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -888,43 +410,18 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
     });
 });
 
-// ═══════════════════════════════════════════
-// SERVICE WORKER + PWA
-// ═══════════════════════════════════════════
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js').catch(() => {});
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js').catch(() => {}); });
 }
-// ═══════════════════════════════════════════
-// LA CALC — original logic, unchanged
-// ═══════════════════════════════════════════
-document.getElementById('highRiskInfo').addEventListener('click', (e) => {
-    e.preventDefault(); e.stopPropagation(); showHighRiskInfo();
-});
+
+document.getElementById('highRiskInfo').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); showHighRiskInfo(); });
 
 function showHighRiskInfo() {
     const overlay = document.createElement('div');
     overlay.className = 'info-popup-overlay';
     const popup = document.createElement('div');
     popup.className = 'info-popup';
-    popup.innerHTML = `
-        <h3>High-Risk Physiology for LAST</h3>
-        <p>The following conditions increase risk of Local Anesthetic Systemic Toxicity (LAST) per ASRA guidelines:</p>
-        <ul>
-            <li><strong>Hepatic dysfunction</strong> – Reduced metabolism of amide local anesthetics</li>
-            <li><strong>Cardiac disease</strong> – Low cardiac output, heart failure, conduction abnormalities</li>
-            <li><strong>Severe metabolic acidosis</strong> – Increases unbound (active) fraction of local anesthetic</li>
-            <li><strong>Pregnancy</strong> – Increased cardiac sensitivity and decreased protein binding</li>
-            <li><strong>Frail/elderly patients</strong> – Age-related changes in clearance and volume of distribution</li>
-            <li><strong>Renal dysfunction</strong> – May affect clearance of certain agents and metabolites</li>
-            <li><strong>Extremes of age</strong> – Neonates and very elderly have altered pharmacokinetics</li>
-        </ul>
-        <div class="note">
-            <strong>Note:</strong> Multiple risk factors compound. This calculator applies a 0.80× reduction for high-risk physiology and 0.85× for age ≥70. When both apply, reductions multiply (0.80 × 0.85 = 0.68× total reduction).
-        </div>
-        <button class="close-btn" onclick="this.closest('.info-popup-overlay').remove()">Close</button>
-    `;
+    popup.innerHTML = `<h3>High-Risk Physiology for LAST</h3><p>The following conditions increase risk of Local Anesthetic Systemic Toxicity (LAST) per ASRA guidelines:</p><ul><li><strong>Hepatic dysfunction</strong> – Reduced metabolism of amide local anesthetics</li><li><strong>Cardiac disease</strong> – Low cardiac output, heart failure, conduction abnormalities</li><li><strong>Severe metabolic acidosis</strong> – Increases unbound (active) fraction of local anesthetic</li><li><strong>Pregnancy</strong> – Increased cardiac sensitivity and decreased protein binding</li><li><strong>Frail/elderly patients</strong> – Age-related changes in clearance and volume of distribution</li><li><strong>Renal dysfunction</strong> – May affect clearance of certain agents and metabolites</li><li><strong>Extremes of age</strong> – Neonates and very elderly have altered pharmacokinetics</li></ul><div class="note"><strong>Note:</strong> Multiple risk factors compound. This calculator applies a 0.80× reduction for high-risk physiology and 0.85× for age ≥70. When both apply, reductions multiply (0.80 × 0.85 = 0.68× total reduction).</div><button class="close-btn" onclick="this.closest('.info-popup-overlay').remove()">Close</button>`;
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
@@ -938,65 +435,41 @@ const DRUGS = {
     chloroprocaine: { name: 'Chloroprocaine (Nesacaine)', plainMgKg: 11, epiMgKg: 14, commonConc: [2, 3] }
 };
 
-let currentMode = 'single';
-let mixtureAgents = [];
-let singleDrugValue = '';
-let singleConcValue = '';
-
-// Detect touch device
+let currentMode = 'single', mixtureAgents = [], singleDrugValue = '', singleConcValue = '';
 const isTouchDevice = () => ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
 function buildDrugSelect(wrap, currentVal, onChange) {
     if (isTouchDevice()) {
-        // Mobile: custom scroll picker trigger
         const div = document.createElement('div');
         div.className = 'picker-input';
-        div.id = 'singleDrugPicker';
-        div.innerHTML = `<span id="singleDrugLabel">${currentVal ? DRUGS[currentVal].name : 'Select drug...'}</span>`;
-        div.addEventListener('click', () => {
-            showDrugPicker(currentVal, (value) => { onChange(value); buildDrugSelect(wrap, value, onChange); });
-        });
-        wrap.innerHTML = '';
-        wrap.appendChild(div);
+        div.innerHTML = `<span>${currentVal ? DRUGS[currentVal].name : 'Select drug...'}</span>`;
+        div.addEventListener('click', () => { showDrugPicker(currentVal, (value) => { onChange(value); buildDrugSelect(wrap, value, onChange); }); });
+        wrap.innerHTML = ''; wrap.appendChild(div);
     } else {
-        // Desktop: native select
         const sel = document.createElement('select');
         sel.className = 'native-select';
-        sel.id = 'singleDrugPicker';
-        sel.innerHTML = '<option value="">Select drug...</option>' +
-            Object.keys(DRUGS).map(k => `<option value="${k}" ${k === currentVal ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
+        sel.innerHTML = '<option value="">Select drug...</option>' + Object.keys(DRUGS).map(k => `<option value="${k}" ${k === currentVal ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
         sel.addEventListener('change', () => onChange(sel.value));
-        wrap.innerHTML = '';
-        wrap.appendChild(sel);
+        wrap.innerHTML = ''; wrap.appendChild(sel);
     }
 }
 
 function buildConcSelect(wrap, currentVal, drugKey, onChange) {
     wrap.innerHTML = '';
     if (!drugKey) {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'picker-input';
-        placeholder.style.color = '#999';
-        placeholder.innerHTML = '<span>Select drug first...</span>';
-        wrap.appendChild(placeholder);
-        return;
+        const p = document.createElement('div'); p.className = 'picker-input'; p.style.color = '#999'; p.innerHTML = '<span>Select drug first...</span>'; wrap.appendChild(p); return;
     }
     const concs = DRUGS[drugKey].commonConc;
     if (isTouchDevice()) {
         const div = document.createElement('div');
         div.className = 'picker-input';
-        div.id = 'singleConcPicker';
-        div.innerHTML = `<span id="singleConcLabel">${currentVal ? currentVal + '%' : 'Select concentration...'}</span>`;
-        div.addEventListener('click', () => {
-            showConcPicker(currentVal, concs, (value) => { onChange(value); buildConcSelect(wrap, value, drugKey, onChange); });
-        });
+        div.innerHTML = `<span>${currentVal ? currentVal + '%' : 'Select concentration...'}</span>`;
+        div.addEventListener('click', () => { showConcPicker(currentVal, concs, (value) => { onChange(value); buildConcSelect(wrap, value, drugKey, onChange); }); });
         wrap.appendChild(div);
     } else {
         const sel = document.createElement('select');
         sel.className = 'native-select';
-        sel.id = 'singleConcPicker';
-        sel.innerHTML = '<option value="">Select concentration...</option>' +
-            concs.map(c => `<option value="${c}" ${String(c) === String(currentVal) ? 'selected' : ''}>${c}%</option>`).join('');
+        sel.innerHTML = '<option value="">Select concentration...</option>' + concs.map(c => `<option value="${c}" ${String(c) === String(currentVal) ? 'selected' : ''}>${c}%</option>`).join('');
         sel.addEventListener('change', () => onChange(sel.value));
         wrap.appendChild(sel);
     }
@@ -1004,34 +477,17 @@ function buildConcSelect(wrap, currentVal, drugKey, onChange) {
 
 function initLA() {
     document.querySelectorAll('.mode-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentMode = tab.dataset.mode;
-            showMode(currentMode);
-        });
+        tab.addEventListener('click', () => { document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); currentMode = tab.dataset.mode; showMode(currentMode); });
     });
     document.getElementById('weight').addEventListener('input', validateWeight);
     document.getElementById('proceedAnyway').addEventListener('change', calculate);
     document.getElementById('useEpi').addEventListener('change', calculate);
     document.getElementById('age70').addEventListener('change', calculate);
     document.getElementById('highRisk').addEventListener('change', calculate);
-
-    // Build single mode pickers
     const drugWrap = document.getElementById('singleDrugPickerWrap');
     const concWrap = document.getElementById('singleConcPickerWrap');
-
-    buildDrugSelect(drugWrap, singleDrugValue, (value) => {
-        singleDrugValue = value;
-        singleConcValue = '';
-        buildConcSelect(concWrap, '', value, (cv) => { singleConcValue = cv; calculate(); });
-        calculate();
-    });
-    buildConcSelect(concWrap, singleConcValue, singleDrugValue, (value) => {
-        singleConcValue = value;
-        calculate();
-    });
-
+    buildDrugSelect(drugWrap, singleDrugValue, (value) => { singleDrugValue = value; singleConcValue = ''; buildConcSelect(concWrap, '', value, (cv) => { singleConcValue = cv; calculate(); }); calculate(); });
+    buildConcSelect(concWrap, singleConcValue, singleDrugValue, (value) => { singleConcValue = value; calculate(); });
     document.getElementById('singleVolume').addEventListener('input', calculate);
     document.getElementById('addAgentBtn').addEventListener('click', addMixtureAgent);
     document.getElementById('lidocaineRecent').addEventListener('change', calculate);
@@ -1043,112 +499,36 @@ function initLA() {
 }
 
 function showDrugPicker(currentValue, callback) {
-    const overlay = document.createElement('div');
-    overlay.className = 'picker-overlay';
-    const container = document.createElement('div');
-    container.className = 'picker-container';
-    const header = document.createElement('div');
-    header.className = 'picker-header';
-    header.innerHTML = '<div class="picker-done">Done</div>';
-    const wheelContainer = document.createElement('div');
-    wheelContainer.style.position = 'relative';
-    const highlight = document.createElement('div');
-    highlight.className = 'picker-highlight';
-    const wheel = document.createElement('div');
-    wheel.className = 'picker-wheel';
-    let selectedValue = currentValue;
+    const overlay = document.createElement('div'); overlay.className = 'picker-overlay';
+    const container = document.createElement('div'); container.className = 'picker-container';
+    const header = document.createElement('div'); header.className = 'picker-header'; header.innerHTML = '<div class="picker-done">Done</div>';
+    const wc = document.createElement('div'); wc.style.position = 'relative';
+    const hl = document.createElement('div'); hl.className = 'picker-highlight';
+    const wheel = document.createElement('div'); wheel.className = 'picker-wheel';
     Object.keys(DRUGS).forEach(key => {
-        const option = document.createElement('div');
-        option.className = 'picker-option';
-        if (key === currentValue) option.classList.add('selected');
-        option.textContent = DRUGS[key].name;
-        option.dataset.value = key;
-        wheel.appendChild(option);
+        const opt = document.createElement('div'); opt.className = 'picker-option'; if (key === currentValue) opt.classList.add('selected');
+        opt.textContent = DRUGS[key].name; opt.dataset.value = key; wheel.appendChild(opt);
     });
-    let scrollTimeout;
-    wheel.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            const wheelRect = wheel.getBoundingClientRect();
-            const centerY = wheelRect.top + wheelRect.height / 2;
-            let closestOption = null, closestDistance = Infinity;
-            wheel.querySelectorAll('.picker-option').forEach(option => {
-                const optionRect = option.getBoundingClientRect();
-                const distance = Math.abs(centerY - (optionRect.top + optionRect.height / 2));
-                if (distance < closestDistance) { closestDistance = distance; closestOption = option; }
-            });
-            if (closestOption) {
-                wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
-                closestOption.classList.add('selected');
-                selectedValue = closestOption.dataset.value;
-                callback(selectedValue);
-            }
-        }, 100);
-    });
-    wheelContainer.appendChild(highlight);
-    wheelContainer.appendChild(wheel);
-    container.appendChild(header);
-    container.appendChild(wheelContainer);
-    overlay.appendChild(container);
-    document.body.appendChild(overlay);
-    if (currentValue) {
-        const sel = wheel.querySelector(`[data-value="${currentValue}"]`);
-        if (sel) setTimeout(() => sel.scrollIntoView({ block: 'center', behavior: 'auto' }), 50);
-    }
+    let st;
+    wheel.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => { const wr = wheel.getBoundingClientRect(); const cy = wr.top + wr.height / 2; let co = null, cd = Infinity; wheel.querySelectorAll('.picker-option').forEach(o => { const d = Math.abs(cy - (o.getBoundingClientRect().top + o.getBoundingClientRect().height / 2)); if (d < cd) { cd = d; co = o; } }); if (co) { wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected')); co.classList.add('selected'); callback(co.dataset.value); } }, 100); });
+    wc.appendChild(hl); wc.appendChild(wheel); container.appendChild(header); container.appendChild(wc); overlay.appendChild(container); document.body.appendChild(overlay);
+    if (currentValue) { const s = wheel.querySelector(`[data-value="${currentValue}"]`); if (s) setTimeout(() => s.scrollIntoView({ block: 'center', behavior: 'auto' }), 50); }
     header.querySelector('.picker-done').addEventListener('click', () => document.body.removeChild(overlay));
     overlay.addEventListener('click', (e) => { if (e.target === overlay) document.body.removeChild(overlay); });
 }
 
 function showConcPicker(currentValue, concentrations, callback) {
-    const overlay = document.createElement('div');
-    overlay.className = 'picker-overlay';
-    const container = document.createElement('div');
-    container.className = 'picker-container';
-    const header = document.createElement('div');
-    header.className = 'picker-header';
-    header.innerHTML = '<div class="picker-done">Done</div>';
-    const wheelContainer = document.createElement('div');
-    wheelContainer.style.position = 'relative';
-    const highlight = document.createElement('div');
-    highlight.className = 'picker-highlight';
-    const wheel = document.createElement('div');
-    wheel.className = 'picker-wheel';
-    concentrations.forEach(conc => {
-        const option = document.createElement('div');
-        option.className = 'picker-option';
-        if (conc === parseFloat(currentValue)) option.classList.add('selected');
-        option.textContent = conc + '%';
-        option.dataset.value = conc;
-        wheel.appendChild(option);
-    });
-    let scrollTimeout;
-    wheel.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            const wheelRect = wheel.getBoundingClientRect();
-            const centerY = wheelRect.top + wheelRect.height / 2;
-            let closestOption = null, closestDistance = Infinity;
-            wheel.querySelectorAll('.picker-option').forEach(option => {
-                const distance = Math.abs(centerY - (option.getBoundingClientRect().top + 20));
-                if (distance < closestDistance) { closestDistance = distance; closestOption = option; }
-            });
-            if (closestOption) {
-                wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected'));
-                closestOption.classList.add('selected');
-                callback(closestOption.dataset.value);
-            }
-        }, 100);
-    });
-    wheelContainer.appendChild(highlight);
-    wheelContainer.appendChild(wheel);
-    container.appendChild(header);
-    container.appendChild(wheelContainer);
-    overlay.appendChild(container);
-    document.body.appendChild(overlay);
-    if (currentValue) {
-        const sel = wheel.querySelector(`[data-value="${currentValue}"]`);
-        if (sel) setTimeout(() => sel.scrollIntoView({ block: 'center', behavior: 'auto' }), 50);
-    }
+    const overlay = document.createElement('div'); overlay.className = 'picker-overlay';
+    const container = document.createElement('div'); container.className = 'picker-container';
+    const header = document.createElement('div'); header.className = 'picker-header'; header.innerHTML = '<div class="picker-done">Done</div>';
+    const wc = document.createElement('div'); wc.style.position = 'relative';
+    const hl = document.createElement('div'); hl.className = 'picker-highlight';
+    const wheel = document.createElement('div'); wheel.className = 'picker-wheel';
+    concentrations.forEach(conc => { const opt = document.createElement('div'); opt.className = 'picker-option'; if (conc === parseFloat(currentValue)) opt.classList.add('selected'); opt.textContent = conc + '%'; opt.dataset.value = conc; wheel.appendChild(opt); });
+    let st;
+    wheel.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => { const wr = wheel.getBoundingClientRect(); const cy = wr.top + wr.height / 2; let co = null, cd = Infinity; wheel.querySelectorAll('.picker-option').forEach(o => { const d = Math.abs(cy - (o.getBoundingClientRect().top + 20)); if (d < cd) { cd = d; co = o; } }); if (co) { wheel.querySelectorAll('.picker-option').forEach(o => o.classList.remove('selected')); co.classList.add('selected'); callback(co.dataset.value); } }, 100); });
+    wc.appendChild(hl); wc.appendChild(wheel); container.appendChild(header); container.appendChild(wc); overlay.appendChild(container); document.body.appendChild(overlay);
+    if (currentValue) { const s = wheel.querySelector(`[data-value="${currentValue}"]`); if (s) setTimeout(() => s.scrollIntoView({ block: 'center', behavior: 'auto' }), 50); }
     header.querySelector('.picker-done').addEventListener('click', () => document.body.removeChild(overlay));
     overlay.addEventListener('click', (e) => { if (e.target === overlay) document.body.removeChild(overlay); });
 }
@@ -1162,23 +542,15 @@ function showMode(mode) {
 }
 
 function validateWeight() {
-    const weight = parseFloat(document.getElementById('weight').value);
-    const warning = document.getElementById('weightWarning');
-    if (weight && (weight < 20 || weight > 250)) {
-        warning.classList.remove('hidden');
-    } else {
-        warning.classList.add('hidden');
-        document.getElementById('proceedAnyway').checked = false;
-    }
+    const w = parseFloat(document.getElementById('weight').value);
+    const warn = document.getElementById('weightWarning');
+    if (w && (w < 20 || w > 250)) { warn.classList.remove('hidden'); } else { warn.classList.add('hidden'); document.getElementById('proceedAnyway').checked = false; }
     calculate();
 }
 
 function getPatientData() {
     const weight = parseFloat(document.getElementById('weight').value);
-    const useEpi = document.getElementById('useEpi').checked;
-    const age70 = document.getElementById('age70').checked;
-    const highRisk = document.getElementById('highRisk').checked;
-    const proceedAnyway = document.getElementById('proceedAnyway').checked;
+    const useEpi = document.getElementById('useEpi').checked, age70 = document.getElementById('age70').checked, highRisk = document.getElementById('highRisk').checked, proceedAnyway = document.getElementById('proceedAnyway').checked;
     if (!weight) return null;
     if ((weight < 20 || weight > 250) && !proceedAnyway) return null;
     return { weight, useEpi, age70, highRisk };
@@ -1188,100 +560,50 @@ function calcMaxMg(drugKey, patient) {
     const drug = DRUGS[drugKey];
     const mgPerKg = patient.useEpi ? drug.epiMgKg : drug.plainMgKg;
     let baseMg = patient.weight * mgPerKg;
-    if (drug.hardCap) {
-        const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
-        baseMg = Math.min(baseMg, cap);
-    }
+    if (drug.hardCap) { const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain; baseMg = Math.min(baseMg, cap); }
     let mult = 1.0;
     if (patient.age70) mult *= 0.85;
     if (patient.highRisk) mult *= 0.80;
     return { baseMg, finalMg: baseMg * mult, mgPerKg };
 }
 
-function addMixtureAgent() {
-    if (mixtureAgents.length >= 3) return;
-    const id = Date.now();
-    mixtureAgents.push({ id, drug: '', conc: '', volume: '0' });
-    renderMixtureAgents();
-    calculate();
-}
-
-function removeMixtureAgent(id) {
-    mixtureAgents = mixtureAgents.filter(a => a.id !== id);
-    renderMixtureAgents();
-    calculate();
-}
+function addMixtureAgent() { if (mixtureAgents.length >= 3) return; mixtureAgents.push({ id: Date.now(), drug: '', conc: '', volume: '0' }); renderMixtureAgents(); calculate(); }
+function removeMixtureAgent(id) { mixtureAgents = mixtureAgents.filter(a => a.id !== id); renderMixtureAgents(); calculate(); }
 
 function renderMixtureAgents() {
     const container = document.getElementById('mixtureAgents');
-    if (mixtureAgents.length === 0) {
-        container.innerHTML = '<p style="color: #666; text-align: center;">No agents added</p>';
-        return;
-    }
+    if (mixtureAgents.length === 0) { container.innerHTML = '<p style="color: #666; text-align: center;">No agents added</p>'; return; }
     container.innerHTML = '';
     mixtureAgents.forEach((agent, idx) => {
-        const card = document.createElement('div');
-        card.className = 'agent-card';
-        const header = document.createElement('div');
-        header.className = 'agent-header';
-        header.innerHTML = `<span class="agent-number">Agent ${idx + 1}</span>${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}`;
-        card.appendChild(header);
-
-        // Drug selector
-        const drugGroup = document.createElement('div');
-        drugGroup.className = 'input-group';
-        drugGroup.innerHTML = '<label>Drug</label>';
+        const card = document.createElement('div'); card.className = 'agent-card';
+        const hdr = document.createElement('div'); hdr.className = 'agent-header';
+        hdr.innerHTML = `<span class="agent-number">Agent ${idx + 1}</span>${mixtureAgents.length > 1 ? `<button class="remove-btn" onclick="removeMixtureAgent(${agent.id})">Remove</button>` : ''}`;
+        card.appendChild(hdr);
+        const dg = document.createElement('div'); dg.className = 'input-group'; dg.innerHTML = '<label>Drug</label>';
         if (isTouchDevice()) {
-            const drugPicker = document.createElement('div');
-            drugPicker.className = 'picker-input';
-            drugPicker.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
-            drugPicker.addEventListener('click', () => {
-                showDrugPicker(agent.drug, (value) => { agent.drug = value; agent.conc = ''; renderMixtureAgents(); calculate(); });
-            });
-            drugGroup.appendChild(drugPicker);
+            const dp = document.createElement('div'); dp.className = 'picker-input'; dp.innerHTML = `<span>${agent.drug ? DRUGS[agent.drug].name : 'Select drug...'}</span>`;
+            dp.addEventListener('click', () => { showDrugPicker(agent.drug, (v) => { agent.drug = v; agent.conc = ''; renderMixtureAgents(); calculate(); }); }); dg.appendChild(dp);
         } else {
-            const sel = document.createElement('select');
-            sel.className = 'native-select';
-            sel.innerHTML = '<option value="">Select drug...</option>' +
-                Object.keys(DRUGS).map(k => `<option value="${k}" ${k === agent.drug ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
-            sel.addEventListener('change', () => { agent.drug = sel.value; agent.conc = ''; renderMixtureAgents(); calculate(); });
-            drugGroup.appendChild(sel);
+            const sel = document.createElement('select'); sel.className = 'native-select';
+            sel.innerHTML = '<option value="">Select drug...</option>' + Object.keys(DRUGS).map(k => `<option value="${k}" ${k === agent.drug ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
+            sel.addEventListener('change', () => { agent.drug = sel.value; agent.conc = ''; renderMixtureAgents(); calculate(); }); dg.appendChild(sel);
         }
-        card.appendChild(drugGroup);
-
-        // Concentration selector
-        const concGroup = document.createElement('div');
-        concGroup.className = 'input-group';
-        concGroup.innerHTML = '<label>Concentration (%)</label>';
+        card.appendChild(dg);
+        const cg = document.createElement('div'); cg.className = 'input-group'; cg.innerHTML = '<label>Concentration (%)</label>';
         if (isTouchDevice()) {
-            const concPicker = document.createElement('div');
-            concPicker.className = 'picker-input';
-            concPicker.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
-            concPicker.addEventListener('click', () => {
-                if (!agent.drug) { alert('Please select a drug first'); return; }
-                showConcPicker(agent.conc, DRUGS[agent.drug].commonConc, (value) => { agent.conc = value; renderMixtureAgents(); calculate(); });
-            });
-            concGroup.appendChild(concPicker);
+            const cp = document.createElement('div'); cp.className = 'picker-input'; cp.innerHTML = `<span>${agent.conc ? agent.conc + '%' : 'Select concentration...'}</span>`;
+            cp.addEventListener('click', () => { if (!agent.drug) { alert('Please select a drug first'); return; } showConcPicker(agent.conc, DRUGS[agent.drug].commonConc, (v) => { agent.conc = v; renderMixtureAgents(); calculate(); }); }); cg.appendChild(cp);
         } else {
-            const sel = document.createElement('select');
-            sel.className = 'native-select';
+            const sel = document.createElement('select'); sel.className = 'native-select';
             const concs = agent.drug ? DRUGS[agent.drug].commonConc : [];
-            sel.innerHTML = '<option value="">Select concentration...</option>' +
-                concs.map(c => `<option value="${c}" ${String(c) === String(agent.conc) ? 'selected' : ''}>${c}%</option>`).join('');
+            sel.innerHTML = '<option value="">Select concentration...</option>' + concs.map(c => `<option value="${c}" ${String(c) === String(agent.conc) ? 'selected' : ''}>${c}%</option>`).join('');
             if (!agent.drug) sel.disabled = true;
-            sel.addEventListener('change', () => { agent.conc = sel.value; renderMixtureAgents(); calculate(); });
-            concGroup.appendChild(sel);
+            sel.addEventListener('change', () => { agent.conc = sel.value; renderMixtureAgents(); calculate(); }); cg.appendChild(sel);
         }
-        card.appendChild(concGroup);
-
-        const volGroup = document.createElement('div');
-        volGroup.className = 'input-group';
-        volGroup.innerHTML = '<label>Volume (mL)</label>';
-        const volInput = document.createElement('input');
-        volInput.type = 'number'; volInput.min = '0'; volInput.step = '0.1'; volInput.value = agent.volume;
-        volInput.addEventListener('input', (e) => { agent.volume = e.target.value; calculate(); });
-        volGroup.appendChild(volInput);
-        card.appendChild(volGroup);
+        card.appendChild(cg);
+        const vg = document.createElement('div'); vg.className = 'input-group'; vg.innerHTML = '<label>Volume (mL)</label>';
+        const vi = document.createElement('input'); vi.type = 'number'; vi.min = '0'; vi.step = '0.1'; vi.value = agent.volume;
+        vi.addEventListener('input', (e) => { agent.volume = e.target.value; calculate(); }); vg.appendChild(vi); card.appendChild(vg);
         container.appendChild(card);
     });
     document.getElementById('addAgentBtn').style.display = mixtureAgents.length >= 3 ? 'none' : 'block';
@@ -1289,82 +611,57 @@ function renderMixtureAgents() {
 
 function calculate() {
     const patient = getPatientData();
-    const resultsDiv = document.getElementById('results');
-    const resultsContent = document.getElementById('resultsContent');
-    if (!patient) { resultsDiv.classList.add('hidden'); return; }
+    const rd = document.getElementById('results'), rc = document.getElementById('resultsContent');
+    if (!patient) { rd.classList.add('hidden'); return; }
     let html = '';
     if (currentMode === 'single') html = calculateSingle(patient);
     else if (currentMode === 'mixture') html = calculateMixture(patient);
     else if (currentMode === 'exparel') html = calculateExparel(patient);
-    if (html) { resultsContent.innerHTML = html; resultsDiv.classList.remove('hidden'); }
-    else resultsDiv.classList.add('hidden');
+    if (html) { rc.innerHTML = html; rd.classList.remove('hidden'); } else rd.classList.add('hidden');
 }
 
 function calculateSingle(patient) {
-    // Read from native selects on desktop, stored values on mobile
     if (!isTouchDevice()) {
-        const drugEl = document.querySelector('#singleDrugPickerWrap select');
-        const concEl = document.querySelector('#singleConcPickerWrap select');
-        if (drugEl) singleDrugValue = drugEl.value;
-        if (concEl) singleConcValue = concEl.value;
+        const de = document.querySelector('#singleDrugPickerWrap select'), ce = document.querySelector('#singleConcPickerWrap select');
+        if (de) singleDrugValue = de.value; if (ce) singleConcValue = ce.value;
     }
-    const drugKey = singleDrugValue;
-    const conc = parseFloat(singleConcValue);
-    const volume = parseFloat(document.getElementById('singleVolume').value);
+    const drugKey = singleDrugValue, conc = parseFloat(singleConcValue), volume = parseFloat(document.getElementById('singleVolume').value);
     if (!drugKey || !conc || conc <= 0 || conc > 4) return '';
-    const drug = DRUGS[drugKey];
-    const { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
-    const mgPerMl = conc * 10;
-    const maxMl = finalMg / mgPerMl;
-    let html = '<div class="result-card">';
-    html += `<h3>${drug.name} ${conc}%</h3>`;
+    const drug = DRUGS[drugKey], { baseMg, finalMg, mgPerKg } = calcMaxMg(drugKey, patient);
+    const mgPerMl = conc * 10, maxMl = finalMg / mgPerMl;
+    let html = `<div class="result-card"><h3>${drug.name} ${conc}%</h3>`;
     html += `<div class="result-row"><span class="result-label">Mg per kg:</span><span class="result-value">${mgPerKg} mg/kg ${patient.useEpi ? '(with epi)' : '(plain)'}</span></div>`;
     if (drug.hardCap) { const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain; html += `<div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">${cap} mg (enforced)</span></div>`; }
     if (drug.advisory) { const adv = patient.useEpi ? drug.advisory.epi : drug.advisory.plain; html += `<div class="result-row"><span class="result-label">Advisory cap:</span><span class="result-value">${adv} mg (display only)</span></div>`; }
     html += `<div class="result-row"><span class="result-label">Base max mg:</span><span class="result-value">${baseMg.toFixed(1)} mg</span></div>`;
-    let redFactors = [];
-    if (patient.age70) redFactors.push('0.85× age≥70');
-    if (patient.highRisk) redFactors.push('0.80× high-risk');
-    if (redFactors.length > 0) html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${redFactors.join(', ')}</span></div>`;
+    let rf = []; if (patient.age70) rf.push('0.85× age≥70'); if (patient.highRisk) rf.push('0.80× high-risk');
+    if (rf.length > 0) html += `<div class="result-row"><span class="result-label">Reductions:</span><span class="result-value">${rf.join(', ')}</span></div>`;
     html += `<div class="result-row"><span class="result-label">Final max mg:</span><span class="result-value">${finalMg.toFixed(1)} mg</span></div>`;
     html += `<div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${mgPerMl} mg/mL</span></div>`;
     html += `<div class="result-row"><span class="result-label">Final max mL:</span><span class="result-value">${maxMl.toFixed(1)} mL</span></div>`;
-    if (volume > 0) {
-        const usedMg = mgPerMl * volume;
-        const pct = (usedMg / finalMg * 100);
-        html += `<div class="result-row"><span class="result-label">Intended volume:</span><span class="result-value">${volume.toFixed(1)} mL</span></div>`;
-        html += `<div class="result-row"><span class="result-label">Mg used:</span><span class="result-value">${usedMg.toFixed(1)} mg (${pct.toFixed(1)}%)</span></div>`;
-        if (volume > 60) html += '<div style="color: #856404; margin-top: 8px; font-size: 13px;">⚠️ Volume >60 mL - verify clinically appropriate</div>';
-    }
-    html += '</div>';
-    return html;
+    if (volume > 0) { const usedMg = mgPerMl * volume, pct = usedMg / finalMg * 100; html += `<div class="result-row"><span class="result-label">Intended volume:</span><span class="result-value">${volume.toFixed(1)} mL</span></div><div class="result-row"><span class="result-label">Mg used:</span><span class="result-value">${usedMg.toFixed(1)} mg (${pct.toFixed(1)}%)</span></div>`; if (volume > 60) html += '<div style="color: #856404; margin-top: 8px; font-size: 13px;">⚠️ Volume >60 mL - verify clinically appropriate</div>'; }
+    html += '</div>'; return html;
 }
 
 function calculateMixture(patient) {
-    const valid = mixtureAgents.filter(a => a.drug && a.conc);
-    if (valid.length === 0) return '';
-    let totalFraction = 0;
-    const calcs = [];
+    const valid = mixtureAgents.filter(a => a.drug && a.conc); if (valid.length === 0) return '';
+    let totalFraction = 0; const calcs = [];
     for (const agent of valid) {
-        const conc = parseFloat(agent.conc);
-        const volume = parseFloat(agent.volume) || 0;
+        const conc = parseFloat(agent.conc), volume = parseFloat(agent.volume) || 0;
         if (conc <= 0 || conc > 4 || volume < 0) continue;
         const { baseMg, finalMg } = calcMaxMg(agent.drug, patient);
-        const mgPerMl = conc * 10;
-        const actualMg = mgPerMl * volume;
-        const fraction = actualMg / finalMg;
+        const mgPerMl = conc * 10, actualMg = mgPerMl * volume, fraction = actualMg / finalMg;
         totalFraction += fraction;
         calcs.push({ name: DRUGS[agent.drug].name, conc, mgPerMl, volume, actualMg, baseMg, finalMg, fraction });
     }
-    let statusClass = totalFraction > 1.0 ? 'status-red' : totalFraction >= 0.8 ? 'status-yellow' : 'status-green';
-    let statusText = totalFraction > 1.0 ? `RED - UNSAFE (${totalFraction.toFixed(3)} / 1.000)` : totalFraction >= 0.8 ? `YELLOW - CAUTION (${totalFraction.toFixed(3)} / 1.000)` : `GREEN - SAFE (${totalFraction.toFixed(3)} / 1.000)`;
-    let html = `<div class="status-badge ${statusClass}">${statusText}</div>`;
-    html += '<div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th class="max-ml-header">Max+ mL</th></tr></thead><tbody>';
+    const sc = totalFraction > 1.0 ? 'status-red' : totalFraction >= 0.8 ? 'status-yellow' : 'status-green';
+    const st = totalFraction > 1.0 ? `RED - UNSAFE (${totalFraction.toFixed(3)} / 1.000)` : totalFraction >= 0.8 ? `YELLOW - CAUTION (${totalFraction.toFixed(3)} / 1.000)` : `GREEN - SAFE (${totalFraction.toFixed(3)} / 1.000)`;
+    let html = `<div class="status-badge ${sc}">${st}</div><div style="overflow-x: auto;"><table><thead><tr><th>Drug</th><th>%</th><th>mg/mL</th><th>mL</th><th>mg</th><th>Base max</th><th>Final max</th><th>Frac</th><th class="max-ml-header">Max+ mL</th></tr></thead><tbody>`;
     const remaining = Math.max(0, 1.0 - totalFraction);
-    for (const calc of calcs) {
-        const maxAdditional = (remaining * calc.finalMg) / calc.mgPerMl;
-        html += `<tr><td>${calc.name}</td><td>${calc.conc}</td><td>${calc.mgPerMl}</td><td>${calc.volume.toFixed(1)}</td><td>${calc.actualMg.toFixed(1)}</td><td>${calc.baseMg.toFixed(1)}</td><td>${calc.finalMg.toFixed(1)}</td><td>${calc.fraction.toFixed(3)}</td><td class="max-ml-cell">${maxAdditional.toFixed(1)}</td></tr>`;
-        if (calc.volume > 60) html += `<tr><td colspan="9" style="color:#856404;font-size:12px;">⚠️ ${calc.name} volume >60 mL</td></tr>`;
+    for (const c of calcs) {
+        const ma = (remaining * c.finalMg) / c.mgPerMl;
+        html += `<tr><td>${c.name}</td><td>${c.conc}</td><td>${c.mgPerMl}</td><td>${c.volume.toFixed(1)}</td><td>${c.actualMg.toFixed(1)}</td><td>${c.baseMg.toFixed(1)}</td><td>${c.finalMg.toFixed(1)}</td><td>${c.fraction.toFixed(3)}</td><td class="max-ml-cell">${ma.toFixed(1)}</td></tr>`;
+        if (c.volume > 60) html += `<tr><td colspan="9" style="color:#856404;font-size:12px;">⚠️ ${c.name} volume >60 mL</td></tr>`;
     }
     html += `</tbody></table></div><div class="result-card"><div class="result-row"><span class="result-label">Remaining fraction:</span><span class="result-value">${remaining.toFixed(3)}</span></div></div>`;
     return html;
@@ -1374,42 +671,29 @@ function calculateExparel(patient) {
     const lidoRecent = document.getElementById('lidocaineRecent').checked;
     document.getElementById('lidocaineStop').classList.toggle('hidden', !lidoRecent);
     if (lidoRecent) return '<div class="status-badge status-red">RED - UNSAFE<br>Lidocaine interaction risk - DO NOT PROCEED</div>';
-    const exparelVol = parseFloat(document.getElementById('exparelVolume').value) || 0;
-    const bupiConc = parseFloat(document.getElementById('bupiConc').value) || 0;
-    const bupiVol = parseFloat(document.getElementById('bupiVolume').value) || 0;
-    if (exparelVol === 0) return '';
-    const exparelMg = exparelVol * 13.3;
-    let html = '', isUnsafe = false;
-    if (exparelMg > 266) { html += `<div class="status-badge status-red">RED - UNSAFE<br>Exparel exceeds 266 mg cap (${exparelMg.toFixed(1)} mg)</div>`; isUnsafe = true; }
-    html += `<div class="result-card"><h3>Exparel</h3><div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${exparelVol.toFixed(1)} mL</span></div><div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${exparelMg.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">266 mg</span></div><div class="result-row"><span class="result-label">Status:</span><span class="result-value">${exparelMg <= 266 ? '✓ Within cap' : '✗ EXCEEDS'}</span></div></div>`;
-    if (bupiConc > 0 && bupiVol > 0) {
-        if (bupiConc > 4) { html += '<div class="warning">Bupivacaine concentration >4% - invalid</div>'; return html; }
-        const bupiMg = bupiConc * 10 * bupiVol;
-        const maxBupi = exparelMg * 0.5;
-        const ratioOk = bupiMg <= maxBupi;
-        const { baseMg, finalMg } = calcMaxMg('bupivacaine', patient);
-        const bupiCapOk = bupiMg <= finalMg;
-        html += `<div class="result-card"><h3>Bupivacaine HCl</h3><div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${bupiConc}% (${bupiConc*10} mg/mL)</span></div><div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${bupiVol.toFixed(1)} mL</span></div><div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${bupiMg.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">Max bupi (50% rule):</span><span class="result-value">${maxBupi.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">50% ratio check:</span><span class="result-value">${ratioOk ? '✓ OK' : '✗ EXCEEDS'}</span></div><div class="result-row"><span class="result-label">Hard cap check:</span><span class="result-value">${bupiCapOk ? '✓ OK' : '✗ EXCEEDS'}</span></div></div>`;
-        if (!ratioOk) { html += '<div class="warning">Bupivacaine exceeds 50% of Exparel dose</div>'; isUnsafe = true; }
-        if (!bupiCapOk) { html += '<div class="warning">Bupivacaine exceeds hard cap limits</div>'; isUnsafe = true; }
+    const ev = parseFloat(document.getElementById('exparelVolume').value) || 0, bc = parseFloat(document.getElementById('bupiConc').value) || 0, bv = parseFloat(document.getElementById('bupiVolume').value) || 0;
+    if (ev === 0) return '';
+    const em = ev * 13.3; let html = '', isUnsafe = false;
+    if (em > 266) { html += `<div class="status-badge status-red">RED - UNSAFE<br>Exparel exceeds 266 mg cap (${em.toFixed(1)} mg)</div>`; isUnsafe = true; }
+    html += `<div class="result-card"><h3>Exparel</h3><div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${ev.toFixed(1)} mL</span></div><div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${em.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">Hard cap:</span><span class="result-value">266 mg</span></div><div class="result-row"><span class="result-label">Status:</span><span class="result-value">${em <= 266 ? '✓ Within cap' : '✗ EXCEEDS'}</span></div></div>`;
+    if (bc > 0 && bv > 0) {
+        if (bc > 4) { html += '<div class="warning">Bupivacaine concentration >4% - invalid</div>'; return html; }
+        const bm = bc * 10 * bv, mb = em * 0.5, ro = bm <= mb, { baseMg, finalMg } = calcMaxMg('bupivacaine', patient), co = bm <= finalMg;
+        html += `<div class="result-card"><h3>Bupivacaine HCl</h3><div class="result-row"><span class="result-label">Concentration:</span><span class="result-value">${bc}% (${bc*10} mg/mL)</span></div><div class="result-row"><span class="result-label">Volume:</span><span class="result-value">${bv.toFixed(1)} mL</span></div><div class="result-row"><span class="result-label">Mg:</span><span class="result-value">${bm.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">Max bupi (50% rule):</span><span class="result-value">${mb.toFixed(1)} mg</span></div><div class="result-row"><span class="result-label">50% ratio check:</span><span class="result-value">${ro ? '✓ OK' : '✗ EXCEEDS'}</span></div><div class="result-row"><span class="result-label">Hard cap check:</span><span class="result-value">${co ? '✓ OK' : '✗ EXCEEDS'}</span></div></div>`;
+        if (!ro) { html += '<div class="warning">Bupivacaine exceeds 50% of Exparel dose</div>'; isUnsafe = true; }
+        if (!co) { html += '<div class="warning">Bupivacaine exceeds hard cap limits</div>'; isUnsafe = true; }
     }
-    if (!isUnsafe && exparelMg <= 266) html = `<div class="status-badge status-green">GREEN - SAFE</div>` + html;
+    if (!isUnsafe && em <= 266) html = `<div class="status-badge status-green">GREEN - SAFE</div>` + html;
     return html;
 }
 
 function copySummary() {
-    const patient = getPatientData();
-    if (!patient) return;
-    let summary = `========================================\nLOCAL ANESTHETIC CALCULATOR\n========================================\n\nDate: ${new Date().toLocaleString()}\n\nDISCLAIMER: Educational calculator only.\nVerify all dosing per institutional policy.\n\n--- PATIENT DATA ---\nWeight: ${patient.weight} kg\nEpinephrine: ${patient.useEpi ? 'Yes' : 'No'}\nAge ≥ 70: ${patient.age70 ? 'Yes (0.85× applied)' : 'No'}\nHigh-risk: ${patient.highRisk ? 'Yes (0.80× applied)' : 'No'}\n\n`;
+    const patient = getPatientData(); if (!patient) return;
+    const summary = `========================================\nLOCAL ANESTHETIC CALCULATOR\n========================================\n\nDate: ${new Date().toLocaleString()}\n\nDISCLAIMER: Educational calculator only.\nVerify all dosing per institutional policy.\n\n--- PATIENT DATA ---\nWeight: ${patient.weight} kg\nEpinephrine: ${patient.useEpi ? 'Yes' : 'No'}\nAge >= 70: ${patient.age70 ? 'Yes (0.85x applied)' : 'No'}\nHigh-risk: ${patient.highRisk ? 'Yes (0.80x applied)' : 'No'}\n\n`;
     navigator.clipboard.writeText(summary).then(() => alert('Summary copied!')).catch(() => alert('Copy failed:\n\n' + summary));
 }
 
-// ═══════════════════════════════════════════
-// BMI CALC
-// ═══════════════════════════════════════════
 let bmiUnit = 'metric';
-let bmiSex = 'male';
-
 function setBMIUnit(unit) {
     bmiUnit = unit;
     document.querySelectorAll('[data-unit]').forEach(b => b.classList.toggle('active', b.dataset.unit === unit));
@@ -1420,120 +704,48 @@ function setBMIUnit(unit) {
 
 function calcBMI() {
     let weightKg, heightCm;
-    if (bmiUnit === 'metric') {
-        weightKg = parseFloat(document.getElementById('bmi-weight-kg').value);
-        heightCm = parseFloat(document.getElementById('bmi-height-cm').value);
-    } else {
-        const lb = parseFloat(document.getElementById('bmi-weight-lb').value);
-        const ft = parseFloat(document.getElementById('bmi-height-ft').value) || 0;
-        const inch = parseFloat(document.getElementById('bmi-height-in').value) || 0;
-        weightKg = lb / 2.2046;
-        heightCm = (ft * 12 + inch) * 2.54;
-    }
-
-    if (!weightKg || !heightCm || heightCm < 50 || weightKg < 1) {
-        document.getElementById('bmi-results').classList.add('hidden');
-        return;
-    }
-
-    const heightM = heightCm / 100;
-    const bmi = weightKg / (heightM * heightM);
-
-    let category, color;
-    if (bmi < 18.5) { category = 'Underweight'; color = '#006064'; }
-    else if (bmi < 25) { category = 'Normal Weight'; color = '#1b5e20'; }
-    else if (bmi < 30) { category = 'Overweight'; color = '#f57f17'; }
-    else if (bmi < 35) { category = 'Obese Class I'; color = '#bf360c'; }
-    else if (bmi < 40) { category = 'Obese Class II'; color = '#b71c1c'; }
-    else { category = 'Obese Class III'; color = '#7b0000'; }
-
-    document.getElementById('bmi-value').textContent = bmi.toFixed(1);
-    document.getElementById('bmi-value').style.color = color;
-    document.getElementById('bmi-category').textContent = category;
-    document.getElementById('bmi-category').style.color = color;
-
-    // Marker position: BMI 15 = 0%, BMI 40 = 100%
-    const pct = Math.min(100, Math.max(0, ((bmi - 15) / 25) * 100));
-    document.getElementById('bmi-marker').style.left = pct + '%';
-
-    // IBW (Devine) — requires height in inches
-    const totalInches = heightCm / 2.54;
-    const inchesOver5ft = Math.max(0, totalInches - 60);
-    const ibwMale = 50 + 2.3 * inchesOver5ft;
-    const ibwFemale = 45.5 + 2.3 * inchesOver5ft;
-
-    // LBW (Janmahasatian)
-    const lbwMale = (9270 * weightKg) / (6680 + 216 * bmi);
-    const lbwFemale = (9270 * weightKg) / (8780 + 244 * bmi);
-
-    // ABW (only if BMI > 30)
-    const ibw = ibwMale; // show male as default; could add sex toggle later
-    const abw = bmi > 30 ? ibw + 0.4 * (weightKg - ibw) : weightKg;
-
-    document.getElementById('bmi-ibw').textContent = `♂ ${ibwMale.toFixed(1)} kg | ♀ ${ibwFemale.toFixed(1)} kg`;
-    document.getElementById('bmi-lbw').textContent = `♂ ${lbwMale.toFixed(1)} kg | ♀ ${lbwFemale.toFixed(1)} kg`;
-    document.getElementById('bmi-abw').textContent = bmi > 30
-        ? `♂ ${(ibwMale + 0.4*(weightKg - ibwMale)).toFixed(1)} kg | ♀ ${(ibwFemale + 0.4*(weightKg - ibwFemale)).toFixed(1)} kg`
-        : 'N/A (BMI ≤ 30)';
-    document.getElementById('bmi-cat-label').textContent = category;
-
+    if (bmiUnit === 'metric') { weightKg = parseFloat(document.getElementById('bmi-weight-kg').value); heightCm = parseFloat(document.getElementById('bmi-height-cm').value); }
+    else { const lb = parseFloat(document.getElementById('bmi-weight-lb').value), ft = parseFloat(document.getElementById('bmi-height-ft').value) || 0, inch = parseFloat(document.getElementById('bmi-height-in').value) || 0; weightKg = lb / 2.2046; heightCm = (ft * 12 + inch) * 2.54; }
+    if (!weightKg || !heightCm || heightCm < 50 || weightKg < 1) { document.getElementById('bmi-results').classList.add('hidden'); return; }
+    const hm = heightCm / 100, bmi = weightKg / (hm * hm);
+    let cat, col;
+    if (bmi < 18.5) { cat = 'Underweight'; col = '#006064'; } else if (bmi < 25) { cat = 'Normal Weight'; col = '#1b5e20'; } else if (bmi < 30) { cat = 'Overweight'; col = '#f57f17'; } else if (bmi < 35) { cat = 'Obese Class I'; col = '#bf360c'; } else if (bmi < 40) { cat = 'Obese Class II'; col = '#b71c1c'; } else { cat = 'Obese Class III'; col = '#7b0000'; }
+    document.getElementById('bmi-value').textContent = bmi.toFixed(1); document.getElementById('bmi-value').style.color = col;
+    document.getElementById('bmi-category').textContent = cat; document.getElementById('bmi-category').style.color = col;
+    document.getElementById('bmi-marker').style.left = Math.min(100, Math.max(0, ((bmi - 15) / 25) * 100)) + '%';
+    const ti = heightCm / 2.54, io = Math.max(0, ti - 60);
+    const im = 50 + 2.3 * io, ifem = 45.5 + 2.3 * io;
+    const lm = (9270 * weightKg) / (6680 + 216 * bmi), lf = (9270 * weightKg) / (8780 + 244 * bmi);
+    document.getElementById('bmi-ibw').textContent = `♂ ${im.toFixed(1)} kg | ♀ ${ifem.toFixed(1)} kg`;
+    document.getElementById('bmi-lbw').textContent = `♂ ${lm.toFixed(1)} kg | ♀ ${lf.toFixed(1)} kg`;
+    document.getElementById('bmi-abw').textContent = bmi > 30 ? `♂ ${(im + 0.4*(weightKg-im)).toFixed(1)} kg | ♀ ${(ifem + 0.4*(weightKg-ifem)).toFixed(1)} kg` : 'N/A (BMI ≤ 30)';
+    document.getElementById('bmi-cat-label').textContent = cat;
     document.getElementById('bmi-results').classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════
-// PARKLAND
-// ═══════════════════════════════════════════
-let pkType = 'adult';
-let pkActiveParts = new Set();
-
-const ADULT_PARTS = [
-    { id: 'head', label: 'Head', pct: 9 },
-    { id: 'front-torso', label: 'Front Torso', pct: 18 },
-    { id: 'back-torso', label: 'Back Torso', pct: 18 },
-    { id: 'right-arm', label: 'R Arm', pct: 9 },
-    { id: 'left-arm', label: 'L Arm', pct: 9 },
-    { id: 'right-leg', label: 'R Leg', pct: 18 },
-    { id: 'left-leg', label: 'L Leg', pct: 18 },
-    { id: 'perineum', label: 'Perineum', pct: 1 },
-];
-
-const PEDS_PARTS = [
-    { id: 'head', label: 'Head', pct: 18 },
-    { id: 'front-torso', label: 'Front Torso', pct: 18 },
-    { id: 'back-torso', label: 'Back Torso', pct: 18 },
-    { id: 'right-arm', label: 'R Arm', pct: 9 },
-    { id: 'left-arm', label: 'L Arm', pct: 9 },
-    { id: 'right-leg', label: 'R Leg', pct: 14 },
-    { id: 'left-leg', label: 'L Leg', pct: 14 },
-];
+let pkType = 'adult', pkActiveParts = new Set();
+const ADULT_PARTS = [{id:'head',label:'Head',pct:9},{id:'front-torso',label:'Front Torso',pct:18},{id:'back-torso',label:'Back Torso',pct:18},{id:'right-arm',label:'R Arm',pct:9},{id:'left-arm',label:'L Arm',pct:9},{id:'right-leg',label:'R Leg',pct:18},{id:'left-leg',label:'L Leg',pct:18},{id:'perineum',label:'Perineum',pct:1}];
+const PEDS_PARTS = [{id:'head',label:'Head',pct:18},{id:'front-torso',label:'Front Torso',pct:18},{id:'back-torso',label:'Back Torso',pct:18},{id:'right-arm',label:'R Arm',pct:9},{id:'left-arm',label:'L Arm',pct:9},{id:'right-leg',label:'R Leg',pct:14},{id:'left-leg',label:'L Leg',pct:14}];
 
 function setParklandType(type) {
-    pkType = type;
-    pkActiveParts.clear();
+    pkType = type; pkActiveParts.clear();
     document.querySelectorAll('[data-ptype]').forEach(b => b.classList.toggle('active', b.dataset.ptype === type));
-    const hint = document.getElementById('pk-tbsa-hint');
-    hint.textContent = type === 'adult'
-        ? 'Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%'
-        : 'Lund-Browder (Peds): Head 18% | Each arm 9% | Front/Back torso 18% each | Each leg 14%';
-    renderBodyParts();
-    calcParkland();
+    document.getElementById('pk-tbsa-hint').textContent = type === 'adult' ? 'Wallace Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back torso 18% | Each leg 18% | Perineum 1%' : 'Lund-Browder (Peds): Head 18% | Each arm 9% | Front/Back torso 18% each | Each leg 14%';
+    renderBodyParts(); calcParkland();
 }
 
 function renderBodyParts() {
     const parts = pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS;
-    const container = document.getElementById('pk-body-parts');
-    container.innerHTML = '';
+    const container = document.getElementById('pk-body-parts'); container.innerHTML = '';
     parts.forEach(part => {
         const btn = document.createElement('button');
         btn.className = 'body-part-btn' + (pkActiveParts.has(part.id) ? ' active' : '');
         btn.textContent = `${part.label} (${part.pct}%)`;
         btn.onclick = () => {
-            if (pkActiveParts.has(part.id)) pkActiveParts.delete(part.id);
-            else pkActiveParts.add(part.id);
+            if (pkActiveParts.has(part.id)) pkActiveParts.delete(part.id); else pkActiveParts.add(part.id);
             btn.classList.toggle('active', pkActiveParts.has(part.id));
-            const parts2 = pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS;
-            const tbsa = parts2.filter(p => pkActiveParts.has(p.id)).reduce((s, p) => s + p.pct, 0);
-            document.getElementById('pk-tbsa-value').textContent = tbsa;
+            const p2 = pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS;
+            document.getElementById('pk-tbsa-value').textContent = p2.filter(p => pkActiveParts.has(p.id)).reduce((s, p) => s + p.pct, 0);
             document.getElementById('pk-tbsa-manual').value = '';
             calcParkland();
         };
@@ -1543,61 +755,27 @@ function renderBodyParts() {
 
 function calcParkland() {
     const weight = parseFloat(document.getElementById('pk-weight').value);
-    let tbsa;
-    const manualTbsa = document.getElementById('pk-tbsa-manual').value;
-    if (manualTbsa !== '') {
-        tbsa = parseFloat(manualTbsa);
-    } else {
-        const parts = pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS;
-        tbsa = parts.filter(p => pkActiveParts.has(p.id)).reduce((s, p) => s + p.pct, 0);
-    }
+    const manual = document.getElementById('pk-tbsa-manual').value;
+    let tbsa = manual !== '' ? parseFloat(manual) : (pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS).filter(p => pkActiveParts.has(p.id)).reduce((s, p) => s + p.pct, 0);
     document.getElementById('pk-tbsa-value').textContent = tbsa || 0;
-
-    if (!weight || !tbsa || tbsa <= 0 || weight <= 0) {
-        document.getElementById('pk-results').classList.add('hidden');
-        return;
-    }
-
-    const total = 4 * weight * tbsa;
-    const first8Vol = total / 2;
-    const next16Vol = total / 2;
-    const first8Rate = first8Vol / 8;
-    const next16Rate = next16Vol / 16;
-    const preHosp = total / 8;
-
+    if (!weight || !tbsa || tbsa <= 0 || weight <= 0) { document.getElementById('pk-results').classList.add('hidden'); return; }
+    const total = 4 * weight * tbsa, f8v = total / 2, n16v = total / 2;
     document.getElementById('pk-total').textContent = Math.round(total).toLocaleString() + ' mL';
-    document.getElementById('pk-first8-vol').textContent = Math.round(first8Vol).toLocaleString() + ' mL';
-    document.getElementById('pk-first8-rate').textContent = `${Math.round(first8Rate)} mL/hr`;
-    document.getElementById('pk-next16-vol').textContent = Math.round(next16Vol).toLocaleString() + ' mL';
-    document.getElementById('pk-next16-rate').textContent = `${Math.round(next16Rate)} mL/hr`;
-    document.getElementById('pk-prehosp').textContent = Math.round(preHosp).toLocaleString() + ' mL';
-
+    document.getElementById('pk-first8-vol').textContent = Math.round(f8v).toLocaleString() + ' mL';
+    document.getElementById('pk-first8-rate').textContent = Math.round(f8v / 8) + ' mL/hr';
+    document.getElementById('pk-next16-vol').textContent = Math.round(n16v).toLocaleString() + ' mL';
+    document.getElementById('pk-next16-rate').textContent = Math.round(n16v / 16) + ' mL/hr';
+    document.getElementById('pk-prehosp').textContent = Math.round(total / 8).toLocaleString() + ' mL';
     document.getElementById('pk-res-weight').textContent = weight + ' kg';
     document.getElementById('pk-res-tbsa').textContent = tbsa + '%';
     document.getElementById('pk-res-type').textContent = pkType === 'adult' ? 'Adult' : 'Pediatric';
-
-    // Peds maintenance (4-2-1)
     const pedsCard = document.getElementById('pk-peds-extra');
-    if (pkType === 'peds') {
-        const maintRate = calc421Rate(weight);
-        document.getElementById('pk-maintenance').textContent = `${maintRate.toFixed(1)} mL/hr`;
-        pedsCard.classList.remove('hidden');
-    } else {
-        pedsCard.classList.add('hidden');
-    }
-
+    if (pkType === 'peds') { document.getElementById('pk-maintenance').textContent = calc421Rate(weight).toFixed(1) + ' mL/hr'; pedsCard.classList.remove('hidden'); } else { pedsCard.classList.add('hidden'); }
     document.getElementById('pk-results').classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════
-// 4-2-1 RULE
-// ═══════════════════════════════════════════
 let surgicalLoss = 'minimal';
-const SURGICAL_RATES = {
-    minimal: { low: 2, high: 4, label: 'Minimal: superficial/laparoscopic — 2–4 mL/kg/hr' },
-    moderate: { low: 4, high: 6, label: 'Moderate: open abdominal/thoracic — 4–6 mL/kg/hr' },
-    major: { low: 6, high: 8, label: 'Major: trauma/major vascular — 6–8 mL/kg/hr' },
-};
+const SURGICAL_RATES = { minimal: { low: 2, high: 4, label: 'Minimal: superficial/laparoscopic — 2–4 mL/kg/hr' }, moderate: { low: 4, high: 6, label: 'Moderate: open abdominal/thoracic — 4–6 mL/kg/hr' }, major: { low: 6, high: 8, label: 'Major: trauma/major vascular — 6–8 mL/kg/hr' } };
 
 function setSurgicalLoss(level) {
     surgicalLoss = level;
@@ -1620,7 +798,6 @@ function calc421() {
     const ebl = parseFloat(document.getElementById('f421-ebl').value) || 0;
     const duration = parseFloat(document.getElementById('f421-duration').value) || 0;
 
-    // Maintenance breakdown
     const first10 = Math.min(weight, 10) * 4;
     const next10 = Math.min(Math.max(weight - 10, 0), 10) * 2;
     const remainder = Math.max(weight - 20, 0) * 1;
@@ -1631,55 +808,49 @@ function calc421() {
     document.getElementById('f421-next10').textContent = next10.toFixed(1) + ' mL/hr';
     document.getElementById('f421-remainder').textContent = remainder.toFixed(1) + ' mL/hr';
 
-    // NPO deficit
+    // NPO deficit — Hours 1-3 are discrete boluses; Hour 4+ drops back to maintenance only
     const deficit = totalRate * npo;
     document.getElementById('f421-deficit-total').textContent = deficit > 0 ? `${deficit.toFixed(0)} mL` : 'N/A (no NPO entered)';
     document.getElementById('f421-deficit-h1').textContent = deficit > 0 ? `${(deficit * 0.5).toFixed(0)} mL` : '--';
     document.getElementById('f421-deficit-h2').textContent = deficit > 0 ? `${(deficit * 0.25).toFixed(0)} mL` : '--';
     document.getElementById('f421-deficit-h3').textContent = deficit > 0 ? `${(deficit * 0.25).toFixed(0)} mL` : '--';
+    document.getElementById('f421-maint-ongoing').textContent = `${totalRate.toFixed(1)} mL/hr`;
 
-    // Surgical 3rd space
-    const sRate = SURGICAL_RATES[surgicalLoss];
-    const midRate = (sRate.low + sRate.high) / 2;
+    const sRate = SURGICAL_RATES[surgicalLoss], midRate = (sRate.low + sRate.high) / 2;
     document.getElementById('f421-3rd-rate').textContent = `${sRate.low}–${sRate.high} mL/kg/hr → ~${(midRate * weight).toFixed(0)} mL/hr`;
-    if (duration > 0) {
-        document.getElementById('f421-3rd-total').textContent = `${(midRate * weight * duration).toFixed(0)} mL`;
-    } else {
-        document.getElementById('f421-3rd-total').textContent = '--';
-    }
+    document.getElementById('f421-3rd-total').textContent = duration > 0 ? `${(midRate * weight * duration).toFixed(0)} mL` : '--';
 
-    // EBL replacement
     if (ebl > 0) {
         document.getElementById('f421-ebl-display').textContent = `${ebl} mL`;
         document.getElementById('f421-crystalloid').textContent = `${(ebl * 3).toFixed(0)} mL`;
         document.getElementById('f421-colloid').textContent = `${ebl.toFixed(0)} mL`;
         document.getElementById('f421-ebl-card').classList.remove('hidden');
-    } else {
-        document.getElementById('f421-ebl-card').classList.add('hidden');
-    }
+    } else { document.getElementById('f421-ebl-card').classList.add('hidden'); }
 
-    // Total intraop estimate
+    // ABL
+    const hgbStart = parseFloat(document.getElementById('abl-hgb-start').value);
+    const hgbMin = parseFloat(document.getElementById('abl-hgb-min').value);
+    const ablCard = document.getElementById('f421-abl-card');
+    if (hgbStart > 0 && hgbMin > 0 && hgbStart > hgbMin) {
+        const ebv = weight * 70;
+        const abl = ebv * (hgbStart - hgbMin) / hgbStart;
+        document.getElementById('abl-ebv').textContent = `${Math.round(ebv)} mL (70 mL/kg)`;
+        document.getElementById('abl-hgb-start-display').textContent = `${hgbStart.toFixed(1)} g/dL`;
+        document.getElementById('abl-hgb-min-display').textContent = `${hgbMin.toFixed(1)} g/dL`;
+        document.getElementById('abl-result').textContent = `${Math.round(abl)} mL`;
+        document.getElementById('abl-units').textContent = `~${(abl / 250).toFixed(1)} units`;
+        ablCard.classList.remove('hidden');
+    } else { ablCard.classList.add('hidden'); }
+
     if (duration > 0) {
-        const maintTotal = totalRate * duration;
-        const deficitGiven = deficit; // all deficit
-        const surgicalTotal = midRate * weight * duration;
-        const eblCrystalloid = ebl * 3;
-        const grandTotal = maintTotal + deficitGiven + surgicalTotal + eblCrystalloid;
-        document.getElementById('f421-total').textContent = `~${grandTotal.toFixed(0)} mL (maint + deficit + 3rd space + EBL replacement)`;
-    } else {
-        document.getElementById('f421-total').textContent = 'Enter duration for estimate';
-    }
+        const grand = (totalRate * duration) + deficit + (midRate * weight * duration) + (ebl * 3);
+        document.getElementById('f421-total').textContent = `~${grand.toFixed(0)} mL (maint + deficit + 3rd space + EBL replacement)`;
+    } else { document.getElementById('f421-total').textContent = 'Enter duration for estimate'; }
 
     document.getElementById('f421-results').classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-window.onload = () => {
-    initLA();
-    renderBodyParts();
-};
+window.onload = () => { initLA(); renderBodyParts(); };
 </script>
 </body>
 </html>
