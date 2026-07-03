@@ -1,4 +1,4 @@
-const CACHE_NAME = 'la-calc-v1';
+const CACHE_NAME = 'la-calc-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -32,7 +32,7 @@ self.addEventListener('activate', event => {
 // Fetch strategy: Network first, fallback to cache
 self.addEventListener('fetch', event => {
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-store' })
       .then(response => {
         // Clone the response before caching
         const responseToCache = response.clone();
