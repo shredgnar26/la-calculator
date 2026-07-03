@@ -11,12 +11,8 @@
     <title>BlockCalc</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.5; }
-        .app-nav { background: #fff; padding: 12px 16px 14px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #e0e0e0; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
-        .app-nav-title { color: #1a1a1a; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 10px; }
-        .nav-tabs { display: flex; background: #e9e9eb; border-radius: 10px; padding: 3px; }
-        .nav-tab { flex: 1; padding: 7px 4px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; border-radius: 8px; text-align: center; white-space: nowrap; transition: all 0.18s; user-select: none; }
-        .nav-tab.active { background: #007aff; color: #fff; box-shadow: 0 1px 4px rgba(0,122,255,0.35); }
         .page-panel { display: none; padding: 12px; max-width: 600px; margin: 0 auto; }
         .page-panel.active { display: block; }
         .container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 12px; }
@@ -96,15 +92,6 @@
         .highlight-red { background: #ffeaea; border-radius: 4px; padding: 8px 6px !important; margin: 4px -6px; }
         .highlight-red .result-label { color: #721c24; font-weight: 600; font-size: 14px; }
         .highlight-red .result-value { color: #721c24; font-size: 15px; font-weight: 700; }
-        .bmi-number { font-size: 56px; font-weight: 700; line-height: 1; }
-        .bmi-category { font-size: 18px; font-weight: 600; margin-top: 6px; }
-        .bmi-bar-wrapper { margin: 16px 0; position: relative; }
-        .bmi-bar { height: 14px; border-radius: 7px; background: linear-gradient(to right, #17a2b8 0%, #28a745 18.5%, #ffc107 47.7%, #fd7e14 70%, #dc3545 100%); }
-        .bmi-marker { position: absolute; top: -4px; width: 22px; height: 22px; border-radius: 50%; background: white; border: 3px solid #1a1a1a; transform: translateX(-50%); transition: left 0.4s; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
-        .bmi-labels { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 6px; }
-        .bmi-categories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .bmi-cat-item { padding: 8px 10px; border-radius: 6px; font-size: 12px; }
-        .bmi-cat-item span { font-weight: 700; display: block; font-size: 13px; }
         .parkland-fluid-block { background: white; border-radius: 8px; padding: 16px; margin: 10px 0; border-left: 5px solid #007bff; }
         .parkland-fluid-block.first-8 { border-left-color: #dc3545; }
         .parkland-fluid-block.next-16 { border-left-color: #ffc107; }
@@ -132,17 +119,114 @@
         .info-popup li { margin: 8px 0; color: #333; font-size: 14px; }
         .info-popup .note { background: #e7f3ff; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px; }
         .info-popup .close-btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 16px; }
+
+        /* ==================== DISCLAIMER SCREEN ==================== */
+        .disclaimer-screen { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; flex-direction: column; padding: 48px 24px 24px; }
+        .disclaimer-screen.hidden { display: none; }
+        .disclaimer-brand { text-align: center; margin-top: 22vh; }
+        .disclaimer-brand .logo { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; color: #1a1a1a; }
+        .disclaimer-brand .logo span { color: #007bff; }
+        .disclaimer-brand .tagline { font-size: 17px; color: #888; margin-top: 6px; }
+        .disclaimer-notice { display: flex; gap: 12px; background: #fff8e1; border: 1px solid #ffe08a; border-radius: 14px; padding: 18px; margin: 40px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .disclaimer-notice .warn-icon { font-size: 20px; flex-shrink: 0; }
+        .disclaimer-notice p { font-size: 15px; color: #444; line-height: 1.5; }
+        .disclaimer-screen .btn-understand { margin-top: auto; width: 100%; padding: 18px; font-size: 17px; font-weight: 700; border: none; border-radius: 12px; background: #007bff; color: white; cursor: pointer; }
+
+        /* ==================== TOP BAR / HAMBURGER ==================== */
+        .app-topbar { background: #0a1128; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 14px; }
+        .hamburger-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 4px; display: flex; }
+        .app-topbar-title { font-size: 18px; font-weight: 700; }
+
+        /* ==================== SIDE DRAWER ==================== */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .side-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 82vw; background: #0a1128; color: #fff; z-index: 950; transform: translateX(-100%); transition: transform 0.25s ease; display: flex; flex-direction: column; overflow-y: auto; }
+        .side-drawer.open { transform: translateX(0); }
+        .drawer-header { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+        .drawer-header .logo { font-size: 22px; font-weight: 800; }
+        .drawer-header .tagline { font-size: 13px; color: #8a93b8; margin-top: 2px; }
+        .drawer-menu { padding: 8px 0; }
+        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; cursor: pointer; color: #cdd3ea; font-size: 15px; font-weight: 500; border-left: 3px solid transparent; user-select: none; }
+        .drawer-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .drawer-item.active { background: rgba(0,122,255,0.16); color: #fff; font-weight: 700; border-left-color: #007bff; }
+        .drawer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 8px 0; }
+
+        /* ==================== PATIENT PROFILE ==================== */
+        .segmented { display: flex; background: #e9e9eb; border-radius: 10px; padding: 3px; margin: 6px 0 16px; }
+        .segmented button { flex: 1; padding: 10px 4px; font-size: 14px; font-weight: 600; color: #555; cursor: pointer; border-radius: 8px; text-align: center; border: none; background: transparent; }
+        .segmented button.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+        .unit-toggle { display: flex; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+        .unit-toggle button { padding: 0 16px; font-size: 15px; font-weight: 700; border: none; background: #eee; color: #666; cursor: pointer; }
+        .unit-toggle button.active { background: #007bff; color: #fff; }
+        .profile-result-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .profile-result-row:last-child { border-bottom: none; }
+        .profile-result-name { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+        .profile-result-desc { font-size: 12px; color: #999; margin-top: 2px; }
+        .profile-result-note { font-size: 12px; color: #999; font-style: italic; margin-top: 2px; }
+        .profile-result-value { font-size: 17px; font-weight: 700; color: #1a1a1a; text-align: right; white-space: nowrap; }
+        .profile-result-value.muted { color: #aaa; }
+        .habitus-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .habitus-under { background: #e0f7fa; color: #006064; }
+        .habitus-normal { background: #e8f5e9; color: #1b5e20; }
+        .habitus-over { background: #fff3cd; color: #b5730a; }
+        .habitus-obese { background: #fbe9e7; color: #bf360c; }
     </style>
 </head>
 <body>
 
-<nav class="app-nav">
-    <div class="app-nav-title">BlockCalc</div>
-    <div class="nav-tabs">
-        <div class="nav-tab active" data-panel="panel-la">LA Calc</div>
-        <div class="nav-tab" data-panel="panel-bmi">BMI</div>
-        <div class="nav-tab" data-panel="panel-parkland">Parkland</div>
-        <div class="nav-tab" data-panel="panel-421">4-2-1 / ABL</div>
+<!-- ==================== DISCLAIMER SCREEN ==================== -->
+<div id="disclaimer-screen" class="disclaimer-screen hidden">
+    <div class="disclaimer-brand">
+        <div class="logo">Block<span>Calc</span></div>
+        <div class="tagline">Anesthesia Tools</div>
+    </div>
+    <div class="disclaimer-notice">
+        <span class="warn-icon">⚠️</span>
+        <p>For educational use only. Verify all dosing per institutional policy. Not medical advice.</p>
+    </div>
+    <button class="btn-understand" onclick="acceptDisclaimer()">I Understand</button>
+</div>
+
+<!-- ==================== TOP BAR / HAMBURGER ==================== -->
+<div class="app-topbar">
+    <button class="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="app-topbar-title" id="app-topbar-title">LA Calc</div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<nav class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="logo">BlockCalc</div>
+        <div class="tagline">Anesthesia Tools</div>
+    </div>
+    <div class="drawer-menu">
+        <div class="drawer-item active" data-panel="panel-la" data-title="LA Calc" onclick="selectDrawerPanel(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><line x1="8" y1="19" x2="8" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="16" y1="19" x2="16" y2="19"/></svg>
+            <span>LA Calc</span>
+        </div>
+        <div class="drawer-item" data-panel="panel-profile" data-title="Patient Profile" onclick="selectDrawerPanel(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2"/></svg>
+            <span>Patient Profile</span>
+        </div>
+        <div class="drawer-item" data-panel="panel-parkland" data-title="Parkland" onclick="selectDrawerPanel(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-1.5 4-6 6-6 11a6 6 0 0 0 12 0c0-1.5-.7-2.7-1.5-3.8-.3 1.5-1 2.3-1.8 2.3-1 0-1.2-1-.7-2C14.8 7 12 5.5 12 2z"/></svg>
+            <span>Parkland</span>
+        </div>
+        <div class="drawer-item" data-panel="panel-421" data-title="4-2-1 / ABL" onclick="selectDrawerPanel(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3c-1.2 3-4 5-4 8.5a4 4 0 0 0 8 0C13 8 10.2 6 9 3z"/><path d="M16 9c-.9 2.2-2.8 3.6-2.8 6.1a2.8 2.8 0 0 0 5.6 0C18.8 12.6 16.9 11.2 16 9z"/></svg>
+            <span>4-2-1 / ABL</span>
+        </div>
+        <div class="drawer-item" data-panel="panel-settings" data-title="Settings" onclick="selectDrawerPanel(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+        </div>
+        <hr class="drawer-divider">
+        <div class="drawer-item" onclick="contactUs()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            <span>Contact Us</span>
+        </div>
     </div>
 </nav>
 
@@ -154,7 +238,6 @@
             <a href="#last-section" style="background:#dc3545;color:white;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;text-decoration:none;letter-spacing:0.03em;">LAST ↓</a>
         </div>
         <div class="subtitle">Single &amp; Multi-Agent Dosing</div>
-        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational only. Verify all dosing per institutional policy. Not medical advice.</div>
 
         <div class="section">
             <div class="section-title">Patient Information</div>
@@ -198,7 +281,7 @@
                 <h1 style="color:#dc3545;font-size:20px;margin-bottom:0;">⚡ LAST</h1>
                 <span style="font-size:13px;color:#555;font-weight:500;">Local Anesthetic Systemic Toxicity</span>
             </div>
-            <div class="disclaimer" style="border-color:#dc3545;background:#ffeaea;color:#721c24;"><strong>⚠️ CALL FOR HELP IMMEDIATELY</strong><br>Educational only. Not a substitute for clinical judgment or institutional emergency protocols.</div>
+            <div class="disclaimer" style="border-color:#dc3545;background:#ffeaea;color:#721c24;"><strong>⚠️ CALL FOR HELP IMMEDIATELY</strong><br>Not a substitute for clinical judgment or institutional emergency protocols.</div>
 
             <div class="accordion-card" onclick="toggleAccordion('acc-cns-early')">
                 <div class="accordion-header">
@@ -333,46 +416,89 @@
     </div>
 </div>
 
-<!-- ==================== BMI ==================== -->
-<div id="panel-bmi" class="page-panel">
+<!-- ==================== PATIENT PROFILE ==================== -->
+<div id="panel-profile" class="page-panel">
     <div class="container">
-        <h1>BMI Calculator</h1>
-        <div class="subtitle">Body Mass Index</div>
-        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational tool only.</div>
-        <div class="toggle-group">
-            <button class="toggle-btn active" onclick="setBMIUnit('metric')">Metric (kg/cm)</button>
-            <button class="toggle-btn" onclick="setBMIUnit('imperial')">Imperial (lb/in)</button>
-        </div>
-        <div class="section">
-            <div id="bmi-metric-inputs">
-                <div class="input-group"><label>Weight (kg)</label><input type="number" id="bmi-weight-kg" min="1" step="0.1" placeholder="e.g. 80" oninput="calcBMI()"></div>
-                <div class="input-group"><label>Height (cm)</label><input type="number" id="bmi-height-cm" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()"></div>
+        <h1>Patient Measurements</h1>
+        <div class="input-group">
+            <label>Sex</label>
+            <div class="segmented">
+                <button class="active" id="sex-male-btn" onclick="setSex('male')">Male</button>
+                <button id="sex-female-btn" onclick="setSex('female')">Female</button>
             </div>
-            <div id="bmi-imperial-inputs" class="hidden">
-                <div class="input-group"><label>Weight (lbs)</label><input type="number" id="bmi-weight-lb" min="1" step="0.1" placeholder="e.g. 175" oninput="calcBMI()"></div>
-                <div style="display:flex;gap:8px;">
-                    <div class="input-group" style="flex:1;"><label>Feet</label><input type="number" id="bmi-height-ft" min="1" max="9" step="1" placeholder="5" oninput="calcBMI()"></div>
-                    <div class="input-group" style="flex:1;"><label>Inches</label><input type="number" id="bmi-height-in" min="0" max="11" step="0.1" placeholder="9" oninput="calcBMI()"></div>
+        </div>
+        <div class="input-group">
+            <label>Weight</label>
+            <div class="weight-row">
+                <input type="number" id="profile-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcProfile()">
+                <div class="unit-toggle">
+                    <button class="active" id="profile-weight-kg-btn" onclick="setProfileWeightUnit('kg')">kg</button>
+                    <button id="profile-weight-lbs-btn" onclick="setProfileWeightUnit('lbs')">lbs</button>
                 </div>
             </div>
         </div>
-        <div id="bmi-results" class="hidden">
-            <div class="bmi-display"><div class="bmi-number" id="bmi-value">--</div><div class="bmi-category" id="bmi-category">--</div></div>
-            <div class="bmi-bar-wrapper"><div class="bmi-bar"><div class="bmi-marker" id="bmi-marker" style="left:0%"></div></div><div class="bmi-labels"><span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span></div></div>
-            <div class="bmi-categories-grid">
-                <div class="bmi-cat-item" style="background:#e0f7fa;"><span style="color:#006064;">Underweight</span>&lt; 18.5</div>
-                <div class="bmi-cat-item" style="background:#e8f5e9;"><span style="color:#1b5e20;">Normal</span>18.5–24.9</div>
-                <div class="bmi-cat-item" style="background:#fff8e1;"><span style="color:#f57f17;">Overweight</span>25–29.9</div>
-                <div class="bmi-cat-item" style="background:#fbe9e7;"><span style="color:#bf360c;">Obese</span>≥ 30</div>
+        <div class="input-group">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <label style="margin-bottom:0;">Height</label>
+                <div class="unit-toggle">
+                    <button id="profile-height-cm-btn" onclick="setProfileHeightUnit('cm')">cm</button>
+                    <button class="active" id="profile-height-ftin-btn" onclick="setProfileHeightUnit('ftin')">ft·in</button>
+                </div>
             </div>
-            <div class="result-card" style="margin-top:12px;">
-                <div class="result-row"><span class="result-label">IBW (Devine)</span><span class="result-value" id="bmi-ibw">--</span></div>
-                <div class="result-row"><span class="result-label">Lean Body Weight</span><span class="result-value" id="bmi-lbw">--</span></div>
-                <div class="result-row"><span class="result-label">Adjusted Body Weight</span><span class="result-value" id="bmi-abw">--</span></div>
-                <div class="result-row"><span class="result-label">BMI Category</span><span class="result-value" id="bmi-cat-label">--</span></div>
+            <div id="profile-height-cm-input" class="hidden" style="margin-top:10px;">
+                <input type="number" id="profile-height-cm" min="1" step="0.1" placeholder="e.g. 170" oninput="calcProfile()">
             </div>
-            <div class="info-text" style="margin-top:6px;">IBW (Devine): ♂ 50+2.3×(in>5ft) | ♀ 45.5+2.3×(in>5ft). LBW: Janmahasatian. ABW=IBW+0.4×(actual−IBW) if BMI>30.</div>
+            <div id="profile-height-ftin-input" style="display:flex;gap:8px;margin-top:10px;">
+                <input type="number" id="profile-height-ft" min="1" max="9" step="1" placeholder="Feet" oninput="calcProfile()">
+                <input type="number" id="profile-height-in" min="0" max="11" step="0.1" placeholder="Inches" oninput="calcProfile()">
+            </div>
         </div>
+    </div>
+
+    <div class="container hidden" id="profile-results">
+        <h1>Results</h1>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">IBW</div><div class="profile-result-desc">Ideal body weight — Devine</div></div>
+            <div class="profile-result-value" id="profile-ibw">--</div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">LBW</div><div class="profile-result-desc">Lean body weight — Janmahasatian</div></div>
+            <div class="profile-result-value" id="profile-lbw">--</div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">AjBW</div><div class="profile-result-desc">Adjusted body weight</div><div class="profile-result-note" id="profile-ajbw-note">--</div></div>
+            <div class="profile-result-value" id="profile-ajbw">--</div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">BSA</div><div class="profile-result-desc">Body surface area — Mosteller</div></div>
+            <div class="profile-result-value" id="profile-bsa">--</div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">BMI</div></div>
+            <div class="profile-result-value" id="profile-bmi">--</div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">Habitus</div></div>
+            <div class="profile-result-value"><span class="habitus-badge" id="profile-habitus">--</span></div>
+        </div>
+        <div class="profile-result-row">
+            <div><div class="profile-result-name">Tidal Volume</div><div class="profile-result-desc">6–8 mL/kg IBW (target 7)</div></div>
+            <div class="profile-result-value" id="profile-tv">--</div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SETTINGS ==================== -->
+<div id="panel-settings" class="page-panel">
+    <div class="container">
+        <h1>Settings</h1>
+        <div class="subtitle">App preferences</div>
+        <div class="section">
+            <div class="section-title">About</div>
+            <div class="result-row"><span class="result-label">App</span><span class="result-value">BlockCalc — Anesthesia Tools</span></div>
+            <div class="result-row"><span class="result-label">Version</span><span class="result-value">1.0.0</span></div>
+        </div>
+        <button class="btn btn-secondary" onclick="showDisclaimerAgain()">View Disclaimer</button>
     </div>
 </div>
 
@@ -381,7 +507,7 @@
     <div class="container">
         <h1>Parkland Formula</h1>
         <div class="subtitle">Burn Fluid Resuscitation</div>
-        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational only. Titrate to urine output. Consult burn surgery.</div>
+        <div class="info-text" style="margin-bottom:10px;">Titrate to urine output. Consult burn surgery.</div>
         <div class="toggle-group">
             <button class="toggle-btn active" onclick="setParklandType('adult')">Adult</button>
             <button class="toggle-btn" onclick="setParklandType('peds')">Pediatric</button>
@@ -431,7 +557,7 @@
     <div class="container">
         <h1>4-2-1 Rule &amp; ABL</h1>
         <div class="subtitle">Maintenance Fluids + Deficit + Allowable Blood Loss</div>
-        <div class="disclaimer"><strong>⚠️ DISCLAIMER</strong><br>Educational only. Adjust per clinical status.</div>
+        <div class="info-text" style="margin-bottom:10px;">Adjust per clinical status.</div>
 
         <div class="section">
             <div class="section-title">4-2-1 Maintenance</div>
@@ -546,15 +672,39 @@
 </div>
 
 <script>
-// ==================== NAV ====================
-document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.panel).classList.add('active');
-    });
-});
+// ==================== DISCLAIMER ====================
+function acceptDisclaimer() {
+    localStorage.setItem('blockcalc_disclaimer_ack', '1');
+    document.getElementById('disclaimer-screen').classList.add('hidden');
+}
+function showDisclaimerAgain() {
+    document.getElementById('disclaimer-screen').classList.remove('hidden');
+}
+if (!localStorage.getItem('blockcalc_disclaimer_ack')) {
+    document.getElementById('disclaimer-screen').classList.remove('hidden');
+}
+
+// ==================== NAV / DRAWER ====================
+function openDrawer() {
+    document.getElementById('sideDrawer').classList.add('open');
+    document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer() {
+    document.getElementById('sideDrawer').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+}
+function selectDrawerPanel(item) {
+    document.querySelectorAll('.drawer-item[data-panel]').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(item.dataset.panel).classList.add('active');
+    document.getElementById('app-topbar-title').textContent = item.dataset.title;
+    closeDrawer();
+}
+function contactUs() {
+    window.location.href = 'mailto:support@blockcalc.app?subject=BlockCalc%20Feedback';
+    closeDrawer();
+}
 
 document.getElementById('highRiskInfo').addEventListener('click', e => {
     e.preventDefault(); e.stopPropagation();
@@ -897,33 +1047,79 @@ function copySummary() {
     navigator.clipboard.writeText(lines.join('\n')).then(() => alert('Copied!')).catch(() => alert('Copy failed'));
 }
 
-// ==================== BMI ====================
-let bmiUnit = 'metric';
-function setBMIUnit(unit) {
-    bmiUnit = unit;
-    document.querySelectorAll('#panel-bmi .toggle-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && unit === 'metric') || (i === 1 && unit === 'imperial')));
-    document.getElementById('bmi-metric-inputs').classList.toggle('hidden', unit !== 'metric');
-    document.getElementById('bmi-imperial-inputs').classList.toggle('hidden', unit !== 'imperial');
-    calcBMI();
+// ==================== PATIENT PROFILE ====================
+let profileSex = 'male', profileWeightUnit = 'kg', profileHeightUnit = 'ftin';
+
+function setSex(sex) {
+    profileSex = sex;
+    document.getElementById('sex-male-btn').classList.toggle('active', sex === 'male');
+    document.getElementById('sex-female-btn').classList.toggle('active', sex === 'female');
+    calcProfile();
 }
-function calcBMI() {
-    let wKg, hCm;
-    if (bmiUnit === 'metric') { wKg = parseFloat(document.getElementById('bmi-weight-kg').value); hCm = parseFloat(document.getElementById('bmi-height-cm').value); }
-    else { const lb = parseFloat(document.getElementById('bmi-weight-lb').value), ft = parseFloat(document.getElementById('bmi-height-ft').value) || 0, inch = parseFloat(document.getElementById('bmi-height-in').value) || 0; wKg = lb / 2.2046; hCm = (ft * 12 + inch) * 2.54; }
-    if (!wKg || !hCm || hCm < 50 || wKg < 1) { document.getElementById('bmi-results').classList.add('hidden'); return; }
-    const hm = hCm / 100, bmi = wKg / (hm * hm);
-    let cat, col;
-    if (bmi < 18.5) { cat = 'Underweight'; col = '#006064'; } else if (bmi < 25) { cat = 'Normal'; col = '#1b5e20'; } else if (bmi < 30) { cat = 'Overweight'; col = '#f57f17'; } else if (bmi < 35) { cat = 'Obese I'; col = '#bf360c'; } else if (bmi < 40) { cat = 'Obese II'; col = '#b71c1c'; } else { cat = 'Obese III'; col = '#7b0000'; }
-    document.getElementById('bmi-value').textContent = bmi.toFixed(1); document.getElementById('bmi-value').style.color = col;
-    document.getElementById('bmi-category').textContent = cat; document.getElementById('bmi-category').style.color = col;
-    document.getElementById('bmi-marker').style.left = Math.min(100, Math.max(0, (bmi - 15) / 25 * 100)) + '%';
-    const ti = hCm / 2.54, io = Math.max(0, ti - 60);
-    document.getElementById('bmi-ibw').textContent = `♂ ${(50 + 2.3 * io).toFixed(1)} kg | ♀ ${(45.5 + 2.3 * io).toFixed(1)} kg`;
-    document.getElementById('bmi-lbw').textContent = `♂ ${((9270 * wKg) / (6680 + 216 * bmi)).toFixed(1)} kg | ♀ ${((9270 * wKg) / (8780 + 244 * bmi)).toFixed(1)} kg`;
-    const ibwM = 50 + 2.3 * io, ibwF = 45.5 + 2.3 * io;
-    document.getElementById('bmi-abw').textContent = bmi > 30 ? `♂ ${(ibwM + 0.4 * (wKg - ibwM)).toFixed(1)} kg | ♀ ${(ibwF + 0.4 * (wKg - ibwF)).toFixed(1)} kg` : 'N/A (BMI ≤ 30)';
-    document.getElementById('bmi-cat-label').textContent = cat;
-    document.getElementById('bmi-results').classList.remove('hidden');
+function setProfileWeightUnit(unit) {
+    profileWeightUnit = unit;
+    document.getElementById('profile-weight-kg-btn').classList.toggle('active', unit === 'kg');
+    document.getElementById('profile-weight-lbs-btn').classList.toggle('active', unit === 'lbs');
+    calcProfile();
+}
+function setProfileHeightUnit(unit) {
+    profileHeightUnit = unit;
+    document.getElementById('profile-height-cm-btn').classList.toggle('active', unit === 'cm');
+    document.getElementById('profile-height-ftin-btn').classList.toggle('active', unit === 'ftin');
+    document.getElementById('profile-height-cm-input').classList.toggle('hidden', unit !== 'cm');
+    document.getElementById('profile-height-ftin-input').classList.toggle('hidden', unit !== 'ftin');
+    calcProfile();
+}
+function getProfileWeightKg() {
+    const raw = parseFloat(document.getElementById('profile-weight').value);
+    return profileWeightUnit === 'lbs' ? raw / 2.2046 : raw;
+}
+function getProfileHeightCm() {
+    if (profileHeightUnit === 'cm') return parseFloat(document.getElementById('profile-height-cm').value);
+    const ft = parseFloat(document.getElementById('profile-height-ft').value) || 0;
+    const inch = parseFloat(document.getElementById('profile-height-in').value) || 0;
+    return (ft * 12 + inch) * 2.54;
+}
+function bmiCategory(bmi) {
+    if (bmi < 18.5) return { cat: 'Underweight', cls: 'habitus-under' };
+    if (bmi < 25) return { cat: 'Normal', cls: 'habitus-normal' };
+    if (bmi < 30) return { cat: 'Overweight', cls: 'habitus-over' };
+    if (bmi < 35) return { cat: 'Obese I', cls: 'habitus-obese' };
+    if (bmi < 40) return { cat: 'Obese II', cls: 'habitus-obese' };
+    return { cat: 'Obese III', cls: 'habitus-obese' };
+}
+function calcProfile() {
+    const wKg = getProfileWeightKg();
+    const hCm = getProfileHeightCm();
+    const results = document.getElementById('profile-results');
+    if (!wKg || wKg < 1 || !hCm || hCm < 50) { results.classList.add('hidden'); return; }
+
+    const bmi = wKg / Math.pow(hCm / 100, 2);
+    const inTotal = hCm / 2.54;
+    const inOver5ft = Math.max(0, inTotal - 60);
+    const ibw = profileSex === 'male' ? (50 + 2.3 * inOver5ft) : (45.5 + 2.3 * inOver5ft);
+    const lbw = profileSex === 'male'
+        ? (9270 * wKg) / (6680 + 216 * bmi)
+        : (9270 * wKg) / (8780 + 244 * bmi);
+    const ajbw = ibw + 0.4 * (wKg - ibw);
+    const bsa = Math.sqrt((hCm * wKg) / 3600);
+    const { cat, cls } = bmiCategory(bmi);
+    const tvLow = ibw * 6, tvTarget = ibw * 7, tvHigh = ibw * 8;
+
+    document.getElementById('profile-ibw').textContent = `${ibw.toFixed(1)} kg`;
+    document.getElementById('profile-lbw').textContent = `${lbw.toFixed(1)} kg`;
+    document.getElementById('profile-ajbw').textContent = `${ajbw.toFixed(1)} kg`;
+    const indicated = wKg >= ibw * 1.3;
+    document.getElementById('profile-ajbw').classList.toggle('muted', !indicated);
+    document.getElementById('profile-ajbw-note').textContent = indicated ? '' : 'Not indicated — TBW < 130% IBW';
+    document.getElementById('profile-bsa').textContent = `${bsa.toFixed(2)} m²`;
+    document.getElementById('profile-bmi').textContent = bmi.toFixed(1);
+    const habitusEl = document.getElementById('profile-habitus');
+    habitusEl.textContent = cat;
+    habitusEl.className = 'habitus-badge ' + cls;
+    document.getElementById('profile-tv').textContent = `${Math.round(tvLow)} – ${Math.round(tvTarget)} – ${Math.round(tvHigh)} mL`;
+
+    results.classList.remove('hidden');
 }
 
 // ==================== PARKLAND ====================
