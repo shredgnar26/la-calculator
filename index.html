@@ -80,6 +80,24 @@
         .accordion-chevron { margin-left: auto; font-size: 12px; color: #999; transition: transform 0.2s; }
         .accordion-chevron.open { transform: rotate(180deg); }
         .accordion-body { padding: 0 16px 16px; }
+        /* ===== REMAINING CAPACITY TABLE ===== */
+        .cap-wrap { margin: 12px 0; border: 2px solid #004085; border-radius: 10px; overflow: hidden; }
+        .cap-title { background: #004085; color: #fff; padding: 10px 14px; font-weight: 700; font-size: 15px; }
+        .cap-sub { background: #e8f4ff; color: #004085; padding: 8px 14px; font-size: 12.5px; font-weight: 600; border-bottom: 1px solid #b8d9f5; }
+        table.cap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table.cap-table th { background: #f1f5f9; color: #334155; text-align: left; padding: 7px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #cbd5e1; }
+        table.cap-table th.num, table.cap-table td.num { text-align: right; }
+        table.cap-table td { padding: 7px 12px; border-bottom: 1px solid #eef2f6; }
+        table.cap-table tr.grp-a td { background: #ffffff; }
+        table.cap-table tr.grp-b td { background: #f4f8fc; }
+        table.cap-table tr.drug-start td { border-top: 2px solid #cbd5e1; }
+        table.cap-table td.drugname { font-weight: 700; color: #1a1a1a; }
+        table.cap-table td.conc { color: #475569; }
+        table.cap-table td.vol { font-weight: 800; color: #004085; font-size: 15px; white-space: nowrap; }
+        table.cap-table td.mg { color: #64748b; font-size: 13px; white-space: nowrap; }
+        table.cap-table tr.zero td.vol { color: #dc3545; }
+        .cap-none { padding: 14px; background: #f8d7da; color: #721c24; font-weight: 700; text-align: center; }
+        .cap-foot { padding: 9px 14px; background: #fff8e1; color: #856404; font-size: 12.5px; border-top: 1px solid #ffe08a; }
         .acc-intro { font-size: 13px; color: #555; margin-bottom: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; }
         .symptom-row { padding: 8px 10px; margin: 4px 0; border-radius: 6px; font-size: 13px; }
         .symptom-row.warn { background: #fff8e1; border-left: 3px solid #ffc107; }
@@ -134,7 +152,8 @@
 
         /* ==================== TOP BAR / HAMBURGER ==================== */
         .app-topbar { background: #0a1128; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 14px; }
-        .hamburger-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 4px; display: flex; }
+        .hamburger-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 4px; display: flex; flex-shrink: 0; }
+        .hamburger-btn svg { width: 24px; height: 24px; flex-shrink: 0; }
         .app-topbar-title { font-size: 18px; font-weight: 700; }
 
         /* ==================== SIDE DRAWER ==================== */
@@ -181,7 +200,7 @@
         <div class="tagline">Anesthesia Tools</div>
     </div>
     <div class="disclaimer-notice">
-        <span class="warn-icon">⚠️</span>
+        <span class="warn-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
         <p>For educational use only. Verify all dosing per institutional policy. Not medical advice.</p>
     </div>
     <button class="btn-understand" onclick="acceptDisclaimer()">I Understand</button>
@@ -190,7 +209,7 @@
 <!-- ==================== TOP BAR / HAMBURGER ==================== -->
 <div class="app-topbar">
     <button class="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="app-topbar-title" id="app-topbar-title">LA Calc</div>
 </div>
@@ -203,28 +222,28 @@
     </div>
     <div class="drawer-menu">
         <div class="drawer-item active" data-panel="panel-la" data-title="LA Calc" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><line x1="8" y1="19" x2="8" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="16" y1="19" x2="16" y2="19"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><line x1="8" y1="19" x2="8" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="16" y1="19" x2="16" y2="19"/></svg>
             <span>LA Calc</span>
         </div>
         <div class="drawer-item" data-panel="panel-profile" data-title="Patient Profile" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2"/></svg>
             <span>Patient Profile</span>
         </div>
         <div class="drawer-item" data-panel="panel-parkland" data-title="Parkland" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-1.5 4-6 6-6 11a6 6 0 0 0 12 0c0-1.5-.7-2.7-1.5-3.8-.3 1.5-1 2.3-1.8 2.3-1 0-1.2-1-.7-2C14.8 7 12 5.5 12 2z"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-1.5 4-6 6-6 11a6 6 0 0 0 12 0c0-1.5-.7-2.7-1.5-3.8-.3 1.5-1 2.3-1.8 2.3-1 0-1.2-1-.7-2C14.8 7 12 5.5 12 2z"/></svg>
             <span>Parkland</span>
         </div>
         <div class="drawer-item" data-panel="panel-421" data-title="4-2-1 / ABL" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3c-1.2 3-4 5-4 8.5a4 4 0 0 0 8 0C13 8 10.2 6 9 3z"/><path d="M16 9c-.9 2.2-2.8 3.6-2.8 6.1a2.8 2.8 0 0 0 5.6 0C18.8 12.6 16.9 11.2 16 9z"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3c-1.2 3-4 5-4 8.5a4 4 0 0 0 8 0C13 8 10.2 6 9 3z"/><path d="M16 9c-.9 2.2-2.8 3.6-2.8 6.1a2.8 2.8 0 0 0 5.6 0C18.8 12.6 16.9 11.2 16 9z"/></svg>
             <span>4-2-1 / ABL</span>
         </div>
         <div class="drawer-item" data-panel="panel-settings" data-title="Settings" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span>Settings</span>
         </div>
         <hr class="drawer-divider">
         <div class="drawer-item" onclick="contactUs()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
             <span>Contact Us</span>
         </div>
     </div>
@@ -278,15 +297,15 @@
         <!-- ==================== LAST SECTION ==================== -->
         <div id="last-section" style="margin-top:24px;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-                <h1 style="color:#dc3545;font-size:20px;margin-bottom:0;">⚡ LAST</h1>
+                <h1 style="color:#dc3545;font-size:20px;margin-bottom:0;display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> LAST</h1>
                 <span style="font-size:13px;color:#555;font-weight:500;">Local Anesthetic Systemic Toxicity</span>
             </div>
-            <div class="disclaimer" style="border-color:#dc3545;background:#ffeaea;color:#721c24;"><strong>⚠️ CALL FOR HELP IMMEDIATELY</strong><br>Not a substitute for clinical judgment or institutional emergency protocols.</div>
+            <div class="disclaimer" style="border-color:#dc3545;background:#ffeaea;color:#721c24;"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> CALL FOR HELP IMMEDIATELY</strong><br>Not a substitute for clinical judgment or institutional emergency protocols.</div>
 
             <div class="accordion-card" onclick="toggleAccordion('acc-cns-early')">
                 <div class="accordion-header">
                     <span class="accordion-dot" style="background:#ffc107;"></span>
-                    <span>🧠 CNS — Early Signs</span>
+                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M9.5 3a2.5 2.5 0 0 0-2.5 2.5v.6A3 3 0 0 0 5 9v1a3 3 0 0 0 0 6 2.5 2.5 0 0 0 2.5 2.5H9V3.5A.5.5 0 0 0 9.5 3z"/><path d="M14.5 3a2.5 2.5 0 0 1 2.5 2.5v.6A3 3 0 0 1 19 9v1a3 3 0 0 1 0 6 2.5 2.5 0 0 1-2.5 2.5H15V3.5a.5.5 0 0 1 .5-.5z"/></svg> CNS — Early Signs</span>
                     <span class="accordion-chevron" id="chev-acc-cns-early">▼</span>
                 </div>
                 <div class="accordion-body hidden" id="acc-cns-early">
@@ -298,14 +317,14 @@
                     <div class="symptom-row warn"><strong>Visual disturbance</strong> — blurred, double vision</div>
                     <div class="symptom-row warn"><strong>Agitation / anxiety / sudden behavioral change</strong></div>
                     <div class="symptom-row warn"><strong>Slurred speech</strong></div>
-                    <div class="symptom-note">⚠️ With rapid IV injection or high-potency agents, early CNS signs may be absent. CV collapse can be the first presentation.</div>
+                    <div class="symptom-note"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> With rapid IV injection or high-potency agents, early CNS signs may be absent. CV collapse can be the first presentation.</div>
                 </div>
             </div>
 
             <div class="accordion-card" onclick="toggleAccordion('acc-cns-severe')">
                 <div class="accordion-header">
                     <span class="accordion-dot" style="background:#fd7e14;"></span>
-                    <span>🧠 CNS — Severe</span>
+                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M9.5 3a2.5 2.5 0 0 0-2.5 2.5v.6A3 3 0 0 0 5 9v1a3 3 0 0 0 0 6 2.5 2.5 0 0 0 2.5 2.5H9V3.5A.5.5 0 0 0 9.5 3z"/><path d="M14.5 3a2.5 2.5 0 0 1 2.5 2.5v.6A3 3 0 0 1 19 9v1a3 3 0 0 1 0 6 2.5 2.5 0 0 1-2.5 2.5H15V3.5a.5.5 0 0 1 .5-.5z"/></svg> CNS — Severe</span>
                     <span class="accordion-chevron" id="chev-acc-cns-severe">▼</span>
                 </div>
                 <div class="accordion-body hidden" id="acc-cns-severe">
@@ -320,7 +339,7 @@
             <div class="accordion-card" onclick="toggleAccordion('acc-cv')">
                 <div class="accordion-header">
                     <span class="accordion-dot" style="background:#dc3545;"></span>
-                    <span>❤️ Cardiovascular Signs</span>
+                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Cardiovascular Signs</span>
                     <span class="accordion-chevron" id="chev-acc-cv">▼</span>
                 </div>
                 <div class="accordion-body hidden" id="acc-cv">
@@ -342,7 +361,7 @@
             <div class="accordion-card" onclick="toggleAccordion('acc-actions')">
                 <div class="accordion-header">
                     <span class="accordion-dot" style="background:#dc3545;"></span>
-                    <span>🚨 Immediate Actions</span>
+                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Immediate Actions</span>
                     <span class="accordion-chevron" id="chev-acc-actions">▼</span>
                 </div>
                 <div class="accordion-body hidden" id="acc-actions">
@@ -360,7 +379,7 @@
 
             <!-- ILE CALCULATOR -->
             <div class="section" style="margin-top:16px;">
-                <div class="section-title" style="color:#dc3545;">💉 Lipid Emulsion Dosing (20% Intralipid)</div>
+                <div class="section-title" style="color:#dc3545;display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="2" x2="22" y2="6"/><line x1="17" y1="7" x2="7" y2="17"/><path d="M14 4l6 6"/><path d="M4 20l3-1 10-10-2-2-10 10-1 3z"/><line x1="7" y1="17" x2="4" y2="20"/></svg> Lipid Emulsion Dosing (20% Intralipid)</div>
                 <p style="font-size:13px;color:#555;margin-bottom:14px;">ASRA 2020 — weight-based protocol (&lt;70 kg) or fixed dose (≥70 kg). 20% solution only.</p>
                 <div class="input-group">
                     <label>Patient Weight</label>
@@ -917,7 +936,7 @@ function calculate() {
 
     // 20-min rule
     if (hasExparel && hasNonBupi) {
-        warnings += `<div class="warning"><strong>⚠️ 20-MINUTE RULE</strong><br>Exparel is listed alongside a non-bupivacaine LA. These agents must NOT be admixed in the same syringe. Exparel must be administered ≥20 min AFTER the other agent(s). Sequential, not simultaneous.</div>`;
+        warnings += `<div class="warning"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> 20-MINUTE RULE</strong><br>Exparel is listed alongside a non-bupivacaine LA. These agents must NOT be admixed in the same syringe. Exparel must be administered ≥20 min AFTER the other agent(s). Sequential, not simultaneous.</div>`;
     }
     // 96-hr rule
     if (hasExparel) {
@@ -967,6 +986,10 @@ function calculate() {
         calcs.push({ agent, drug: DRUGS[agent.drug], conc, mgPerMl, volume, usedMg, baseMg, finalMg, mgPerKg, fraction, remainingMl });
     }
 
+    // Amide budget constraint: how much MORE total amide (mg), across bupivacaine /
+    // ropivacaine / Exparel combined, remains before hitting the shared 3.0 mg/kg ceiling.
+    const remainingAmideMg = Math.max(0, 3.0 - totalAmideMgKg) * patient.weight;
+
     // Overall status
     const amideOver = totalAmideMgKg > 3;
     const amideWarn = totalAmideMgKg > 2.5 && !amideOver;
@@ -982,7 +1005,7 @@ function calculate() {
     // Per-agent breakdown table
     html += `<div style="overflow-x:auto;"><table><thead><tr>
         <th>Drug</th><th>%</th><th>mg/mL</th><th>mL used</th><th>mg used</th>
-        <th>Final max mg</th><th>Fraction</th><th class="max-ml-header">Remaining mL</th>
+        <th>Final max mg</th><th class="max-ml-header">% of own max</th>
     </tr></thead><tbody>`;
 
     for (const c of calcs) {
@@ -995,11 +1018,10 @@ function calculate() {
             <td>${c.volume.toFixed ? c.volume.toFixed(1) : c.volume}</td>
             <td>${c.usedMg.toFixed(1)}</td>
             <td>${c.finalMg.toFixed(1)}</td>
-            <td style="${fracColor}">${c.fraction.toFixed(3)} (${fracPct}%)</td>
-            <td class="max-ml-cell">${c.remainingMl.toFixed(1)} mL</td>
+            <td class="max-ml-cell" style="${fracColor}">${fracPct}%</td>
         </tr>`;
-        if (c.volume > 60) html += `<tr><td colspan="8" style="color:#856404;font-size:12px;">⚠️ Volume >60 mL — verify appropriate</td></tr>`;
-        if (c.agent.drug === 'exparel' && c.usedMg > 266) html += `<tr><td colspan="8" class="warning" style="font-size:12px;">⛔ Exparel exceeds 266 mg hard cap</td></tr>`;
+        if (c.volume > 60) html += `<tr><td colspan="7" style="color:#856404;font-size:12px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Volume >60 mL — verify appropriate</td></tr>`;
+        if (c.agent.drug === 'exparel' && c.usedMg > 266) html += `<tr><td colspan="7" class="warning" style="font-size:12px;">⛔ Exparel exceeds 266 mg hard cap</td></tr>`;
     }
     html += `</tbody></table></div>`;
 
@@ -1009,28 +1031,87 @@ function calculate() {
             <div class="result-row"><span class="result-label">Max (mg/kg):</span><span class="result-value">${c.mgPerKg} ${patient.useEpi ? '+ epi' : 'plain'}</span></div>
             <div class="result-row"><span class="result-label">Base max:</span><span class="result-value">${c.baseMg.toFixed(1)} mg</span></div>
             <div class="result-row"><span class="result-label">Final max:</span><span class="result-value">${c.finalMg.toFixed(1)} mg</span></div>
-            <div class="result-row"><span class="result-label">Used:</span><span class="result-value">${c.usedMg.toFixed(1)} mg (${(c.fraction * 100).toFixed(0)}%)</span></div>
-            <div class="result-row highlight-row"><span class="result-label">Remaining:</span><span class="result-value">${c.remainingMl.toFixed(1)} mL</span></div>
+            <div class="result-row highlight-row"><span class="result-label">Used:</span><span class="result-value">${c.usedMg.toFixed(1)} mg (${(c.fraction * 100).toFixed(0)}% of its own max)</span></div>
         </div>`;
     }
 
-    // Totals card — remaining fraction + remaining mL per agent + amide warning if applicable
-    const remaining = Math.max(0, 1.0 - totalFraction);
-    html += `<div class="result-card" style="border-left-color:#2c3e50;">
-        <div class="result-row highlight-row"><span class="result-label">Remaining fraction:</span><span class="result-value">${remaining.toFixed(3)}</span></div>`;
-    for (const c of calcs) {
-        html += `<div class="result-row"><span class="result-label">Remaining — ${c.drug.name}:</span><span class="result-value" style="color:#004085;font-weight:700;">${c.remainingMl.toFixed(1)} mL</span></div>`;
-    }
-    if (totalAmideMgKg > 0) {
-        html += `<hr class="result-divider">
-            <div class="result-row">
-                <span class="result-label">Total amide (mg/kg):</span>
-                <span class="result-value" style="${amideOver ? 'color:#dc3545' : amideWarn ? 'color:#856404' : ''}">${totalAmideMgKg.toFixed(2)} / 3.0</span>
-            </div>`;
-        if (amideOver) html += `<div class="warning" style="margin-top:8px;"><strong>⛔ CUMULATIVE AMIDE TOXICITY</strong><br>Total amide (bupivacaine + ropivacaine + Exparel) exceeds 3 mg/kg. Reassess dosing.</div>`;
-        else if (amideWarn) html += `<div class="info-warn" style="margin-top:8px;"><strong>⚠️ Approaching amide limit</strong> — ${totalAmideMgKg.toFixed(2)} mg/kg of 3.0 mg/kg threshold.</div>`;
+    // ===== GOVERNING NUMBER: additive fraction-of-max across all agents =====
+    // Total capacity used = sum of (mg given / that drug's own final max). This is the
+    // conventional mixture rule and includes EVERY agent given. Remaining capacity is
+    // whatever is left of that single shared pool.
+    const capacityUsedPct = totalFraction * 100;
+    const remainingCapacity = Math.max(0, 1.0 - totalFraction);
+
+    html += `<div class="result-card" style="border-left-color:#004085;">
+        <div class="result-row highlight-row">
+            <span class="result-label">Total capacity used:</span>
+            <span class="result-value" style="${fracOver ? 'color:#dc3545' : fracWarn ? 'color:#856404' : ''};font-size:17px;">${capacityUsedPct.toFixed(0)}%</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">Capacity remaining:</span>
+            <span class="result-value">${(remainingCapacity * 100).toFixed(0)}%</span>
+        </div>
+        <div class="info-text" style="margin-top:6px;">Sum of each agent's dose as a fraction of its own max for this patient. Covers all agents given.</div>
+    </div>`;
+
+    // ===== REMAINING CAPACITY TABLE — "what can I still give" =====
+    // Converts the remaining shared capacity into mL of each drug at each of its common
+    // concentrations. These are ALTERNATIVES: the capacity is one pool, so giving any
+    // one row consumes it. Giving two rows exceeds the limit.
+    html += `<div class="cap-wrap">
+        <div class="cap-title">What you can still give</div>`;
+
+    if (remainingCapacity <= 0) {
+        html += `<div class="cap-none">NO CAPACITY REMAINING — 0 mL of any agent</div>`;
+    } else {
+        html += `<div class="cap-sub">CHOOSE ONE ROW — these are alternatives, not additive. Any single row uses up all remaining capacity.</div>
+        <table class="cap-table"><thead><tr>
+            <th>Drug</th><th>Conc</th><th class="num">Volume</th><th class="num">Dose</th>
+        </tr></thead><tbody>`;
+
+        let grpIdx = 0;
+        for (const key of Object.keys(DRUGS)) {
+            const d = DRUGS[key];
+            const { finalMg } = calcMaxMg(key, patient);
+            const allowedMg = remainingCapacity * finalMg;
+            const grpClass = (grpIdx % 2 === 0) ? 'grp-a' : 'grp-b';
+            let firstRow = true;
+            for (const conc of d.commonConc) {
+                const mgPerMl = conc * 10;
+                const ml = allowedMg / mgPerMl;
+                html += `<tr class="${grpClass}${firstRow ? ' drug-start' : ''}${ml < 0.05 ? ' zero' : ''}">
+                    <td class="drugname">${firstRow ? d.name : ''}</td>
+                    <td class="conc">${conc}%</td>
+                    <td class="num vol">${ml.toFixed(1)} mL</td>
+                    <td class="num mg">${allowedMg.toFixed(0)} mg</td>
+                </tr>`;
+                firstRow = false;
+            }
+            grpIdx++;
+        }
+        html += `</tbody></table>
+        <div class="cap-foot">Exparel has separate admixture rules (20-min / 96-hr) — see warnings above before using that row.</div>`;
     }
     html += `</div>`;
+
+    // ===== Long-acting amide pool — secondary check, collapsed by default =====
+    if (totalAmideMgKg > 0) {
+        const remainingAmideMgKg = Math.max(0, 3.0 - totalAmideMgKg);
+        const amideDot = amideOver ? '#dc3545' : amideWarn ? '#fd7e14' : '#28a745';
+        html += `<div class="accordion-card" onclick="toggleAccordion('acc-amide-pool')">
+            <div class="accordion-header">
+                <span class="accordion-dot" style="background:${amideDot};"></span>
+                <span>Long-acting amide pool — ${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span>
+                <span class="accordion-chevron" id="chev-acc-amide-pool">&#9660;</span>
+            </div>
+            <div class="accordion-body hidden" id="acc-amide-pool">
+                <div class="result-row"><span class="result-label">Used:</span><span class="result-value" style="${amideOver ? 'color:#dc3545' : amideWarn ? 'color:#856404' : ''}">${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span></div>
+                <div class="result-row"><span class="result-label">Room left:</span><span class="result-value">${remainingAmideMgKg.toFixed(2)} mg/kg (${remainingAmideMg.toFixed(0)} mg)</span></div>
+                <div class="info-text" style="margin-top:6px;">Secondary check covering bupivacaine + ropivacaine + Exparel only. Lidocaine and mepivacaine are not counted in this pool. The governing limit for this case is total capacity used, above.</div>`;
+        if (amideOver) html += `<div class="warning" style="margin-top:8px;"><strong>&#9940; CUMULATIVE AMIDE TOXICITY</strong><br>Long-acting amide total exceeds 3 mg/kg. Reassess dosing.</div>`;
+        else if (amideWarn) html += `<div class="info-warn" style="margin-top:8px;"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Approaching amide limit</strong> — ${totalAmideMgKg.toFixed(2)} mg/kg of 3.0 mg/kg.</div>`;
+        html += `</div></div>`;
+    }
 
     rc.innerHTML = html;
     rd.classList.remove('hidden');
