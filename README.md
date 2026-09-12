@@ -1,155 +1,60 @@
-# Local Anesthetic Calculator - PWA 
+# BlockCalc — review version
 
-Progressive Web App for peripheral nerve block dose calculations.
+Anesthesia calculation tools with the original navy, blue and white appearance. This branch is for review before merging into `main`; see [REVIEW.md](REVIEW.md) for clinical scope and outstanding verification decisions.
+
+## Included tools
+
+- Local-anesthetic reference comparisons with complete-input validation and product-specific ceilings.
+- Four-hour maintenance/fasting-deficit breakdown, including partial-duration totals.
+- Allowable blood loss using either hemoglobin (g/dL) or hematocrit (%), with independent inputs and equivalent proportional calculations.
+- Adult body measurements, explicitly selected burn-fluid protocols and a LAST emergency reference linked to ASRA.
+
+No patient information is saved to local storage. Clearing the patient or activating an app update resets the session. Calculation outputs support review and do not supply patient-specific treatment decisions.
 
 ## Files
-- `index.html` - Main application (single-file calculator)
-- `manifest.json` - PWA configuration (app name, icons, display mode)
-- `service-worker.js` - Offline support + auto-updates
 
-## Features
-✓ Install on phone like native app
-✓ Works offline after first load
-✓ Automatic updates when you push changes
-✓ No app store required
+- `index.html`: page structure, labels and reference links.
+- `styles.css`: responsive presentation.
+- `calculations.js`: independently testable validation and arithmetic.
+- `app.js`: patient state, input handling, results and navigation.
+- `service-worker.js`: scoped offline app cache and explicit update activation.
+- `manifest.json`: installable-app metadata.
+- `tests/`: calculation and browser checks.
 
-## Deployment Options
+## Preview locally
 
-### Option 1: GitHub Pages (RECOMMENDED)
+Serve the repository with a local web server, for example:
 
-**Why:** Free, version controlled, auto-deploy via git push
-
-**Steps:**
-1. Create new GitHub repo (e.g., `la-calculator`)
-2. Push these 3 files to repo:
-   ```bash
-   git init
-   git add index.html manifest.json service-worker.js
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/la-calculator.git
-   git push -u origin main
-   ```
-3. Go to repo Settings → Pages
-4. Source: Deploy from branch `main` → folder `/root`
-5. Click Save
-6. Wait 1-2 minutes
-7. Your app is live at: `https://YOUR_USERNAME.github.io/la-calculator`
-
-**To update:**
-```bash
-# Edit files locally
-git add .
-git commit -m "Update calculations"
-git push
-# Live in ~30 seconds
+```sh
+python3 -m http.server 8000
 ```
 
-### Option 2: Vercel (Alternative)
+Open `http://localhost:8000`. No build step is required. Production PWA features require HTTPS. Do not change the production deployment branch to review this version.
 
-**Why:** Faster deploys, custom domains easy
+## Verification
 
-**Steps:**
-1. Install Vercel CLI: `npm i -g vercel`
-2. In project folder: `vercel`
-3. Follow prompts
-4. Auto-deployed on every git push
+Node.js 18 or newer is required for calculation tests:
 
-### Option 3: Netlify (Drag & Drop)
-
-**Why:** Zero terminal commands
-
-**Steps:**
-1. Go to netlify.com
-2. Drag folder into browser
-3. Done - live URL instantly
-
-## How Users Install
-
-### iOS (Safari):
-1. Open your URL
-2. Tap Share icon
-3. Tap "Add to Home Screen"
-4. App appears on home screen
-
-### Android (Chrome):
-1. Open your URL
-2. Tap "Install" banner (or menu → "Install app")
-3. App appears in app drawer
-
-## Auto-Updates
-
-When you push changes:
-- Service worker detects new version
-- Updates cache automatically
-- Users get latest version on next app open (within 24 hours max)
-
-## Cache Version Control
-
-To force immediate update for all users:
-1. Edit `service-worker.js`
-2. Change `CACHE_NAME` from `'la-calc-v1'` to `'la-calc-v2'`
-3. Push changes
-
-## Testing Locally
-
-```bash
-# Simple HTTP server
-python -m http.server 8000
-# or
-npx serve
+```sh
+npm test
 ```
 
-Then visit `http://localhost:8000`
+Browser checks use Playwright and its Chromium browser:
 
-**Note:** PWA features (install prompt, offline) only work on HTTPS in production.
-
-## Customization
-
-**Change app name/colors:**
-Edit `manifest.json` - change `name`, `short_name`, `theme_color`
-
-**Change cache strategy:**
-Edit `service-worker.js` - currently uses "network first, cache fallback"
-
-**Add custom icon:**
-Replace the inline SVG icons in `manifest.json` with paths to real PNG files:
-```json
-"icons": [
-  {
-    "src": "icon-192.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  },
-  {
-    "src": "icon-512.png",
-    "sizes": "512x512",
-    "type": "image/png"
-  }
-]
+```sh
+npm install --no-save playwright
+npx playwright install chromium
+npm run test:browser
 ```
 
-## Distribution
+Alternatively set `PLAYWRIGHT_MODULE` to an installed Playwright module path. The browser test starts its own server at a project subpath, exercises input validation, Hb/HCT comparisons, unit switching, medication copying, responsive screens, offline reload and explicit cache updates. Screenshots go to ignored `test-artifacts/`.
 
-Share the URL with colleagues:
-- Works on any device with modern browser
-- No login required
-- No app store approval needed
-- Updates pushed instantly to everyone
+## Offline updates
 
-## File Size
-Total: ~50KB (single page load)
-Loads in <1 second on 3G
+The application becomes available offline after a successful service-worker install. External clinical references are not cached. Keep an institutional emergency checklist separately.
 
-## Browser Support
-✓ iOS Safari 11.3+
-✓ Android Chrome 40+
-✓ Desktop Chrome/Edge/Safari
-✗ Internet Explorer (not supported)
+For a release, update the service-worker cache version with the application assets. A waiting update is presented to the user and activates only after selection; activation reloads the page and clears current patient entries. Update timing depends on browser behavior and network access. Cache cleanup is limited to this app scope.
 
-## License
-MIT - Use freely
+## Clinical review
 
----
-
-**Questions?** The entire app is in `index.html` - all logic is plain JavaScript, easily readable and modifiable.
+Read `REVIEW.md` before release. Supported populations, route-specific limits, burn protocols, blood-volume factors, combined-agent comparisons and emergency workflows require local verification. Software tests do not establish clinical suitability. Main remains the production branch until the review is approved and merged.

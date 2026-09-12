@@ -1,0 +1,7 @@
+{
+  "name": "blockcalc",
+  "private": true,
+  "version": "2.0.0-review.1",
+  "scripts": {"test": "node --test tests/calculations.test.js", "test:browser": "node tests/browser.cjs"},
+  "engines": {"node": ">=18"}
+}
