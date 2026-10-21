@@ -1,0 +1,4 @@
+# Verified 2026-10-21; local task-owned run. Full original command log retained in workspace checkpoint.
+{"engine":"webkit","cacheAfterCold":{"keys":["blockcalc-http%3A%2F%2F127.0.0.1%3A65179%2Fla-calculator%2F-2.1.0-review.1","unrelated-cache"],"marker":true}}
+{"engine":"webkit","markerDiagnostic":{"url":"http://127.0.0.1:65179/la-calculator/","origin":"http://127.0.0.1:65179","keys":["http://127.0.0.1:65179/la-calculator/manifest.json"],"response":{"status":200,"type":"basic","name":"BlockCalc — Adult Anesthesia Tools"}}}
+[{"engine":"webkit","passed":true,"checks":89}]

@@ -1,1359 +1,302 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#007bff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="BlockCalc">
-    <link rel="manifest" href="manifest.json">
-    <title>BlockCalc</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { overflow-x: hidden; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.5; }
-        .page-panel { display: none; padding: 12px; max-width: 600px; margin: 0 auto; }
-        .page-panel.active { display: block; }
-        .container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 12px; }
-        h1 { font-size: 20px; margin-bottom: 4px; color: #1a1a1a; }
-        .subtitle { color: #666; font-size: 13px; margin-bottom: 16px; }
-        .disclaimer { background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; color: #856404; }
-        .section { margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 8px; }
-        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #2c3e50; }
-        .input-group { margin: 12px 0; }
-        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #333; }
-        input[type="number"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; background: white; -moz-appearance: textfield; }
-        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-        input[type="number"]:focus { outline: none; border-color: #007bff; }
-        .checkbox-row { display: flex; align-items: center; margin: 10px 0; padding: 10px; background: white; border-radius: 6px; }
-        .checkbox-row input[type="checkbox"] { width: 22px; height: 22px; margin-right: 10px; cursor: pointer; flex-shrink: 0; }
-        .checkbox-row label { margin: 0; cursor: pointer; flex: 1; font-size: 14px; }
-        .info-icon { min-width: 28px; min-height: 28px; border-radius: 50%; background: #17a2b8; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; cursor: pointer; margin-left: 10px; flex-shrink: 0; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .warning { background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px; padding: 12px; margin: 10px 0; color: #721c24; font-size: 13px; }
-        .info-warn { background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 10px 12px; margin: 10px 0; color: #856404; font-size: 13px; }
-        .agent-card { background: white; border: 2px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0; }
-        .agent-card.exparel-card { border-color: #ffc107; }
-        .agent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .agent-number { font-weight: 700; color: #007bff; font-size: 15px; }
-        .remove-btn { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-        .btn { width: 100%; padding: 16px; margin: 8px 0; font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .results { margin-top: 8px; }
-        .status-badge { padding: 16px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: 700; margin: 12px 0; }
-        .status-green { background: #d4edda; color: #155724; border: 3px solid #28a745; }
-        .status-yellow { background: #fff3cd; color: #856404; border: 3px solid #ffc107; }
-        .status-red { background: #f8d7da; color: #721c24; border: 3px solid #dc3545; }
-        .result-card { background: white; border-left: 4px solid #007bff; padding: 12px; margin: 10px 0; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        .result-card h3 { font-size: 15px; margin-bottom: 10px; color: #1a1a1a; }
-        .result-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; }
-        .result-row:last-child { border-bottom: none; }
-        .result-label { color: #666; font-size: 13px; }
-        .result-value { font-weight: 600; color: #1a1a1a; font-size: 14px; text-align: right; }
-        .highlight-row { background: #e8f4ff; border-radius: 4px; padding: 8px 6px !important; margin: 4px -6px; }
-        .highlight-row .result-label { color: #004085; font-weight: 600; font-size: 14px; }
-        .highlight-row .result-value { color: #004085; font-size: 15px; }
-        .highlight-red { background: #ffeaea; border-radius: 4px; padding: 8px 6px !important; margin: 4px -6px; }
-        .highlight-red .result-label { color: #721c24; font-weight: 600; font-size: 14px; }
-        .highlight-red .result-value { color: #721c24; font-size: 15px; }
-        .result-divider { border: none; border-top: 2px dashed #ddd; margin: 8px 0; }
-        table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; overflow-x: auto; display: block; }
-        th, td { padding: 7px 4px; text-align: left; border-bottom: 1px solid #ddd; white-space: nowrap; }
-        th { background: #f8f9fa; font-weight: 700; }
-        td.max-ml-cell { background: #e8f4ff; color: #004085; font-weight: 700; }
-        th.max-ml-header { background: #cce5ff !important; color: #004085; }
-        .hidden { display: none; }
-        .info-text { font-size: 12px; color: #666; margin-top: 4px; }
-        .toggle-group { display: flex; background: #f0f0f0; border-radius: 8px; padding: 4px; margin: 10px 0; gap: 4px; }
-        .toggle-btn { flex: 1; padding: 10px; text-align: center; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #666; transition: all 0.2s; }
-        .toggle-btn.active { background: #007bff; color: white; }
-        select.native-select { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; color: #1a1a1a; }
-        select.native-select:focus { outline: none; border-color: #007bff; }
-        .weight-row { display: flex; gap: 8px; }
-        .weight-row input { flex: 1; }
-        .weight-row select { width: 80px; flex-shrink: 0; }
-        .accordion-card { background: white; border-radius: 10px; margin: 10px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-        .accordion-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; font-weight: 600; font-size: 15px; color: #1a1a1a; user-select: none; }
-        .accordion-header:active { background: #f5f5f5; }
-        .accordion-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-        .accordion-chevron { margin-left: auto; font-size: 12px; color: #999; transition: transform 0.2s; }
-        .accordion-chevron.open { transform: rotate(180deg); }
-        .accordion-body { padding: 0 16px 16px; }
-        /* ===== REMAINING CAPACITY TABLE ===== */
-        .cap-wrap { margin: 12px 0; border: 2px solid #004085; border-radius: 10px; overflow: hidden; }
-        .cap-title { background: #004085; color: #fff; padding: 10px 14px; font-weight: 700; font-size: 15px; }
-        .cap-sub { background: #e8f4ff; color: #004085; padding: 8px 14px; font-size: 12.5px; font-weight: 600; border-bottom: 1px solid #b8d9f5; }
-        table.cap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        table.cap-table th { background: #f1f5f9; color: #334155; text-align: left; padding: 7px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #cbd5e1; }
-        table.cap-table th.num, table.cap-table td.num { text-align: right; }
-        table.cap-table td { padding: 7px 12px; border-bottom: 1px solid #eef2f6; }
-        table.cap-table tr.grp-a td { background: #ffffff; }
-        table.cap-table tr.grp-b td { background: #f4f8fc; }
-        table.cap-table tr.drug-start td { border-top: 2px solid #cbd5e1; }
-        table.cap-table td.drugname { font-weight: 700; color: #1a1a1a; }
-        table.cap-table td.conc { color: #475569; }
-        table.cap-table td.vol { font-weight: 800; color: #004085; font-size: 15px; white-space: nowrap; }
-        table.cap-table td.mg { color: #64748b; font-size: 13px; white-space: nowrap; }
-        table.cap-table tr.zero td.vol { color: #dc3545; }
-        .cap-none { padding: 14px; background: #f8d7da; color: #721c24; font-weight: 700; text-align: center; }
-        .cap-foot { padding: 9px 14px; background: #fff8e1; color: #856404; font-size: 12.5px; border-top: 1px solid #ffe08a; }
-        .acc-intro { font-size: 13px; color: #555; margin-bottom: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; }
-        .symptom-row { padding: 8px 10px; margin: 4px 0; border-radius: 6px; font-size: 13px; }
-        .symptom-row.warn { background: #fff8e1; border-left: 3px solid #ffc107; }
-        .symptom-row.danger { background: #ffeaea; border-left: 3px solid #dc3545; }
-        .symptom-note { font-size: 12px; color: #856404; background: #fff3cd; padding: 8px 10px; border-radius: 6px; margin-top: 8px; }
-        .acc-action { background: #e8f4ff; border-left: 3px solid #007bff; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; line-height: 1.7; }
-        .step-row { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; }
-        .step-row:last-of-type { border-bottom: none; }
-        .step-num { background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-        .highlight-red { background: #ffeaea; border-radius: 4px; padding: 8px 6px !important; margin: 4px -6px; }
-        .highlight-red .result-label { color: #721c24; font-weight: 600; font-size: 14px; }
-        .highlight-red .result-value { color: #721c24; font-size: 15px; font-weight: 700; }
-        .parkland-fluid-block { background: white; border-radius: 8px; padding: 16px; margin: 10px 0; border-left: 5px solid #007bff; }
-        .parkland-fluid-block.first-8 { border-left-color: #dc3545; }
-        .parkland-fluid-block.next-16 { border-left-color: #ffc107; }
-        .parkland-fluid-block.pre-hospital { border-left-color: #28a745; }
-        .fluid-block-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 4px; }
-        .fluid-block-value { font-size: 28px; font-weight: 700; color: #1a1a1a; line-height: 1.1; }
-        .fluid-block-sub { font-size: 13px; color: #555; margin-top: 2px; }
-        .body-diagram { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
-        .body-part-btn { padding: 10px 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 13px; font-weight: 500; cursor: pointer; background: white; flex: 1; min-width: 80px; text-align: center; }
-        .body-part-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
-        .tbsa-display { text-align: center; padding: 12px; font-size: 22px; font-weight: 700; }
-        .rate-display { text-align: center; padding: 20px; }
-        .rate-number { font-size: 52px; font-weight: 700; color: #007bff; line-height: 1; }
-        .rate-unit { font-size: 18px; color: #555; margin-top: 4px; }
-        .fluid-breakdown { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
-        .breakdown-item { background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center; }
-        .breakdown-item .bd-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; }
-        .breakdown-item .bd-value { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
-        .breakdown-item .bd-sub { font-size: 11px; color: #666; }
-        .info-popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .info-popup { background: white; border-radius: 12px; padding: 24px; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .info-popup h3 { font-size: 18px; margin-bottom: 12px; color: #2c3e50; }
-        .info-popup p { margin-bottom: 12px; color: #333; font-size: 14px; line-height: 1.6; }
-        .info-popup ul { margin: 12px 0; padding-left: 20px; }
-        .info-popup li { margin: 8px 0; color: #333; font-size: 14px; }
-        .info-popup .note { background: #e7f3ff; border-left: 4px solid #007bff; padding: 12px; margin: 16px 0; border-radius: 4px; font-size: 13px; }
-        .info-popup .close-btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 16px; }
-
-        /* ==================== DISCLAIMER SCREEN ==================== */
-        .disclaimer-screen { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; flex-direction: column; padding: 48px 24px 24px; }
-        .disclaimer-screen.hidden { display: none; }
-        .disclaimer-brand { text-align: center; margin-top: 22vh; }
-        .disclaimer-brand .logo { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; color: #1a1a1a; }
-        .disclaimer-brand .logo span { color: #007bff; }
-        .disclaimer-brand .tagline { font-size: 17px; color: #888; margin-top: 6px; }
-        .disclaimer-notice { display: flex; gap: 12px; background: #fff8e1; border: 1px solid #ffe08a; border-radius: 14px; padding: 18px; margin: 40px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-        .disclaimer-notice .warn-icon { font-size: 20px; flex-shrink: 0; }
-        .disclaimer-notice p { font-size: 15px; color: #444; line-height: 1.5; }
-        .disclaimer-screen .btn-understand { margin-top: auto; width: 100%; padding: 18px; font-size: 17px; font-weight: 700; border: none; border-radius: 12px; background: #007bff; color: white; cursor: pointer; }
-
-        /* ==================== TOP BAR / HAMBURGER ==================== */
-        .app-topbar { background: #0a1128; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 14px; }
-        .hamburger-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 4px; display: flex; flex-shrink: 0; }
-        .hamburger-btn svg { width: 24px; height: 24px; flex-shrink: 0; }
-        .app-topbar-title { font-size: 18px; font-weight: 700; }
-
-        /* ==================== SIDE DRAWER ==================== */
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-        .side-drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 82vw; background: #0a1128; color: #fff; z-index: 950; transform: translateX(-100%); transition: transform 0.25s ease; display: flex; flex-direction: column; overflow-y: auto; }
-        .side-drawer.open { transform: translateX(0); }
-        .drawer-header { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
-        .drawer-header .logo { font-size: 22px; font-weight: 800; }
-        .drawer-header .tagline { font-size: 13px; color: #8a93b8; margin-top: 2px; }
-        .drawer-menu { padding: 8px 0; }
-        .drawer-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; cursor: pointer; color: #cdd3ea; font-size: 15px; font-weight: 500; border-left: 3px solid transparent; user-select: none; }
-        .drawer-item svg { width: 20px; height: 20px; flex-shrink: 0; }
-        .drawer-item.active { background: rgba(0,122,255,0.16); color: #fff; font-weight: 700; border-left-color: #007bff; }
-        .drawer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 8px 0; }
-
-        /* ==================== PATIENT PROFILE ==================== */
-        .segmented { display: flex; background: #e9e9eb; border-radius: 10px; padding: 3px; margin: 6px 0 16px; }
-        .segmented button { flex: 1; padding: 10px 4px; font-size: 14px; font-weight: 600; color: #555; cursor: pointer; border-radius: 8px; text-align: center; border: none; background: transparent; }
-        .segmented button.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
-        .unit-toggle { display: flex; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-        .unit-toggle button { padding: 0 16px; font-size: 15px; font-weight: 700; border: none; background: #eee; color: #666; cursor: pointer; }
-        .unit-toggle button.active { background: #007bff; color: #fff; }
-        .profile-result-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .profile-result-row:last-child { border-bottom: none; }
-        .profile-result-name { font-size: 15px; font-weight: 700; color: #1a1a1a; }
-        .profile-result-desc { font-size: 12px; color: #999; margin-top: 2px; }
-        .profile-result-note { font-size: 12px; color: #999; font-style: italic; margin-top: 2px; }
-        .profile-result-value { font-size: 17px; font-weight: 700; color: #1a1a1a; text-align: right; white-space: nowrap; }
-        .profile-result-value.muted { color: #aaa; }
-        .habitus-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-        .habitus-under { background: #e0f7fa; color: #006064; }
-        .habitus-normal { background: #e8f5e9; color: #1b5e20; }
-        .habitus-over { background: #fff3cd; color: #b5730a; }
-        .habitus-obese { background: #fbe9e7; color: #bf360c; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#007bff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BlockCalc">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+<title>BlockCalc — Adult Anesthesia Tools</title>
+<script src="calculations.js" defer>
+</script>
+<script src="app.js" defer>
+</script>
 </head>
 <body>
-
-<!-- ==================== DISCLAIMER SCREEN ==================== -->
-<div id="disclaimer-screen" class="disclaimer-screen hidden">
-    <div class="disclaimer-brand">
-        <div class="logo">Block<span>Calc</span></div>
-        <div class="tagline">Anesthesia Tools</div>
-    </div>
-    <div class="disclaimer-notice">
-        <span class="warn-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-        <p>For educational use only. Verify all dosing per institutional policy. Not medical advice.</p>
-    </div>
-    <button class="btn-understand" onclick="acceptDisclaimer()">I Understand</button>
-</div>
-
-<!-- ==================== TOP BAR / HAMBURGER ==================== -->
-<div class="app-topbar">
-    <button class="hamburger-btn" onclick="openDrawer()" aria-label="Menu">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-    <div class="app-topbar-title" id="app-topbar-title">LA Calc</div>
-</div>
-
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<nav class="side-drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="logo">BlockCalc</div>
-        <div class="tagline">Anesthesia Tools</div>
-    </div>
-    <div class="drawer-menu">
-        <div class="drawer-item active" data-panel="panel-la" data-title="LA Calc" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><line x1="8" y1="19" x2="8" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="16" y1="19" x2="16" y2="19"/></svg>
-            <span>LA Calc</span>
-        </div>
-        <div class="drawer-item" data-panel="panel-profile" data-title="Patient Profile" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2"/></svg>
-            <span>Patient Profile</span>
-        </div>
-        <div class="drawer-item" data-panel="panel-parkland" data-title="Parkland" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-1.5 4-6 6-6 11a6 6 0 0 0 12 0c0-1.5-.7-2.7-1.5-3.8-.3 1.5-1 2.3-1.8 2.3-1 0-1.2-1-.7-2C14.8 7 12 5.5 12 2z"/></svg>
-            <span>Parkland</span>
-        </div>
-        <div class="drawer-item" data-panel="panel-421" data-title="4-2-1 / ABL" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3c-1.2 3-4 5-4 8.5a4 4 0 0 0 8 0C13 8 10.2 6 9 3z"/><path d="M16 9c-.9 2.2-2.8 3.6-2.8 6.1a2.8 2.8 0 0 0 5.6 0C18.8 12.6 16.9 11.2 16 9z"/></svg>
-            <span>4-2-1 / ABL</span>
-        </div>
-        <div class="drawer-item" data-panel="panel-settings" data-title="Settings" onclick="selectDrawerPanel(this)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <span>Settings</span>
-        </div>
-        <hr class="drawer-divider">
-        <div class="drawer-item" onclick="contactUs()">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-            <span>Contact Us</span>
-        </div>
-    </div>
+<header class="app-topbar">
+<button id="menu-button" class="hamburger-btn" aria-expanded="false" aria-controls="app-menu">☰ <span class="sr-only">Menu</span>
+</button>
+<span class="app-topbar-title">BlockCalc</span>
+<button class="emergency-link" data-page="last">LAST emergency</button>
+</header>
+<nav id="app-menu" class="review-menu" aria-label="Calculators" hidden>
+<button data-page="local" aria-current="page">Local anesthetics</button>
+<button data-page="fluids">Adult fluids</button>
+<button data-page="abl">Blood-loss estimate</button>
+<button data-page="profile">Patient measurements</button>
+<button data-page="burns">Burn fluids</button>
+<button data-page="last">LAST emergency</button>
+<button data-page="settings">Settings &amp; references</button>
 </nav>
-
-<!-- ==================== LA CALC ==================== -->
-<div id="panel-la" class="page-panel active">
-    <div class="container">
-        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
-            <h1 style="margin-bottom:0;">Local Anesthetic Calculator</h1>
-            <a href="#last-section" style="background:#dc3545;color:white;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;text-decoration:none;letter-spacing:0.03em;">LAST ↓</a>
-        </div>
-        <div class="subtitle">Single &amp; Multi-Agent Dosing</div>
-
-        <div class="section">
-            <div class="section-title">Patient Information</div>
-            <div class="input-group">
-                <label>Weight *</label>
-                <div class="weight-row">
-                    <input type="number" id="weight" min="0" step="0.1" placeholder="Enter weight" oninput="onWeightChange()">
-                    <select id="weightUnit" class="native-select" onchange="onWeightChange()">
-                        <option value="kg">kg</option>
-                        <option value="lbs">lbs</option>
-                    </select>
-                </div>
-                <div class="info-text" id="weightRangeHint">Valid range: 20–250 kg</div>
-            </div>
-            <div id="weightWarning" class="warning hidden">
-                Weight outside normal range.
-                <div class="checkbox-row" style="margin-top:8px;">
-                    <input type="checkbox" id="proceedAnyway" onchange="calculate()">
-                    <label for="proceedAnyway">Proceed anyway</label>
-                </div>
-            </div>
-            <div class="checkbox-row"><input type="checkbox" id="useEpi" onchange="calculate()"><label for="useEpi">Epinephrine added</label></div>
-            <div class="checkbox-row"><input type="checkbox" id="age70" onchange="calculate()"><label for="age70">Age ≥ 70 (0.85× reduction)</label></div>
-            <div class="checkbox-row"><input type="checkbox" id="highRisk" onchange="calculate()"><label for="highRisk">High-risk physiology (0.80× reduction)</label><span class="info-icon" id="highRiskInfo">i</span></div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Agents</div>
-            <div id="agentCards"></div>
-            <button class="btn btn-secondary" id="addAgentBtn" onclick="addAgent()">+ Add Agent</button>
-        </div>
-
-        <div id="results" class="results hidden">
-            <div id="resultsContent"></div>
-            <button class="btn btn-success" id="copyBtn" onclick="copySummary()">Copy Summary</button>
-        </div>
-
-        <!-- ==================== LAST SECTION ==================== -->
-        <div id="last-section" style="margin-top:24px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-                <h1 style="color:#dc3545;font-size:20px;margin-bottom:0;display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> LAST</h1>
-                <span style="font-size:13px;color:#555;font-weight:500;">Local Anesthetic Systemic Toxicity</span>
-            </div>
-            <div class="disclaimer" style="border-color:#dc3545;background:#ffeaea;color:#721c24;"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> CALL FOR HELP IMMEDIATELY</strong><br>Not a substitute for clinical judgment or institutional emergency protocols.</div>
-
-            <div class="accordion-card" onclick="toggleAccordion('acc-cns-early')">
-                <div class="accordion-header">
-                    <span class="accordion-dot" style="background:#ffc107;"></span>
-                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M9.5 3a2.5 2.5 0 0 0-2.5 2.5v.6A3 3 0 0 0 5 9v1a3 3 0 0 0 0 6 2.5 2.5 0 0 0 2.5 2.5H9V3.5A.5.5 0 0 0 9.5 3z"/><path d="M14.5 3a2.5 2.5 0 0 1 2.5 2.5v.6A3 3 0 0 1 19 9v1a3 3 0 0 1 0 6 2.5 2.5 0 0 1-2.5 2.5H15V3.5a.5.5 0 0 1 .5-.5z"/></svg> CNS — Early Signs</span>
-                    <span class="accordion-chevron" id="chev-acc-cns-early">▼</span>
-                </div>
-                <div class="accordion-body hidden" id="acc-cns-early">
-                    <p class="acc-intro">Typically within 60 seconds of injection. CNS excitation usually precedes CV collapse — but bupivacaine can go straight to arrest.</p>
-                    <div class="symptom-row warn"><strong>Perioral / tongue numbness</strong> — often first symptom</div>
-                    <div class="symptom-row warn"><strong>Tinnitus / auditory changes</strong></div>
-                    <div class="symptom-row warn"><strong>Metallic taste</strong></div>
-                    <div class="symptom-row warn"><strong>Dizziness / lightheadedness</strong></div>
-                    <div class="symptom-row warn"><strong>Visual disturbance</strong> — blurred, double vision</div>
-                    <div class="symptom-row warn"><strong>Agitation / anxiety / sudden behavioral change</strong></div>
-                    <div class="symptom-row warn"><strong>Slurred speech</strong></div>
-                    <div class="symptom-note"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> With rapid IV injection or high-potency agents, early CNS signs may be absent. CV collapse can be the first presentation.</div>
-                </div>
-            </div>
-
-            <div class="accordion-card" onclick="toggleAccordion('acc-cns-severe')">
-                <div class="accordion-header">
-                    <span class="accordion-dot" style="background:#fd7e14;"></span>
-                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M9.5 3a2.5 2.5 0 0 0-2.5 2.5v.6A3 3 0 0 0 5 9v1a3 3 0 0 0 0 6 2.5 2.5 0 0 0 2.5 2.5H9V3.5A.5.5 0 0 0 9.5 3z"/><path d="M14.5 3a2.5 2.5 0 0 1 2.5 2.5v.6A3 3 0 0 1 19 9v1a3 3 0 0 1 0 6 2.5 2.5 0 0 1-2.5 2.5H15V3.5a.5.5 0 0 1 .5-.5z"/></svg> CNS — Severe</span>
-                    <span class="accordion-chevron" id="chev-acc-cns-severe">▼</span>
-                </div>
-                <div class="accordion-body hidden" id="acc-cns-severe">
-                    <div class="symptom-row danger"><strong>Muscle twitching / tremors</strong></div>
-                    <div class="symptom-row danger"><strong>Seizures</strong> — tonic-clonic</div>
-                    <div class="symptom-row danger"><strong>Loss of consciousness</strong></div>
-                    <div class="symptom-row danger"><strong>Respiratory arrest</strong></div>
-                    <div class="acc-action"><strong>Seizures:</strong> Benzodiazepines first line — midazolam 0.05–0.1 mg/kg IV or lorazepam 0.1 mg/kg.<br>Low-dose propofol (20 mg increments) only if benzo unavailable AND patient hemodynamically stable.<br><strong>Airway:</strong> 100% O₂, hyperventilate — acidosis potentiates toxicity.</div>
-                </div>
-            </div>
-
-            <div class="accordion-card" onclick="toggleAccordion('acc-cv')">
-                <div class="accordion-header">
-                    <span class="accordion-dot" style="background:#dc3545;"></span>
-                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Cardiovascular Signs</span>
-                    <span class="accordion-chevron" id="chev-acc-cv">▼</span>
-                </div>
-                <div class="accordion-body hidden" id="acc-cv">
-                    <div class="symptom-row warn"><strong>Hypertension / tachycardia</strong> — early excitatory phase</div>
-                    <div class="symptom-row danger"><strong>Hypotension</strong></div>
-                    <div class="symptom-row danger"><strong>Bradycardia</strong></div>
-                    <div class="symptom-row danger"><strong>Conduction changes</strong> — PR prolongation, wide QRS, ST changes</div>
-                    <div class="symptom-row danger"><strong>Ventricular arrhythmias</strong> — VT, VF</div>
-                    <div class="symptom-row danger"><strong>Cardiac arrest</strong></div>
-                    <div class="acc-action">
-                        <strong>⛔ Avoid:</strong> Vasopressin, calcium channel blockers, beta-blockers, lidocaine/procainamide for arrhythmia.<br>
-                        <strong>Epinephrine:</strong> ≤1 mcg/kg IV only — large doses impair lipid rescue efficacy.<br>
-                        <strong>Amiodarone</strong> acceptable for refractory VT/VF.<br>
-                        <strong>Standard ACLS will fail</strong> without lipid emulsion. Standard epi doses and vasopressin worsen outcome.
-                    </div>
-                </div>
-            </div>
-
-            <div class="accordion-card" onclick="toggleAccordion('acc-actions')">
-                <div class="accordion-header">
-                    <span class="accordion-dot" style="background:#dc3545;"></span>
-                    <span style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Immediate Actions</span>
-                    <span class="accordion-chevron" id="chev-acc-actions">▼</span>
-                </div>
-                <div class="accordion-body hidden" id="acc-actions">
-                    <div class="step-row"><span class="step-num">1</span><span><strong>STOP</strong> injection immediately</span></div>
-                    <div class="step-row"><span class="step-num">2</span><span><strong>Call for help</strong> — activate emergency response, get LAST rescue kit / Intralipid</span></div>
-                    <div class="step-row"><span class="step-num">3</span><span><strong>Airway</strong> — 100% O₂, secure airway, hyperventilate to correct acidosis</span></div>
-                    <div class="step-row"><span class="step-num">4</span><span><strong>IV access</strong> — large bore if not present</span></div>
-                    <div class="step-row"><span class="step-num">5</span><span><strong>Seizures</strong> — benzodiazepine (midazolam 0.05–0.1 mg/kg or lorazepam 0.1 mg/kg IV)</span></div>
-                    <div class="step-row"><span class="step-num">6</span><span><strong>Lipid emulsion NOW</strong> — 20% Intralipid, dose below ↓</span></div>
-                    <div class="step-row"><span class="step-num">7</span><span><strong>If arrest</strong> — modified ACLS: prolonged CPR, epi ≤1 mcg/kg, consider ECMO/cardiopulmonary bypass</span></div>
-                    <div class="step-row"><span class="step-num">8</span><span><strong>Monitor ≥ 2 hours</strong> after stabilization — delayed recurrence possible</span></div>
-                    <div class="acc-action" style="margin-top:12px;">⏱ Approximately 3-minute window from recognition to lipid administration before hypoxia + acidosis make cardiac blockade irreversible.</div>
-                </div>
-            </div>
-
-            <!-- ILE CALCULATOR -->
-            <div class="section" style="margin-top:16px;">
-                <div class="section-title" style="color:#dc3545;display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="2" x2="22" y2="6"/><line x1="17" y1="7" x2="7" y2="17"/><path d="M14 4l6 6"/><path d="M4 20l3-1 10-10-2-2-10 10-1 3z"/><line x1="7" y1="17" x2="4" y2="20"/></svg> Lipid Emulsion Dosing (20% Intralipid)</div>
-                <p style="font-size:13px;color:#555;margin-bottom:14px;">ASRA 2020 — weight-based protocol (&lt;70 kg) or fixed dose (≥70 kg). 20% solution only.</p>
-                <div class="input-group">
-                    <label>Patient Weight</label>
-                    <div class="weight-row">
-                        <input type="number" id="ile-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcILE()">
-                        <select id="ile-weight-unit" class="native-select" onchange="calcILE()">
-                            <option value="kg">kg</option>
-                            <option value="lbs">lbs</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="ile-results" class="hidden" style="margin-top:16px;">
-                    <div class="result-card" style="border-left-color:#dc3545;">
-                        <h3>Intralipid 20% Dosing</h3>
-                        <div class="result-row"><span class="result-label">Weight</span><span class="result-value" id="ile-weight-display">--</span></div>
-                        <hr class="result-divider">
-                        <div class="result-row highlight-row"><span class="result-label">① Initial bolus (over 2–3 min)</span><span class="result-value" id="ile-bolus1">--</span></div>
-                        <div class="result-row"><span class="result-label">② Infusion rate</span><span class="result-value" id="ile-infusion-rate">--</span></div>
-                        <div class="result-row"><span class="result-label">② Infusion volume / time</span><span class="result-value" id="ile-infusion-vol">--</span></div>
-                        <hr class="result-divider">
-                        <div class="result-row"><span class="result-label">③ Repeat bolus if no response at 5 min</span><span class="result-value" id="ile-bolus2">--</span></div>
-                        <hr class="result-divider">
-                        <div class="result-row highlight-red"><span class="result-label">Max cumulative dose</span><span class="result-value" id="ile-max">--</span></div>
-                        <div class="info-text" style="margin-top:8px;" id="ile-note"></div>
-                    </div>
-                    <div class="result-card" style="border-left-color:#2c3e50;margin-top:8px;">
-                        <h3>Key Reminders</h3>
-                        <div class="result-row"><span class="result-label">Solution</span><span class="result-value">20% only — not 10%</span></div>
-                        <div class="result-row"><span class="result-label">Continue infusion</span><span class="result-value">≥ 15 min after stability</span></div>
-                        <div class="result-row"><span class="result-label">Epinephrine</span><span class="result-value">≤ 1 mcg/kg only</span></div>
-                        <div class="result-row"><span class="result-label">Propofol</span><span class="result-value">⛔ NOT a substitute</span></div>
-                        <div class="result-row"><span class="result-label">Vasopressin / CCB / β-blockers</span><span class="result-value">⛔ Avoid</span></div>
-                        <div class="result-row"><span class="result-label">Post-event monitoring</span><span class="result-value">≥ 2 hours minimum</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CITATION -->
-            <div style="margin-top:16px;padding:14px;background:#f0f4ff;border-radius:8px;border-left:4px solid #007bff;">
-                <div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Guidelines &amp; References</div>
-                <div style="font-size:13px;color:#333;line-height:1.8;">
-                    <strong>NYSORA</strong> — Local Anesthetic Systemic Toxicity<br>
-                    <a href="https://www.nysora.com/topics/complications/local-anesthetic-systemic-toxicity/" target="_blank" style="color:#007bff;word-break:break-all;font-size:12px;">nysora.com/topics/complications/local-anesthetic-systemic-toxicity</a><br><br>
-                    <strong>ASRA 2020</strong> — Third Practice Advisory on LAST. Neal JM et al. <em>Reg Anesth Pain Med.</em> 2020;45:113–123<br><br>
-                    <strong>AHA 2023</strong> — Concurs with ASRA on 20% ILE and benzodiazepines for seizure management<br><br>
-                    <span style="font-size:11px;color:#888;">Mechanism: "Lipid sink" — ILE creates a lipophilic compartment in plasma, sequesters LA from cardiac and neural tissue.</span>
-                </div>
-            </div>
-        </div>
-        <!-- END LAST SECTION -->
-
-    </div>
+<div class="review-banner">ADULTS 18+ · Review candidate. Clinician sign-off is still required.</div>
+<aside class="patient-bar" aria-label="Patient context">
+<div class="patient-heading">
+<strong>Adult patient</strong>
+<button id="reset-patient" class="text-button">Clear patient</button>
 </div>
-
-<!-- ==================== PATIENT PROFILE ==================== -->
-<div id="panel-profile" class="page-panel">
-    <div class="container">
-        <h1>Patient Measurements</h1>
-        <div class="input-group">
-            <label>Sex</label>
-            <div class="segmented">
-                <button class="active" id="sex-male-btn" onclick="setSex('male')">Male</button>
-                <button id="sex-female-btn" onclick="setSex('female')">Female</button>
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Weight</label>
-            <div class="weight-row">
-                <input type="number" id="profile-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcProfile()">
-                <div class="unit-toggle">
-                    <button class="active" id="profile-weight-kg-btn" onclick="setProfileWeightUnit('kg')">kg</button>
-                    <button id="profile-weight-lbs-btn" onclick="setProfileWeightUnit('lbs')">lbs</button>
-                </div>
-            </div>
-        </div>
-        <div class="input-group">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <label style="margin-bottom:0;">Height</label>
-                <div class="unit-toggle">
-                    <button id="profile-height-cm-btn" onclick="setProfileHeightUnit('cm')">cm</button>
-                    <button class="active" id="profile-height-ftin-btn" onclick="setProfileHeightUnit('ftin')">ft·in</button>
-                </div>
-            </div>
-            <div id="profile-height-cm-input" class="hidden" style="margin-top:10px;">
-                <input type="number" id="profile-height-cm" min="1" step="0.1" placeholder="e.g. 170" oninput="calcProfile()">
-            </div>
-            <div id="profile-height-ftin-input" style="display:flex;gap:8px;margin-top:10px;">
-                <input type="number" id="profile-height-ft" min="1" max="9" step="1" placeholder="Feet" oninput="calcProfile()">
-                <input type="number" id="profile-height-in" min="0" max="11" step="0.1" placeholder="Inches" oninput="calcProfile()">
-            </div>
-        </div>
-    </div>
-
-    <div class="container hidden" id="profile-results">
-        <h1>Results</h1>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">IBW</div><div class="profile-result-desc">Ideal body weight — Devine</div></div>
-            <div class="profile-result-value" id="profile-ibw">--</div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">LBW</div><div class="profile-result-desc">Lean body weight — Janmahasatian</div></div>
-            <div class="profile-result-value" id="profile-lbw">--</div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">AjBW</div><div class="profile-result-desc">Adjusted body weight</div><div class="profile-result-note" id="profile-ajbw-note">--</div></div>
-            <div class="profile-result-value" id="profile-ajbw">--</div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">BSA</div><div class="profile-result-desc">Body surface area — Mosteller</div></div>
-            <div class="profile-result-value" id="profile-bsa">--</div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">BMI</div></div>
-            <div class="profile-result-value" id="profile-bmi">--</div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">Habitus</div></div>
-            <div class="profile-result-value"><span class="habitus-badge" id="profile-habitus">--</span></div>
-        </div>
-        <div class="profile-result-row">
-            <div><div class="profile-result-name">Tidal Volume</div><div class="profile-result-desc">6–8 mL/kg IBW (target 7)</div></div>
-            <div class="profile-result-value" id="profile-tv">--</div>
-        </div>
-    </div>
+<div class="fields">
+<div>
+<label for="patient-weight">Measured weight</label>
+<div class="weight-row">
+<input id="patient-weight" type="number" min="0.1" step="any" inputmode="decimal" placeholder="Enter weight">
+<select id="patient-unit" aria-label="Weight unit">
+<option value="kg">kg</option>
+<option value="lb">lb</option>
+</select>
 </div>
-
-<!-- ==================== SETTINGS ==================== -->
-<div id="panel-settings" class="page-panel">
-    <div class="container">
-        <h1>Settings</h1>
-        <div class="subtitle">App preferences</div>
-        <div class="section">
-            <div class="section-title">About</div>
-            <div class="result-row"><span class="result-label">App</span><span class="result-value">BlockCalc — Anesthesia Tools</span></div>
-            <div class="result-row"><span class="result-label">Version</span><span class="result-value">1.0.0</span></div>
-        </div>
-        <button class="btn btn-secondary" onclick="showDisclaimerAgain()">View Disclaimer</button>
-    </div>
 </div>
-
-<!-- ==================== PARKLAND ==================== -->
-<div id="panel-parkland" class="page-panel">
-    <div class="container">
-        <h1>Parkland Formula</h1>
-        <div class="subtitle">Burn Fluid Resuscitation</div>
-        <div class="info-text" style="margin-bottom:10px;">Titrate to urine output. Consult burn surgery.</div>
-        <div class="toggle-group">
-            <button class="toggle-btn active" onclick="setParklandType('adult')">Adult</button>
-            <button class="toggle-btn" onclick="setParklandType('peds')">Pediatric</button>
-        </div>
-        <div class="section">
-            <div class="input-group">
-                <label>Patient Weight</label>
-                <div class="weight-row">
-                    <input type="number" id="pk-weight" min="1" step="0.1" placeholder="Enter weight" oninput="calcParkland()">
-                    <select id="pk-weight-unit" class="native-select" onchange="calcParkland()">
-                        <option value="kg">kg</option>
-                        <option value="lbs">lbs</option>
-                    </select>
-                </div>
-            </div>
-            <div class="section-title" style="margin-top:12px;">% TBSA Burned</div>
-            <div class="info-text" style="margin-bottom:10px;" id="pk-tbsa-hint">Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back 18% | Each leg 18% | Perineum 1%</div>
-            <div id="pk-body-parts" class="body-diagram"></div>
-            <div class="tbsa-display">TBSA: <span id="pk-tbsa-value">0</span>%</div>
-            <div class="input-group"><label>Or enter TBSA manually (%)</label><input type="number" id="pk-tbsa-manual" min="0" max="100" step="1" placeholder="0–100" oninput="calcParkland()"></div>
-        </div>
-        <div id="pk-results" class="hidden">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-                <div class="parkland-fluid-block"><div class="fluid-block-label">Total 24 hr</div><div class="fluid-block-value" id="pk-total">--</div><div class="fluid-block-sub">mL LR</div></div>
-                <div class="parkland-fluid-block pre-hospital"><div class="fluid-block-label">Before Hospital</div><div class="fluid-block-value" id="pk-prehosp">--</div><div class="fluid-block-sub">mL (÷8)</div></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-                <div class="parkland-fluid-block first-8"><div class="fluid-block-label">First 8 hr</div><div class="fluid-block-value" id="pk-first8-vol">--</div><div class="fluid-block-sub" id="pk-first8-rate">--</div></div>
-                <div class="parkland-fluid-block next-16"><div class="fluid-block-label">Next 16 hr</div><div class="fluid-block-value" id="pk-next16-vol">--</div><div class="fluid-block-sub" id="pk-next16-rate">--</div></div>
-            </div>
-            <div id="pk-peds-extra" class="hidden">
-                <div class="parkland-fluid-block" style="border-left-color:#17a2b8;"><div class="fluid-block-label">Maintenance (peds)</div><div class="fluid-block-value" id="pk-maintenance">--</div><div class="fluid-block-sub">mL/hr (4-2-1)</div></div>
-            </div>
-            <div class="result-card" style="margin-top:12px;">
-                <div class="result-row"><span class="result-label">Formula</span><span class="result-value">4 mL × kg × %TBSA</span></div>
-                <div class="result-row"><span class="result-label">Weight</span><span class="result-value" id="pk-res-weight">--</span></div>
-                <div class="result-row"><span class="result-label">TBSA</span><span class="result-value" id="pk-res-tbsa">--</span></div>
-                <div class="result-row"><span class="result-label">Solution</span><span class="result-value">Lactated Ringer's</span></div>
-            </div>
-            <div class="info-text" style="margin-top:8px;">First 8 hr counted from time of injury, not arrival.</div>
-        </div>
-    </div>
+<label for="patient-age">Age (years)<input id="patient-age" type="number" min="18" max="120" step="any" inputmode="decimal" placeholder="18 or older">
+</label>
 </div>
-
-<!-- ==================== 4-2-1 / ABL ==================== -->
-<div id="panel-421" class="page-panel">
-    <div class="container">
-        <h1>4-2-1 Rule &amp; ABL</h1>
-        <div class="subtitle">Maintenance Fluids + Deficit + Allowable Blood Loss</div>
-        <div class="info-text" style="margin-bottom:10px;">Adjust per clinical status.</div>
-
-        <div class="section">
-            <div class="section-title">4-2-1 Maintenance</div>
-            <div class="input-group">
-                <label>Weight</label>
-                <div class="weight-row">
-                    <input type="number" id="f421-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calc421()">
-                    <select id="f421-weight-unit" class="native-select" onchange="calc421()">
-                        <option value="kg">kg</option>
-                        <option value="lbs">lbs</option>
-                    </select>
-                </div>
-            </div>
-            <div class="section-title" style="margin-top:16px;">NPO Deficit</div>
-            <div class="input-group">
-                <label>NPO Duration (hours)</label>
-                <input type="number" id="f421-npo" min="0" step="0.5" placeholder="e.g. 8" oninput="calc421()">
-                <div class="info-text">Deficit = maintenance rate × NPO hours</div>
-            </div>
-            <div class="section-title" style="margin-top:16px;">EBL</div>
-            <div class="input-group">
-                <label>Estimated Blood Loss (mL)</label>
-                <input type="number" id="f421-ebl" min="0" step="10" placeholder="Optional" oninput="calc421()">
-            </div>
-            <div class="section-title" style="margin-top:16px;">Case Duration</div>
-            <div class="input-group">
-                <label>Duration (hours)</label>
-                <input type="number" id="f421-duration" min="0" step="0.25" placeholder="e.g. 2.5" oninput="calc421()">
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Allowable Blood Loss (ABL)</div>
-            <div class="info-text" style="margin-bottom:10px;">Independent of 4-2-1 weight above.</div>
-            <div class="input-group">
-                <label>Patient Weight</label>
-                <div class="weight-row">
-                    <input type="number" id="abl-weight" min="0.1" step="0.1" placeholder="Enter weight" oninput="calcABL()">
-                    <select id="abl-weight-unit" class="native-select" onchange="calcABL()">
-                        <option value="kg">kg</option>
-                        <option value="lbs">lbs</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Average Blood Volume</label>
-                <select id="abl-ebv-select" class="native-select" onchange="calcABL()">
-                    <option value="">Select patient type...</option>
-                    <option value="95">Preterm neonate — 95 mL/kg</option>
-                    <option value="85">Term neonate (37 wk) — 85 mL/kg</option>
-                    <option value="80">&lt; 12 months — 80 mL/kg</option>
-                    <option value="77">1–6 years — 77 mL/kg</option>
-                    <option value="75">Adult Male — 75 mL/kg</option>
-                    <option value="65">Adult Female — 65 mL/kg</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Starting HCT (%)</label>
-                <input type="number" id="abl-hct-start" min="1" max="70" step="0.1" placeholder="e.g. 42" oninput="calcABL()">
-            </div>
-            <div class="input-group">
-                <label>Lowest Allowable HCT (%)</label>
-                <input type="number" id="abl-hct-min" min="1" max="60" step="0.1" placeholder="e.g. 21" oninput="calcABL()">
-                <div class="info-text">Typical: 21–24%</div>
-            </div>
-        </div>
-
-        <div id="f421-results" class="hidden">
-            <div class="section-title">4-2-1 Results</div>
-            <div class="rate-display">
-                <div class="rate-number" id="f421-rate">--</div>
-                <div class="rate-unit">mL / hr</div>
-            </div>
-            <div class="fluid-breakdown">
-                <div class="breakdown-item"><div class="bd-label">First 10 kg</div><div class="bd-value" id="f421-first10">--</div><div class="bd-sub">4 mL/kg/hr</div></div>
-                <div class="breakdown-item"><div class="bd-label">Next 10 kg</div><div class="bd-value" id="f421-next10">--</div><div class="bd-sub">2 mL/kg/hr</div></div>
-                <div class="breakdown-item"><div class="bd-label">Remainder</div><div class="bd-value" id="f421-remainder">--</div><div class="bd-sub">1 mL/kg/hr</div></div>
-            </div>
-            <div class="result-card">
-                <div class="section-title" style="font-size:14px;margin-bottom:8px;">NPO Deficit</div>
-                <div class="result-row"><span class="result-label">Total deficit</span><span class="result-value" id="f421-deficit-total">--</span></div>
-                <div class="result-row"><span class="result-label">Hour 1 (50%)</span><span class="result-value" id="f421-deficit-h1">--</span></div>
-                <div class="result-row"><span class="result-label">Hour 2 (25%)</span><span class="result-value" id="f421-deficit-h2">--</span></div>
-                <div class="result-row"><span class="result-label">Hour 3 (25%)</span><span class="result-value" id="f421-deficit-h3">--</span></div>
-                <hr class="result-divider">
-                <div class="result-row"><span class="result-label" style="font-style:italic;">Hour 4+ maintenance only</span><span class="result-value" id="f421-maint-ongoing" style="color:#007bff;">--</span></div>
-            </div>
-            <div class="result-card hidden" id="f421-ebl-card">
-                <div class="section-title" style="font-size:14px;margin-bottom:8px;">Blood Loss Replacement</div>
-                <div class="result-row"><span class="result-label">EBL</span><span class="result-value" id="f421-ebl-display">--</span></div>
-                <div class="result-row"><span class="result-label">Crystalloid (3:1)</span><span class="result-value" id="f421-crystalloid">--</span></div>
-                <div class="result-row"><span class="result-label">Colloid / blood (1:1)</span><span class="result-value" id="f421-colloid">--</span></div>
-            </div>
-            <div class="result-card">
-                <div class="section-title" style="font-size:14px;margin-bottom:8px;">Estimated Total Intraop</div>
-                <div class="result-row"><span class="result-label">Total</span><span class="result-value" id="f421-total">--</span></div>
-            </div>
-        </div>
-
-        <div id="f421-abl-card" class="result-card hidden" style="border-left-color:#dc3545;">
-            <div class="section-title" style="font-size:14px;margin-bottom:8px;">Allowable Blood Loss (ABL)</div>
-            <div class="result-row"><span class="result-label">Weight</span><span class="result-value" id="abl-weight-display">--</span></div>
-            <div class="result-row"><span class="result-label">EBV (mL/kg)</span><span class="result-value" id="abl-mlkg-display">--</span></div>
-            <div class="result-row"><span class="result-label">Est. Blood Volume</span><span class="result-value" id="abl-ebv">--</span></div>
-            <div class="result-row"><span class="result-label">Starting HCT</span><span class="result-value" id="abl-hct-start-display">--</span></div>
-            <div class="result-row"><span class="result-label">Min HCT</span><span class="result-value" id="abl-hct-min-display">--</span></div>
-            <div class="result-row highlight-row"><span class="result-label">Max Allowable Blood Loss</span><span class="result-value" id="abl-result">--</span></div>
-            <div class="result-row"><span class="result-label">pRBC units (~250 mL)</span><span class="result-value" id="abl-units">--</span></div>
-            <div class="info-text" style="margin-top:8px;">ABL = EBV × (HCT_start − HCT_min) / HCT_start</div>
-        </div>
-    </div>
+<p class="info-text" id="patient-context">Enter age and weight. No patient data are saved.</p>
+<p class="validation" id="patient-error" role="alert" hidden>
+</p>
+</aside>
+<main>
+<section class="page-panel active" id="page-local" aria-labelledby="title-local">
+<div class="container">
+<h1 id="title-local" tabindex="-1">Local anesthetics</h1>
+<p class="subtitle">Enter the dose. Check the units. Review the limits.</p><p class="info-text">Use only the listed infiltration or nerve-block routes. Do not use these checks for paracervical, IV regional, spinal, epidural, or eye blocks.</p>
+<aside class="info-warn">CAUTION — A dose below a limit can still cause harm. Check the route, dosing weight, patient factors, and all doses given.</aside>
+<label class="checkbox-row">
+<input id="la-risk" type="checkbox">Patient factors require a lower dose or further review</label>
+<label for="la-prior-exparel">EXPAREL given in the past 96 hours?
+<select id="la-prior-exparel"><option value="">Select</option><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not known</option></select></label>
+<details>
+<summary>Which patient factors matter?</summary>
+<p>Liver, heart, or kidney disease, pregnancy, acid buildup, and frailty may change the plan. Older adults may need less. Choose a lower limit when needed; this app does not choose one for you.</p>
+</details>
+<div id="medications"></div>
+<details id="exparel-checks" hidden open><summary>EXPAREL checks — required</summary>
+<p class="info-text">One dose and one site only. No epidural, spinal, IV, joint, or other block calculations.</p>
+<label for="la-pregnancy">Pregnant?<select id="la-pregnancy"><option value="">Select</option><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not known</option></select></label>
+<label for="exp-prior-local">Other local anesthetic before this EXPAREL dose?<select id="exp-prior-local"><option value="">Select</option><option value="none">None</option><option value="lidocaine">Lidocaine before EXPAREL</option><option value="other">Another local anesthetic</option><option value="unknown">Not known</option></select></label>
+<label id="exp-lidocaine-wrap" for="exp-lidocaine-minutes" hidden>Minutes since local lidocaine<input id="exp-lidocaine-minutes" type="number" min="0" step="any" inputmode="decimal"></label>
+<p class="info-text">The 20-minute rule applies to lidocaine given before EXPAREL. It does not allow mixing or later lidocaine. Record that earlier dose and review its toxicity risk separately.</p>
+<label for="exp-bupi-timing">How will bupivacaine HCl be used?<select id="exp-bupi-timing"><option value="">Select</option><option value="none">No bupivacaine HCl</option><option value="admix">Mixed in the same syringe</option><option value="immediately-before">Given right before EXPAREL</option><option value="other">Later or another plan</option></select></label>
+<label for="exp-diluent">Added dilution fluid<select id="exp-diluent"><option value="">Select</option><option value="none">None</option><option value="saline">Preservative-free 0.9% sodium chloride</option><option value="lr">Lactated Ringer’s</option><option value="other">Other fluid</option></select></label>
+<label for="exp-diluent-volume">Added fluid volume (mL)<input id="exp-diluent-volume" type="number" min="0" max="5000" step="any" inputmode="decimal" placeholder="Enter 0 if none"></label>
+<p class="info-text">Use only the two listed dilution fluids. Water and other low-salt fluids can damage EXPAREL.</p>
+</details>
+<button id="add-medication" class="btn btn-secondary">+ Add medication</button>
+<p id="la-error" class="validation" role="alert" hidden>
+</p>
+<div id="la-results" aria-live="polite">
 </div>
+<button id="copy-summary" class="btn btn-primary" disabled>Copy complete review</button>
+<p id="copy-status" role="status">
+</p>
+</div>
+</section>
+<section class="page-panel" id="page-fluids" aria-labelledby="title-fluids" hidden>
+<div class="container">
+<h1 id="title-fluids" tabindex="-1">Adult fluids</h1>
+<p class="subtitle">Historical 4-2-1 estimate · adults only</p>
+<p id="fluid-error" class="validation" role="alert" hidden></p>
+<div id="fluid-results" aria-live="polite"></div>
+<aside class="info-warn"><strong>CAUTION — This is not an IV fluid order.</strong><p>Adult needs may differ. Fasting alone does not set a fluid deficit or a replacement plan.</p></aside>
+<details><summary>Compare with NICE adult maintenance</summary>
+<p>Choose the weight for this reference. This does not change the 4-2-1 weight.</p>
+<label for="fluid-basis">Weight used<select id="fluid-basis"><option value="">Select</option><option value="measured">Measured weight above</option><option value="ideal">Clinician-confirmed ideal weight</option><option value="clinician">Other clinician-selected weight</option></select></label>
+<label id="fluid-weight-wrap" for="fluid-weight" hidden>Selected weight (kg)<input id="fluid-weight" type="number" min="0.1" max="350" step="any" inputmode="decimal"></label>
+<p id="nice-error" class="validation" role="alert" hidden></p><div id="nice-results" aria-live="polite"></div>
+<p>For obesity, NICE uses ideal weight and the lower range. Adults rarely need over 3 L/day for routine maintenance. Get expert help when BMI is over 40.</p>
+<p>Older or frail adults, kidney or heart failure, and risk of refeeding may need less. Count oral, tube, IV drug, and other fluid intake. Review fluid balance, labs, and response.</p>
+<p>Specialist conditions such as pregnancy, severe organ disease, diabetes, burns, or brain injury need a separate plan.</p><p>These water ranges do not choose fluid type, salts, or glucose. NICE CG174 is a hospital maintenance guide; it is not a surgical replacement formula.</p>
+</details>
+<p class="source-note">Sources checked 2026-10-21 · <a href="references.html#fluids">Offline fluid rules and limits</a></p>
+</div>
+</section>
+<section class="page-panel" id="page-abl" aria-labelledby="title-abl" hidden>
+<div class="container">
+<h1 id="title-abl" tabindex="-1">Simple blood-loss estimate</h1>
+<p class="subtitle">Hemoglobin or hematocrit, using the same proportional-loss method.</p>
+<label for="abl-factor">Clinician-selected blood-volume factor (mL/kg)<input id="abl-factor" type="number" min="40" max="120" step="any" inputmode="decimal" placeholder="Enter the protocol factor"></label>
+<p class="info-text">Use the factor in the approved adult protocol. This app does not choose a factor or measure blood volume.</p>
+<fieldset>
+<legend>Laboratory value used</legend>
+<div class="segmented">
+<label>
+<input type="radio" name="abl-mode" value="hb" checked>Hemoglobin (g/dL)</label>
+<label>
+<input type="radio" name="abl-mode" value="hct">Hematocrit (%)</label>
+</div>
+</fieldset>
+<div id="hb-fields" class="fields">
+<label for="hb-start">Starting hemoglobin (g/dL)<input id="hb-start" type="number" min="0.1" max="25" step="any" placeholder="e.g. 14">
+</label>
+<label for="hb-min">Clinician-selected minimum (g/dL)<input id="hb-min" type="number" min="0.1" max="25" step="any" placeholder="Enter selected minimum">
+</label>
+</div>
+<div id="hct-fields" class="fields" hidden>
+<label for="hct-start">Starting hematocrit (%)<input id="hct-start" type="number" min="0.1" max="75" step="any" placeholder="e.g. 42">
+</label>
+<label for="hct-min">Clinician-selected minimum (%)<input id="hct-min" type="number" min="0.1" max="75" step="any" placeholder="Enter selected minimum">
+</label>
+</div>
+<p id="abl-error" class="validation" role="alert" hidden>
+</p>
+<div id="abl-results" aria-live="polite">
+</div>
+<aside class="clinical-note">
+<strong>An estimate, not a transfusion trigger</strong>
+<p>Use patient condition, bleeding rate, laboratory results, and the clinician’s plan. ABL is not converted to blood-product units.</p>
+</aside>
+<details>
+<summary>Compare hemoglobin and hematocrit</summary>
+<p>Both use a simple model: estimated blood volume × (starting value − selected minimum) ÷ starting value.</p>
+<p>With 5,250 mL estimated blood volume, 14→10 g/dL and 42→30% each give 1,500 mL because the proportional change is identical.</p>
+<p>Enter measured values in their original units. Hematocrit is not automatically set to three times hemoglobin. Switching modes preserves each mode’s entries.</p>
+<div id="abl-comparison">
+</div>
+</details>
+<details>
+<summary>Method and references</summary>
+<p>This model treats lost blood as having the starting blood count. Dilution can make it underestimate loss. Other methods give different results. Do not use this number as a transfusion trigger.</p>
+<a href="https://pubmed.ncbi.nlm.nih.gov/3631499/" target="_blank" rel="noopener">Hemoglobin linear method and limitations</a>
+<p class="source-note">Checked 2026-10-21 · <a href="references.html#other">Offline model limits</a></p>
+</details>
+</div>
+</section>
+<section class="page-panel" id="page-profile" aria-labelledby="title-profile" hidden>
+<div class="container">
+<h1 id="title-profile" tabindex="-1">Patient measurements</h1>
+<p class="subtitle">Adult body-size estimates, with their purpose explained.</p>
+<label for="profile-sex">Sex used by these formulas<select id="profile-sex">
+<option value="">Select</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+</label>
+<div class="fields">
+<label for="profile-height">Measured height<input id="profile-height" type="number" min="0" step="any" placeholder="Enter height">
+</label>
+<label for="height-unit">Height unit<select id="height-unit">
+<option value="cm">cm</option>
+<option value="in">inches</option>
+</select>
+</label>
+</div>
+<p class="info-text">Reference scope: adults ≥18 years, height 152.4–230 cm. Shorter adults need another method.</p>
+<p id="profile-error" class="validation" role="alert" hidden>
+</p>
+<div id="profile-results" aria-live="polite">
+</div>
+<aside class="clinical-note">
+<strong>Which weight should I use?</strong>
+<p>Follow the specific drug or ventilation protocol. Measured, ideal, lean, adjusted and predicted weights are not interchangeable.</p>
+</aside>
+</div>
+</section>
+<section class="page-panel" id="page-burns" aria-labelledby="title-burns" hidden>
+<div class="container">
+<h1 id="title-burns" tabindex="-1">Burn fluids</h1>
+<p class="subtitle">Select the clinical protocol with the burn team.</p>
+<label for="burn-protocol">Protocol<select id="burn-protocol">
+<option value="">Select protocol</option>
+<option value="aba-adult">ABA adult, burns ≥20% TBSA — 2 mL/kg/%</option>
+<option value="parkland-adult">Historical Parkland, adult — 4 mL/kg/%</option>
 
-<script>
-// ==================== DISCLAIMER ====================
-function acceptDisclaimer() {
-    localStorage.setItem('blockcalc_disclaimer_ack', '1');
-    document.getElementById('disclaimer-screen').classList.add('hidden');
-}
-function showDisclaimerAgain() {
-    document.getElementById('disclaimer-screen').classList.remove('hidden');
-}
-if (!localStorage.getItem('blockcalc_disclaimer_ack')) {
-    document.getElementById('disclaimer-screen').classList.remove('hidden');
-}
-
-// ==================== NAV / DRAWER ====================
-function openDrawer() {
-    document.getElementById('sideDrawer').classList.add('open');
-    document.getElementById('drawerOverlay').classList.add('open');
-}
-function closeDrawer() {
-    document.getElementById('sideDrawer').classList.remove('open');
-    document.getElementById('drawerOverlay').classList.remove('open');
-}
-function selectDrawerPanel(item) {
-    document.querySelectorAll('.drawer-item[data-panel]').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-    document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(item.dataset.panel).classList.add('active');
-    document.getElementById('app-topbar-title').textContent = item.dataset.title;
-    closeDrawer();
-}
-function contactUs() {
-    window.location.href = 'mailto:support@blockcalc.app?subject=BlockCalc%20Feedback';
-    closeDrawer();
-}
-
-document.getElementById('highRiskInfo').addEventListener('click', e => {
-    e.preventDefault(); e.stopPropagation();
-    const ov = document.createElement('div'); ov.className = 'info-popup-overlay';
-    ov.innerHTML = `<div class="info-popup"><h3>High-Risk Physiology for LAST</h3><p>Conditions increasing LAST risk (ASRA):</p><ul><li><strong>Hepatic dysfunction</strong> — reduced amide metabolism</li><li><strong>Cardiac disease</strong> — low CO, CHF, conduction defects</li><li><strong>Metabolic acidosis</strong> — increases free (unbound) fraction</li><li><strong>Pregnancy</strong> — increased cardiac sensitivity</li><li><strong>Renal dysfunction</strong> — impaired clearance</li><li><strong>Extremes of age</strong> — altered PK/PD</li></ul><div class="note">Both reductions multiply: age≥70 + high-risk = 0.85 × 0.80 = 0.68× total.</div><button class="close-btn" onclick="this.closest('.info-popup-overlay').remove()">Close</button></div>`;
-    document.body.appendChild(ov);
-    ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
-});
-
-// ==================== DRUGS ====================
-const DRUGS = {
-    lidocaine:      { name: 'Lidocaine (Xylocaine)',           plainMgKg: 4.5, epiMgKg: 7,  advisory: { plain: 300, epi: 500 }, commonConc: [0.5, 1, 1.5, 2] },
-    mepivacaine:    { name: 'Mepivacaine (Polocaine)',          plainMgKg: 5,   epiMgKg: 7,  commonConc: [1, 1.5, 2] },
-    bupivacaine:    { name: 'Bupivacaine (Marcaine)',           plainMgKg: 2.5, epiMgKg: 3,  hardCap: { plain: 175, epi: 225 }, commonConc: [0.25, 0.5, 0.75] },
-    ropivacaine:    { name: 'Ropivacaine (Naropin)',            plainMgKg: 3,   epiMgKg: 3,  commonConc: [0.2, 0.5, 0.75, 1] },
-    chloroprocaine: { name: 'Chloroprocaine (Nesacaine)',       plainMgKg: 11,  epiMgKg: 14, commonConc: [2, 3] },
-    exparel:        { name: 'Exparel (Liposomal Bupivacaine)',  plainMgKg: 2,   epiMgKg: 3,  hardCap: { plain: 266, epi: 266 }, commonConc: [1.3], isExparel: true }
-};
-
-// Drugs that are non-bupivacaine — Exparel must wait 20 min after these
-const NON_BUPI = ['lidocaine', 'mepivacaine', 'ropivacaine', 'chloroprocaine'];
-// Amide agents for cumulative toxicity tracking
-const AMIDES = ['bupivacaine', 'ropivacaine', 'exparel'];
-
-let agents = [];
-
-function getWeightKg() {
-    const raw = parseFloat(document.getElementById('weight').value);
-    const unit = document.getElementById('weightUnit').value;
-    return unit === 'lbs' ? raw / 2.2046 : raw;
-}
-
-function onWeightChange() {
-    const raw = parseFloat(document.getElementById('weight').value);
-    const unit = document.getElementById('weightUnit').value;
-    const kg = unit === 'lbs' ? raw / 2.2046 : raw;
-    const warn = document.getElementById('weightWarning');
-    const hint = document.getElementById('weightRangeHint');
-    hint.textContent = unit === 'lbs' ? 'Valid range: 44–551 lbs' : 'Valid range: 20–250 kg';
-    const inRange = kg >= 20 && kg <= 250;
-    warn.classList.toggle('hidden', !raw || inRange);
-    if (inRange) document.getElementById('proceedAnyway').checked = false;
-    calculate();
-}
-
-function getPatientData() {
-    const kg = getWeightKg();
-    const proceed = document.getElementById('proceedAnyway').checked;
-    if (!kg || isNaN(kg)) return null;
-    if ((kg < 20 || kg > 250) && !proceed) return null;
-    return {
-        weight: kg,
-        useEpi: document.getElementById('useEpi').checked,
-        age70: document.getElementById('age70').checked,
-        highRisk: document.getElementById('highRisk').checked
-    };
-}
-
-function calcMaxMg(drugKey, patient) {
-    const drug = DRUGS[drugKey];
-    const mgPerKg = patient.useEpi ? drug.epiMgKg : drug.plainMgKg;
-    let base = patient.weight * mgPerKg;
-    if (drug.hardCap) {
-        const cap = patient.useEpi ? drug.hardCap.epi : drug.hardCap.plain;
-        base = Math.min(base, cap);
-    }
-    let mult = 1.0;
-    if (patient.age70) mult *= 0.85;
-    if (patient.highRisk) mult *= 0.80;
-    return { baseMg: base, finalMg: base * mult, mgPerKg };
-}
-
-// ==================== AGENT CARDS ====================
-function addAgent() {
-    if (agents.length >= 3) return;
-    agents.push({ id: Date.now(), drug: '', conc: '', volume: '' });
-    renderAgents();
-    calculate();
-}
-
-function removeAgent(id) {
-    agents = agents.filter(a => a.id !== id);
-    renderAgents();
-    calculate();
-}
-
-function renderAgents() {
-    const container = document.getElementById('agentCards');
-    container.innerHTML = '';
-    if (agents.length === 0) {
-        container.innerHTML = '<p style="color:#999;text-align:center;padding:12px 0;">No agents added yet.</p>';
-    }
-    agents.forEach((agent, idx) => {
-        const isExp = agent.drug === 'exparel';
-        const card = document.createElement('div');
-        card.className = 'agent-card' + (isExp ? ' exparel-card' : '');
-
-        // Header
-        const hdr = document.createElement('div'); hdr.className = 'agent-header';
-        hdr.innerHTML = `<span class="agent-number">Agent ${idx + 1}${isExp ? ' — Exparel' : ''}</span>` +
-            (agents.length > 1 ? `<button class="remove-btn" onclick="removeAgent(${agent.id})">Remove</button>` : '');
-        card.appendChild(hdr);
-
-        // Drug select
-        const dg = document.createElement('div'); dg.className = 'input-group';
-        dg.innerHTML = '<label>Drug</label>';
-        const dsel = document.createElement('select'); dsel.className = 'native-select';
-        dsel.innerHTML = '<option value="">Select drug...</option>' +
-            Object.keys(DRUGS).map(k => `<option value="${k}" ${k === agent.drug ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
-        dsel.addEventListener('change', () => {
-            agent.drug = dsel.value;
-            // Auto-lock concentration for Exparel
-            if (agent.drug === 'exparel') agent.conc = '1.3';
-            else agent.conc = '';
-            renderAgents(); calculate();
-        });
-        dg.appendChild(dsel); card.appendChild(dg);
-
-        // Concentration
-        const cg = document.createElement('div'); cg.className = 'input-group';
-        cg.innerHTML = '<label>Concentration (%)</label>';
-        if (isExp) {
-            // Locked display
-            const locked = document.createElement('div');
-            locked.style.cssText = 'padding:14px;background:#fff8e1;border:2px solid #ffc107;border-radius:8px;font-weight:600;color:#856404;';
-            locked.textContent = '1.3% (13.3 mg/mL) — Fixed';
-            cg.appendChild(locked);
-        } else {
-            const csel = document.createElement('select'); csel.className = 'native-select';
-            const concs = agent.drug ? DRUGS[agent.drug].commonConc : [];
-            csel.innerHTML = '<option value="">Select conc...</option>' +
-                concs.map(c => `<option value="${c}" ${String(c) === String(agent.conc) ? 'selected' : ''}>${c}%</option>`).join('');
-            csel.disabled = !agent.drug;
-            csel.addEventListener('change', () => { agent.conc = csel.value; calculate(); });
-            cg.appendChild(csel);
-        }
-        card.appendChild(cg);
-
-        // Volume
-        const vg = document.createElement('div'); vg.className = 'input-group';
-        vg.innerHTML = '<label>Volume (mL)</label>';
-        const vi = document.createElement('input'); vi.type = 'number'; vi.min = '0'; vi.step = '0.1';
-        vi.placeholder = isExp ? 'Max 20 mL (266 mg)' : 'Volume in mL';
-        vi.value = agent.volume;
-        if (isExp) vi.setAttribute('max', '20');
-        vi.addEventListener('input', e => { agent.volume = e.target.value; calculate(); });
-        vg.appendChild(vi); card.appendChild(vg);
-
-        // Exparel: Bupi HCl sub-inputs + warnings
-        if (isExp) {
-            // Divider
-            const div0 = document.createElement('hr'); div0.className = 'result-divider'; div0.style.margin = '16px 0'; card.appendChild(div0);
-
-            // Bupi HCl sub-section label
-            const subLabel = document.createElement('div');
-            subLabel.style.cssText = 'font-size:14px;font-weight:700;color:#2c3e50;margin-bottom:4px;';
-            subLabel.textContent = 'Bupivacaine HCl (optional co-admin)';
-            card.appendChild(subLabel);
-
-            const subNote = document.createElement('div');
-            subNote.className = 'info-text'; subNote.style.marginBottom = '10px';
-            subNote.textContent = 'May be admixed with Exparel only. Ratio must not exceed 1:2 (bupi HCl mg : Exparel mg).';
-            card.appendChild(subNote);
-
-            // Bupi HCl concentration
-            const bcg = document.createElement('div'); bcg.className = 'input-group';
-            bcg.innerHTML = '<label>Bupi HCl Concentration (%)</label>';
-            const bcsel = document.createElement('select'); bcsel.className = 'native-select';
-            bcsel.innerHTML = '<option value="">None (not using)</option>' +
-                [0.25, 0.5, 0.75].map(c => `<option value="${c}" ${String(c) === String(agent.bupiConc) ? 'selected' : ''}>${c}%</option>`).join('');
-            bcsel.addEventListener('change', () => { agent.bupiConc = bcsel.value; calculate(); });
-            bcg.appendChild(bcsel); card.appendChild(bcg);
-
-            // Bupi HCl volume
-            const bvg = document.createElement('div'); bvg.className = 'input-group';
-            bvg.innerHTML = '<label>Bupi HCl Volume (mL)</label>';
-            const bvi = document.createElement('input'); bvi.type = 'number'; bvi.min = '0'; bvi.step = '0.1';
-            bvi.placeholder = 'Volume in mL'; bvi.value = agent.bupiVol || '';
-            bvi.addEventListener('input', e => { agent.bupiVol = e.target.value; calculate(); });
-            bvg.appendChild(bvi); card.appendChild(bvg);
-
-            // Static warning block
-            const warnDiv = document.createElement('div'); warnDiv.className = 'warning'; warnDiv.style.marginTop = '12px';
-            warnDiv.innerHTML = `<strong>⛔ EXPAREL — DO NOT ADMIX</strong> with any non-bupivacaine LA in the same syringe.<br>
-                Lidocaine, ropivacaine, mepivacaine, and chloroprocaine cause <em>immediate</em> free bupivacaine release from liposomes.<br><br>
-                <strong>20-Min Rule:</strong> Administer Exparel ≥20 min AFTER any non-bupivacaine LA in the same field.<br>
-                <strong>96-Hr Rule:</strong> Avoid additional bupivacaine products for 96 hr post-Exparel.`;
-            card.appendChild(warnDiv);
-        }
-
-        container.appendChild(card);
-    });
-    document.getElementById('addAgentBtn').style.display = agents.length >= 3 ? 'none' : 'block';
-}
-
-// ==================== CALCULATE ====================
-function calculate() {
-    const patient = getPatientData();
-    const rd = document.getElementById('results');
-    const rc = document.getElementById('resultsContent');
-    if (!patient || agents.length === 0) { rd.classList.add('hidden'); return; }
-
-    const valid = agents.filter(a => a.drug && a.conc && parseFloat(a.volume) >= 0);
-    if (valid.length === 0) { rd.classList.add('hidden'); return; }
-
-    const hasExparel = valid.some(a => a.drug === 'exparel');
-    const hasNonBupi = valid.some(a => NON_BUPI.includes(a.drug));
-
-    let warnings = '';
-
-    // 20-min rule
-    if (hasExparel && hasNonBupi) {
-        warnings += `<div class="warning"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> 20-MINUTE RULE</strong><br>Exparel is listed alongside a non-bupivacaine LA. These agents must NOT be admixed in the same syringe. Exparel must be administered ≥20 min AFTER the other agent(s). Sequential, not simultaneous.</div>`;
-    }
-    // 96-hr rule
-    if (hasExparel) {
-        warnings += `<div class="info-warn"><strong>⏱ 96-HOUR RULE</strong><br>No additional bupivacaine products (plain bupi, levobupivacaine, or additional Exparel) within 96 hours of Exparel administration.</div>`;
-    }
-    // Bupi HCl ratio check — pulled from Exparel card's own sub-inputs
-    if (hasExparel) {
-        const exAgent = valid.find(a => a.drug === 'exparel');
-        if (exAgent && exAgent.bupiConc && exAgent.bupiVol) {
-            const exMg = parseFloat(exAgent.volume) * 13.3;
-            const bupiMg = parseFloat(exAgent.bupiConc) * 10 * parseFloat(exAgent.bupiVol);
-            if (exMg > 0 && bupiMg > 0) {
-                const ratio = bupiMg / exMg;
-                const maxBupi = exMg * 0.5;
-                if (ratio > 0.5) {
-                    warnings += `<div class="warning"><strong>⛔ BUPI HCl RATIO EXCEEDED</strong><br>
-                        Bupi HCl: ${bupiMg.toFixed(1)} mg | Exparel: ${exMg.toFixed(1)} mg | Ratio: ${(ratio * 100).toFixed(0)}%<br>
-                        Max allowed: ${maxBupi.toFixed(1)} mg bupi HCl (50% of Exparel dose). Reduce dose.</div>`;
-                } else {
-                    warnings += `<div class="info-warn"><strong>✓ Bupi HCl ratio OK</strong> — ${bupiMg.toFixed(1)} mg bupi HCl / ${exMg.toFixed(1)} mg Exparel = ${(ratio * 100).toFixed(0)}% (max 50% ✓)<br>
-                        Note: combined bupivacaine toxicity is additive — monitor CNS/CV status.</div>`;
-                }
-            }
-        }
-    }
-
-    // Per-agent calcs
-    let totalFraction = 0, totalAmideMgKg = 0;
-    const calcs = [];
-
-    for (const agent of valid) {
-        const conc = parseFloat(agent.conc);
-        const volume = parseFloat(agent.volume) || 0;
-        if (!conc || volume < 0) continue;
-        const { baseMg, finalMg, mgPerKg } = calcMaxMg(agent.drug, patient);
-        const mgPerMl = conc * 10;
-        const usedMg = mgPerMl * volume;
-        const fraction = usedMg / finalMg;
-        totalFraction += fraction;
-        if (AMIDES.includes(agent.drug)) totalAmideMgKg += usedMg / patient.weight;
-        // If Exparel card has bupi HCl sub-input, add that to cumulative amide too
-        if (agent.drug === 'exparel' && agent.bupiConc && agent.bupiVol) {
-            const bupiSubMg = parseFloat(agent.bupiConc) * 10 * parseFloat(agent.bupiVol);
-            if (bupiSubMg > 0) totalAmideMgKg += bupiSubMg / patient.weight;
-        }
-        const remainingMl = Math.max(0, (finalMg - usedMg) / mgPerMl);
-        calcs.push({ agent, drug: DRUGS[agent.drug], conc, mgPerMl, volume, usedMg, baseMg, finalMg, mgPerKg, fraction, remainingMl });
-    }
-
-    // Amide budget constraint: how much MORE total amide (mg), across bupivacaine /
-    // ropivacaine / Exparel combined, remains before hitting the shared 3.0 mg/kg ceiling.
-    const remainingAmideMg = Math.max(0, 3.0 - totalAmideMgKg) * patient.weight;
-
-    // Overall status
-    const amideOver = totalAmideMgKg > 3;
-    const amideWarn = totalAmideMgKg > 2.5 && !amideOver;
-    const fracOver = totalFraction > 1.0;
-    const fracWarn = totalFraction >= 0.8 && !fracOver;
-
-    let statusClass = 'status-green', statusText = 'GREEN — SAFE';
-    if (fracOver || amideOver) { statusClass = 'status-red'; statusText = 'RED — UNSAFE'; }
-    else if (fracWarn || amideWarn) { statusClass = 'status-yellow'; statusText = 'YELLOW — CAUTION'; }
-
-    let html = warnings + `<div class="status-badge ${statusClass}">${statusText}</div>`;
-
-    // Per-agent breakdown table
-    html += `<div style="overflow-x:auto;"><table><thead><tr>
-        <th>Drug</th><th>%</th><th>mg/mL</th><th>mL used</th><th>mg used</th>
-        <th>Final max mg</th><th class="max-ml-header">% of own max</th>
-    </tr></thead><tbody>`;
-
-    for (const c of calcs) {
-        const fracPct = (c.fraction * 100).toFixed(0);
-        const fracColor = c.fraction > 1 ? 'color:#dc3545;font-weight:700' : c.fraction >= 0.8 ? 'color:#856404;font-weight:700' : '';
-        html += `<tr>
-            <td>${c.drug.name}</td>
-            <td>${c.conc}</td>
-            <td>${c.mgPerMl}</td>
-            <td>${c.volume.toFixed ? c.volume.toFixed(1) : c.volume}</td>
-            <td>${c.usedMg.toFixed(1)}</td>
-            <td>${c.finalMg.toFixed(1)}</td>
-            <td class="max-ml-cell" style="${fracColor}">${fracPct}%</td>
-        </tr>`;
-        if (c.volume > 60) html += `<tr><td colspan="7" style="color:#856404;font-size:12px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Volume >60 mL — verify appropriate</td></tr>`;
-        if (c.agent.drug === 'exparel' && c.usedMg > 266) html += `<tr><td colspan="7" class="warning" style="font-size:12px;">⛔ Exparel exceeds 266 mg hard cap</td></tr>`;
-    }
-    html += `</tbody></table></div>`;
-
-    // Per-agent detail cards
-    for (const c of calcs) {
-        html += `<div class="result-card"><h3>${c.drug.name} ${c.conc}%</h3>
-            <div class="result-row"><span class="result-label">Max (mg/kg):</span><span class="result-value">${c.mgPerKg} ${patient.useEpi ? '+ epi' : 'plain'}</span></div>
-            <div class="result-row"><span class="result-label">Base max:</span><span class="result-value">${c.baseMg.toFixed(1)} mg</span></div>
-            <div class="result-row"><span class="result-label">Final max:</span><span class="result-value">${c.finalMg.toFixed(1)} mg</span></div>
-            <div class="result-row highlight-row"><span class="result-label">Used:</span><span class="result-value">${c.usedMg.toFixed(1)} mg (${(c.fraction * 100).toFixed(0)}% of its own max)</span></div>
-        </div>`;
-    }
-
-    // ===== GOVERNING NUMBER: additive fraction-of-max across all agents =====
-    // Total capacity used = sum of (mg given / that drug's own final max). This is the
-    // conventional mixture rule and includes EVERY agent given. Remaining capacity is
-    // whatever is left of that single shared pool.
-    const capacityUsedPct = totalFraction * 100;
-    const remainingCapacity = Math.max(0, 1.0 - totalFraction);
-
-    html += `<div class="result-card" style="border-left-color:#004085;">
-        <div class="result-row highlight-row">
-            <span class="result-label">Total capacity used:</span>
-            <span class="result-value" style="${fracOver ? 'color:#dc3545' : fracWarn ? 'color:#856404' : ''};font-size:17px;">${capacityUsedPct.toFixed(0)}%</span>
-        </div>
-        <div class="result-row">
-            <span class="result-label">Capacity remaining:</span>
-            <span class="result-value">${(remainingCapacity * 100).toFixed(0)}%</span>
-        </div>
-        <div class="info-text" style="margin-top:6px;">Sum of each agent's dose as a fraction of its own max for this patient. Covers all agents given.</div>
-    </div>`;
-
-    // ===== REMAINING CAPACITY TABLE — "what can I still give" =====
-    // Converts the remaining shared capacity into mL of each drug at each of its common
-    // concentrations. These are ALTERNATIVES: the capacity is one pool, so giving any
-    // one row consumes it. Giving two rows exceeds the limit.
-    html += `<div class="cap-wrap">
-        <div class="cap-title">What you can still give</div>`;
-
-    if (remainingCapacity <= 0) {
-        html += `<div class="cap-none">NO CAPACITY REMAINING — 0 mL of any agent</div>`;
-    } else {
-        html += `<div class="cap-sub">CHOOSE ONE ROW — these are alternatives, not additive. Any single row uses up all remaining capacity.</div>
-        <table class="cap-table"><thead><tr>
-            <th>Drug</th><th>Conc</th><th class="num">Volume</th><th class="num">Dose</th>
-        </tr></thead><tbody>`;
-
-        let grpIdx = 0;
-        for (const key of Object.keys(DRUGS)) {
-            const d = DRUGS[key];
-            const { finalMg } = calcMaxMg(key, patient);
-            const allowedMg = remainingCapacity * finalMg;
-            const grpClass = (grpIdx % 2 === 0) ? 'grp-a' : 'grp-b';
-            let firstRow = true;
-            for (const conc of d.commonConc) {
-                const mgPerMl = conc * 10;
-                const ml = allowedMg / mgPerMl;
-                html += `<tr class="${grpClass}${firstRow ? ' drug-start' : ''}${ml < 0.05 ? ' zero' : ''}">
-                    <td class="drugname">${firstRow ? d.name : ''}</td>
-                    <td class="conc">${conc}%</td>
-                    <td class="num vol">${ml.toFixed(1)} mL</td>
-                    <td class="num mg">${allowedMg.toFixed(0)} mg</td>
-                </tr>`;
-                firstRow = false;
-            }
-            grpIdx++;
-        }
-        html += `</tbody></table>
-        <div class="cap-foot">Exparel has separate admixture rules (20-min / 96-hr) — see warnings above before using that row.</div>`;
-    }
-    html += `</div>`;
-
-    // ===== Long-acting amide pool — secondary check, collapsed by default =====
-    if (totalAmideMgKg > 0) {
-        const remainingAmideMgKg = Math.max(0, 3.0 - totalAmideMgKg);
-        const amideDot = amideOver ? '#dc3545' : amideWarn ? '#fd7e14' : '#28a745';
-        html += `<div class="accordion-card" onclick="toggleAccordion('acc-amide-pool')">
-            <div class="accordion-header">
-                <span class="accordion-dot" style="background:${amideDot};"></span>
-                <span>Long-acting amide pool — ${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span>
-                <span class="accordion-chevron" id="chev-acc-amide-pool">&#9660;</span>
-            </div>
-            <div class="accordion-body hidden" id="acc-amide-pool">
-                <div class="result-row"><span class="result-label">Used:</span><span class="result-value" style="${amideOver ? 'color:#dc3545' : amideWarn ? 'color:#856404' : ''}">${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span></div>
-                <div class="result-row"><span class="result-label">Room left:</span><span class="result-value">${remainingAmideMgKg.toFixed(2)} mg/kg (${remainingAmideMg.toFixed(0)} mg)</span></div>
-                <div class="info-text" style="margin-top:6px;">Secondary check covering bupivacaine + ropivacaine + Exparel only. Lidocaine and mepivacaine are not counted in this pool. The governing limit for this case is total capacity used, above.</div>`;
-        if (amideOver) html += `<div class="warning" style="margin-top:8px;"><strong>&#9940; CUMULATIVE AMIDE TOXICITY</strong><br>Long-acting amide total exceeds 3 mg/kg. Reassess dosing.</div>`;
-        else if (amideWarn) html += `<div class="info-warn" style="margin-top:8px;"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Approaching amide limit</strong> — ${totalAmideMgKg.toFixed(2)} mg/kg of 3.0 mg/kg.</div>`;
-        html += `</div></div>`;
-    }
-
-    rc.innerHTML = html;
-    rd.classList.remove('hidden');
-}
-
-function copySummary() {
-    const p = getPatientData(); if (!p) return;
-    const lines = [`BlockCalc Summary — ${new Date().toLocaleString()}`,
-        `DISCLAIMER: Educational only. Verify per institutional policy.`,
-        `Weight: ${p.weight.toFixed(1)} kg | Epi: ${p.useEpi ? 'Yes' : 'No'} | Age≥70: ${p.age70 ? 'Yes' : 'No'} | High-risk: ${p.highRisk ? 'Yes' : 'No'}`];
-    agents.filter(a => a.drug && a.conc).forEach((a, i) => {
-        lines.push(`Agent ${i+1}: ${DRUGS[a.drug].name} ${a.conc}% × ${a.volume} mL`);
-    });
-    navigator.clipboard.writeText(lines.join('\n')).then(() => alert('Copied!')).catch(() => alert('Copy failed'));
-}
-
-// ==================== PATIENT PROFILE ====================
-let profileSex = 'male', profileWeightUnit = 'kg', profileHeightUnit = 'ftin';
-
-function setSex(sex) {
-    profileSex = sex;
-    document.getElementById('sex-male-btn').classList.toggle('active', sex === 'male');
-    document.getElementById('sex-female-btn').classList.toggle('active', sex === 'female');
-    calcProfile();
-}
-function setProfileWeightUnit(unit) {
-    profileWeightUnit = unit;
-    document.getElementById('profile-weight-kg-btn').classList.toggle('active', unit === 'kg');
-    document.getElementById('profile-weight-lbs-btn').classList.toggle('active', unit === 'lbs');
-    calcProfile();
-}
-function setProfileHeightUnit(unit) {
-    profileHeightUnit = unit;
-    document.getElementById('profile-height-cm-btn').classList.toggle('active', unit === 'cm');
-    document.getElementById('profile-height-ftin-btn').classList.toggle('active', unit === 'ftin');
-    document.getElementById('profile-height-cm-input').classList.toggle('hidden', unit !== 'cm');
-    document.getElementById('profile-height-ftin-input').classList.toggle('hidden', unit !== 'ftin');
-    calcProfile();
-}
-function getProfileWeightKg() {
-    const raw = parseFloat(document.getElementById('profile-weight').value);
-    return profileWeightUnit === 'lbs' ? raw / 2.2046 : raw;
-}
-function getProfileHeightCm() {
-    if (profileHeightUnit === 'cm') return parseFloat(document.getElementById('profile-height-cm').value);
-    const ft = parseFloat(document.getElementById('profile-height-ft').value) || 0;
-    const inch = parseFloat(document.getElementById('profile-height-in').value) || 0;
-    return (ft * 12 + inch) * 2.54;
-}
-function bmiCategory(bmi) {
-    if (bmi < 18.5) return { cat: 'Underweight', cls: 'habitus-under' };
-    if (bmi < 25) return { cat: 'Normal', cls: 'habitus-normal' };
-    if (bmi < 30) return { cat: 'Overweight', cls: 'habitus-over' };
-    if (bmi < 35) return { cat: 'Obese I', cls: 'habitus-obese' };
-    if (bmi < 40) return { cat: 'Obese II', cls: 'habitus-obese' };
-    return { cat: 'Obese III', cls: 'habitus-obese' };
-}
-function calcProfile() {
-    const wKg = getProfileWeightKg();
-    const hCm = getProfileHeightCm();
-    const results = document.getElementById('profile-results');
-    if (!wKg || wKg < 1 || !hCm || hCm < 50) { results.classList.add('hidden'); return; }
-
-    const bmi = wKg / Math.pow(hCm / 100, 2);
-    const inTotal = hCm / 2.54;
-    const inOver5ft = Math.max(0, inTotal - 60);
-    const ibw = profileSex === 'male' ? (50 + 2.3 * inOver5ft) : (45.5 + 2.3 * inOver5ft);
-    const lbw = profileSex === 'male'
-        ? (9270 * wKg) / (6680 + 216 * bmi)
-        : (9270 * wKg) / (8780 + 244 * bmi);
-    const ajbw = ibw + 0.4 * (wKg - ibw);
-    const bsa = Math.sqrt((hCm * wKg) / 3600);
-    const { cat, cls } = bmiCategory(bmi);
-    const tvLow = ibw * 6, tvTarget = ibw * 7, tvHigh = ibw * 8;
-
-    document.getElementById('profile-ibw').textContent = `${ibw.toFixed(1)} kg`;
-    document.getElementById('profile-lbw').textContent = `${lbw.toFixed(1)} kg`;
-    document.getElementById('profile-ajbw').textContent = `${ajbw.toFixed(1)} kg`;
-    const indicated = wKg >= ibw * 1.3;
-    document.getElementById('profile-ajbw').classList.toggle('muted', !indicated);
-    document.getElementById('profile-ajbw-note').textContent = indicated ? '' : 'Not indicated — TBW < 130% IBW';
-    document.getElementById('profile-bsa').textContent = `${bsa.toFixed(2)} m²`;
-    document.getElementById('profile-bmi').textContent = bmi.toFixed(1);
-    const habitusEl = document.getElementById('profile-habitus');
-    habitusEl.textContent = cat;
-    habitusEl.className = 'habitus-badge ' + cls;
-    document.getElementById('profile-tv').textContent = `${Math.round(tvLow)} – ${Math.round(tvTarget)} – ${Math.round(tvHigh)} mL`;
-
-    results.classList.remove('hidden');
-}
-
-// ==================== PARKLAND ====================
-let pkType = 'adult', pkActiveParts = new Set();
-const ADULT_PARTS = [{id:'head',label:'Head',pct:9},{id:'front-torso',label:'Front Torso',pct:18},{id:'back-torso',label:'Back Torso',pct:18},{id:'right-arm',label:'R Arm',pct:9},{id:'left-arm',label:'L Arm',pct:9},{id:'right-leg',label:'R Leg',pct:18},{id:'left-leg',label:'L Leg',pct:18},{id:'perineum',label:'Perineum',pct:1}];
-const PEDS_PARTS = [{id:'head',label:'Head',pct:18},{id:'front-torso',label:'Front Torso',pct:18},{id:'back-torso',label:'Back Torso',pct:18},{id:'right-arm',label:'R Arm',pct:9},{id:'left-arm',label:'L Arm',pct:9},{id:'right-leg',label:'R Leg',pct:14},{id:'left-leg',label:'L Leg',pct:14}];
-
-function setParklandType(type) {
-    pkType = type; pkActiveParts.clear();
-    document.querySelectorAll('#panel-parkland .toggle-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && type === 'adult') || (i === 1 && type === 'peds')));
-    document.getElementById('pk-tbsa-hint').textContent = type === 'adult' ? 'Rule of Nines (Adult): Head 9% | Each arm 9% | Front torso 18% | Back 18% | Each leg 18% | Perineum 1%' : 'Lund-Browder (Peds): Head 18% | Each arm 9% | Torso 18% each side | Each leg 14%';
-    renderBodyParts(); calcParkland();
-}
-function renderBodyParts() {
-    const parts = pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS;
-    const c = document.getElementById('pk-body-parts'); c.innerHTML = '';
-    parts.forEach(p => {
-        const btn = document.createElement('button'); btn.className = 'body-part-btn' + (pkActiveParts.has(p.id) ? ' active' : '');
-        btn.textContent = `${p.label} (${p.pct}%)`;
-        btn.onclick = () => { pkActiveParts.has(p.id) ? pkActiveParts.delete(p.id) : pkActiveParts.add(p.id); btn.classList.toggle('active', pkActiveParts.has(p.id)); document.getElementById('pk-tbsa-value').textContent = (pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS).filter(x => pkActiveParts.has(x.id)).reduce((s, x) => s + x.pct, 0); document.getElementById('pk-tbsa-manual').value = ''; calcParkland(); };
-        c.appendChild(btn);
-    });
-}
-function getPkWeightKg() {
-    const raw = parseFloat(document.getElementById('pk-weight').value);
-    return document.getElementById('pk-weight-unit').value === 'lbs' ? raw / 2.2046 : raw;
-}
-function calcParkland() {
-    const weight = getPkWeightKg();
-    const manual = document.getElementById('pk-tbsa-manual').value;
-    let tbsa = manual !== '' ? parseFloat(manual) : (pkType === 'adult' ? ADULT_PARTS : PEDS_PARTS).filter(p => pkActiveParts.has(p.id)).reduce((s, p) => s + p.pct, 0);
-    document.getElementById('pk-tbsa-value').textContent = tbsa || 0;
-    if (!weight || !tbsa || tbsa <= 0) { document.getElementById('pk-results').classList.add('hidden'); return; }
-    const total = 4 * weight * tbsa;
-    document.getElementById('pk-total').textContent = Math.round(total).toLocaleString() + ' mL';
-    document.getElementById('pk-first8-vol').textContent = Math.round(total / 2).toLocaleString() + ' mL';
-    document.getElementById('pk-first8-rate').textContent = Math.round(total / 16) + ' mL/hr';
-    document.getElementById('pk-next16-vol').textContent = Math.round(total / 2).toLocaleString() + ' mL';
-    document.getElementById('pk-next16-rate').textContent = Math.round(total / 32) + ' mL/hr';
-    document.getElementById('pk-prehosp').textContent = Math.round(total / 8).toLocaleString() + ' mL';
-    document.getElementById('pk-res-weight').textContent = weight.toFixed(1) + ' kg';
-    document.getElementById('pk-res-tbsa').textContent = tbsa + '%';
-    const pedsX = document.getElementById('pk-peds-extra');
-    if (pkType === 'peds') { document.getElementById('pk-maintenance').textContent = calc421Rate(weight).toFixed(1) + ' mL/hr'; pedsX.classList.remove('hidden'); } else { pedsX.classList.add('hidden'); }
-    document.getElementById('pk-results').classList.remove('hidden');
-}
-
-// ==================== 4-2-1 ====================
-function calc421Rate(w) { return w <= 10 ? 4 * w : w <= 20 ? 40 + 2 * (w - 10) : 60 + (w - 20); }
-function get421WeightKg() {
-    const raw = parseFloat(document.getElementById('f421-weight').value);
-    return document.getElementById('f421-weight-unit').value === 'lbs' ? raw / 2.2046 : raw;
-}
-function calc421() {
-    const weight = get421WeightKg();
-    if (!weight || weight <= 0) { document.getElementById('f421-results').classList.add('hidden'); return; }
-    const npo = parseFloat(document.getElementById('f421-npo').value) || 0;
-    const ebl = parseFloat(document.getElementById('f421-ebl').value) || 0;
-    const duration = parseFloat(document.getElementById('f421-duration').value) || 0;
-    const first10 = Math.min(weight, 10) * 4, next10 = Math.min(Math.max(weight - 10, 0), 10) * 2, rem = Math.max(weight - 20, 0);
-    const totalRate = first10 + next10 + rem;
-    document.getElementById('f421-rate').textContent = totalRate.toFixed(1);
-    document.getElementById('f421-first10').textContent = first10.toFixed(1) + ' mL/hr';
-    document.getElementById('f421-next10').textContent = next10.toFixed(1) + ' mL/hr';
-    document.getElementById('f421-remainder').textContent = rem.toFixed(1) + ' mL/hr';
-    const deficit = totalRate * npo;
-    document.getElementById('f421-deficit-total').textContent = deficit > 0 ? `${deficit.toFixed(0)} mL` : 'N/A';
-    document.getElementById('f421-deficit-h1').textContent = deficit > 0 ? `${(deficit * 0.5).toFixed(0)} mL` : '--';
-    document.getElementById('f421-deficit-h2').textContent = deficit > 0 ? `${(deficit * 0.25).toFixed(0)} mL` : '--';
-    document.getElementById('f421-deficit-h3').textContent = deficit > 0 ? `${(deficit * 0.25).toFixed(0)} mL` : '--';
-    document.getElementById('f421-maint-ongoing').textContent = totalRate.toFixed(1) + ' mL/hr';
-    if (ebl > 0) { document.getElementById('f421-ebl-display').textContent = `${ebl} mL`; document.getElementById('f421-crystalloid').textContent = `${(ebl * 3).toFixed(0)} mL`; document.getElementById('f421-colloid').textContent = `${ebl.toFixed(0)} mL`; document.getElementById('f421-ebl-card').classList.remove('hidden'); } else { document.getElementById('f421-ebl-card').classList.add('hidden'); }
-    document.getElementById('f421-total').textContent = duration > 0
-        ? `~${((totalRate * duration) + deficit + (ebl * 3)).toFixed(0)} mL (maint + deficit + EBL replacement)`
-        : 'Enter duration for estimate';
-    document.getElementById('f421-results').classList.remove('hidden');
-    calcABL();
-}
-function calcABL() {
-    const raw = parseFloat(document.getElementById('abl-weight').value);
-    const unit = document.getElementById('abl-weight-unit').value;
-    const wKg = unit === 'lbs' ? raw / 2.2046 : raw;
-    const mlKg = parseFloat(document.getElementById('abl-ebv-select').value);
-    const hctS = parseFloat(document.getElementById('abl-hct-start').value);
-    const hctM = parseFloat(document.getElementById('abl-hct-min').value);
-    const card = document.getElementById('f421-abl-card');
-    if (wKg > 0 && mlKg > 0 && hctS > 0 && hctM > 0 && hctS > hctM) {
-        const ebv = wKg * mlKg, abl = ebv * (hctS - hctM) / hctS;
-        document.getElementById('abl-weight-display').textContent = unit === 'lbs' ? `${raw.toFixed(1)} lbs (${wKg.toFixed(1)} kg)` : `${wKg.toFixed(1)} kg`;
-        document.getElementById('abl-mlkg-display').textContent = `${mlKg} mL/kg`;
-        document.getElementById('abl-ebv').textContent = `${Math.round(ebv)} mL`;
-        document.getElementById('abl-hct-start-display').textContent = `${hctS.toFixed(1)}%`;
-        document.getElementById('abl-hct-min-display').textContent = `${hctM.toFixed(1)}%`;
-        document.getElementById('abl-result').textContent = `${Math.round(abl)} mL`;
-        document.getElementById('abl-units').textContent = `~${(abl / 250).toFixed(1)} units`;
-        card.classList.remove('hidden');
-    } else { card.classList.add('hidden'); }
-}
-
-// Init
-window.onload = () => { addAgent(); renderBodyParts(); };
-
-// ==================== ACCORDION ====================
-function toggleAccordion(id) {
-    const body = document.getElementById(id);
-    const chev = document.getElementById('chev-' + id);
-    const isOpen = !body.classList.contains('hidden');
-    body.classList.toggle('hidden', isOpen);
-    chev.classList.toggle('open', !isOpen);
-}
-
-// ==================== LAST / ILE ====================
-function calcILE() {
-    const raw = parseFloat(document.getElementById('ile-weight').value);
-    const unit = document.getElementById('ile-weight-unit').value;
-    const wKg = unit === 'lbs' ? raw / 2.2046 : raw;
-    const res = document.getElementById('ile-results');
-    if (!wKg || wKg <= 0) { res.classList.add('hidden'); return; }
-
-    const maxDose = wKg * 12; // 12 mL/kg hard cap
-    let bolus1, infusionRate, infusionVol, infusionTime, bolus2, note;
-
-    if (wKg < 70) {
-        // Weight-based
-        bolus1 = (wKg * 1.5).toFixed(1);
-        infusionRate = (wKg * 0.25).toFixed(1);
-        infusionVol = (wKg * 0.25 * 15).toFixed(0); // 15 min run
-        infusionTime = '15 min';
-        bolus2 = bolus1; // repeat bolus same dose
-        note = `Weight-based protocol (< 70 kg). Pump recommended if < 40 kg.`;
-    } else {
-        // Fixed dose ≥70 kg
-        bolus1 = '100';
-        infusionRate = '~17';
-        infusionVol = '250';
-        infusionTime = '15–20 min';
-        bolus2 = '100';
-        note = `Fixed-dose protocol (≥ 70 kg).`;
-    }
-
-    const weightLabel = unit === 'lbs' ? `${raw.toFixed(1)} lbs (${wKg.toFixed(1)} kg)` : `${wKg.toFixed(1)} kg`;
-
-    document.getElementById('ile-weight-display').textContent = weightLabel;
-    document.getElementById('ile-bolus1').textContent = `${bolus1} mL`;
-    document.getElementById('ile-infusion-rate').textContent = `${infusionRate} mL/min`;
-    document.getElementById('ile-infusion-vol').textContent = `${infusionVol} mL over ${infusionTime}`;
-    document.getElementById('ile-bolus2').textContent = `${bolus2} mL (same dose — if no response after 5 min)`;
-    document.getElementById('ile-max').textContent = `${maxDose.toFixed(0)} mL (12 mL/kg hard cap)`;
-    document.getElementById('ile-note').textContent = note;
-    res.classList.remove('hidden');
-}
-
-</script>
-
+</select>
+</label>
+<div class="fields">
+<label for="burn-tbsa">Assessed burned body surface (%)<input id="burn-tbsa" type="number" min="0.1" max="100" step="any">
+</label>
+<label for="burn-elapsed">Hours since injury<input id="burn-elapsed" type="number" min="0" max="168" step="any">
+</label>
+<label for="burn-prior">Resuscitation fluid already given (mL)<input id="burn-prior" type="number" min="0" max="100000" step="any" placeholder="Enter 0 if none">
+</label>
+</div>
+<p class="info-text">Count partial- and full-thickness burns, not superficial redness. Enter the assessed percentage.</p>
+<p id="burn-error" class="validation" role="alert" hidden>
+</p>
+<div id="burn-results" aria-live="polite">
+</div>
+<aside class="clinical-note">
+<strong>The clock starts at injury</strong>
+<p>Review elapsed time and fluids already received before setting a rate. Reassess with the burn team; do not give an automatic catch-up bolus to meet a formula.</p>
+</aside>
+<details>
+<summary>References</summary>
+<a href="https://guidance.nattrauma.org/media/wetjtmrg/american-burn-association-clinical-practice-guidelines-on-burn-shock-resuscitation.pdf" target="_blank" rel="noopener">ABA adult burn shock guideline</a>
+<br>
+<a href="https://www.ameriburn.org/burn-care-team/resources/guidelines-for-burn-patient-referral" target="_blank" rel="noopener">Burn depth, assessment and referral</a>
+</details>
+</div>
+</section>
+<section class="page-panel" id="page-last" aria-labelledby="title-last" hidden>
+<div class="container">
+<h1 id="title-last" tabindex="-1">Suspected LAST</h1>
+<p class="subtitle">Local anesthetic systemic toxicity</p>
+<aside class="warning">
+<strong>Act immediately</strong>
+<ol>
+<li>Stop local anesthetic administration.</li>
+<li>Call for help and bring the LAST rescue kit.</li>
+<li>Support airway and circulation; follow the LAST checklist.</li>
+</ol>
+</aside>
+<a class="btn btn-primary link-button" href="references/asra-last-2020.pdf" target="_blank" rel="noopener">Open official ASRA LAST checklist</a>
+<p class="info-text">The unmodified ASRA checklist and adult reference notes are bundled offline after installation. Keep your institution’s checklist and rescue kit at hand.</p>
+<h2>20% lipid emulsion</h2>
+<p id="lipid-error" class="validation" role="alert" hidden>
+</p>
+<div id="lipid-results" aria-live="polite">
+</div>
+<aside class="warning">
+<strong>If the patient remains unstable</strong>
+<p>Repeat the bolus and double the infusion per the checklist. Do not apply an automatic five-minute waiting rule. Account for all lipid already given.</p>
+</aside>
+<div class="result-card">
+<h3>After stabilization</h3>
+<p>Continue lipid for more than 15 minutes once hemodynamically stable. Observe for 2 hours after seizure, 4–6 hours after cardiovascular instability, and as appropriate after cardiac arrest.</p>
+</div>
+<details>
+<summary>Recognition and resuscitation reminders</summary>
+<p>Symptoms can include mouth numbness, metallic taste, ringing in the ears, altered behavior, seizures, arrhythmia or collapse. Early symptoms may be absent, and onset may be delayed.</p>
+<p>LAST resuscitation differs from standard ACLS. Ensure adequate oxygenation and ventilation; avoid hypoxia and acidosis. Benzodiazepines are preferred for seizures. Use the official checklist for epinephrine and medication-avoidance instructions. Propofol is not a substitute for lipid emulsion.</p>
+</details>
+<details>
+<summary>Reference version</summary>
+<p>ASRA checklist 2020 v1.1. Reviewed October 21, 2026. ASRA expects an update in early 2027.</p>
+<a href="https://asra.com/news-publications/asra-updates/blog-landing/guidelines/2020/11/01/checklist-for-treatment-of-local-anesthetic-systemic-toxicity" target="_blank" rel="noopener">ASRA publication and update status</a>
+</details>
+</div>
+</section>
+<section class="page-panel" id="page-settings" aria-labelledby="title-settings" hidden>
+<div class="container">
+<h1 id="title-settings" tabindex="-1">Settings &amp; references</h1>
+<div class="result-row">
+<span>App</span>
+<strong>BlockCalc</strong>
+</div>
+<div class="result-row">
+<span>Version</span>
+<strong id="version">
+</strong>
+</div>
+<div class="result-row">
+<span>Reference review</span>
+<strong>October 21, 2026</strong>
+</div>
+<p class="info-text">Review branch. Clinical sign-off remains required before routine deployment.</p>
+<h2>Offline availability</h2>
+<p id="offline-status" role="status">Checking offline support…</p>
+<button id="check-update" class="btn btn-secondary">Check for app update</button>
+<button id="apply-update" class="btn btn-primary" hidden>Load update — clears current patient</button>
+<h2>Clinical references</h2>
+<ul id="reference-list">
+</ul>
+<a href="references.html">Dated clinical rules — available offline</a><br><a href="REVIEW.md" target="_blank" rel="noopener">Review notes and remaining clinical decisions</a>
+<p class="info-text">Educational decision support. Verify the clinical plan, source, patient context and institutional policy. No identifying patient data are requested or saved.</p>
+</div>
+</section>
+</main>
+<nav class="quick-nav" aria-label="Quick calculators"><button data-page="local">Local doses</button><button id="quick-exparel">EXPAREL</button><button data-page="fluids">4-2-1 fluids</button><button id="jump-result" aria-label="View result">Result</button></nav>
+<noscript>
+<p class="warning">Enable JavaScript to use the calculators. Keep a separate copy of your institutional emergency checklist available.</p>
+</noscript>
 </body>
 </html>

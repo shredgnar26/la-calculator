@@ -1,0 +1,59 @@
+# Verified 2026-10-21; local task-owned run. Full original command log retained in workspace checkpoint.
+
+> blockcalc@2.1.0-review.1 test
+> node --test tests/*.test.js
+
+✔ version, review date and exported API surface (1.271958ms)
+✔ strict numeric parsing rejects blanks, hex, scientific, non-numeric and non-finite (0.422167ms)
+✔ weight software bounds 0.1..350 are input validation, not eligibility (0.178208ms)
+✔ adult age guard 18..120 is mandatory at every clinical API (0.693542ms)
+✔ toKg uses an exact lb factor and strict rejection (0.117833ms)
+✔ 4-2-1 maintenance boundaries, 70=110 and 100=140 totals (0.869041ms)
+✔ fluids is the maintenance alias with no fasting/NPO deficit schedule (0.084917ms)
+✔ NICE adult maintenance ranges and required weight basis (0.116792ms)
+✔ adult ABL arithmetic preserved with an age guard (0.109083ms)
+✔ adult body-size outputs; adjusted/category removed; LBW study-range warning (0.156042ms)
+✔ adult burn protocols, elapsed time and prior fluids (0.602666ms)
+✔ LAST lipid arithmetic and the 70 kg boundary (0.070458ms)
+✔ lidocaine/chloroprocaine label ceilings and selected clinician limits (0.185167ms)
+✔ route/concentration mismatches are rejected (0.252542ms)
+✔ epi boolean, status, drug and volume are required and validated (0.141542ms)
+✔ priorExparel enum is required and yes/unknown hard-block the plan (0.126417ms)
+✔ duplicate rows sum the same drug and keep the lowest chosen limit (0.067583ms)
+✔ review shape: per-drug totals, no cross-agent fraction or given-dose total (0.085584ms)
+✔ flags name toxicity, monitoring, product differences and no safety approval (0.050792ms)
+✔ high-risk flag requires review without automatic reduction (0.061416ms)
+✔ limits compare unrounded values with at most 1e-9 tolerance (0.073459ms)
+✔ EXPAREL exact 13.3 mg/mL and infiltration/perineural limits (0.248291ms)
+✔ EXPAREL infiltration 266 boundary and perineural exact-133 regimen (0.09375ms)
+✔ EXPAREL single administration, positive dose and known route (0.162959ms)
+✔ EXPAREL/bupivacaine HCl conservative ratio boundary and timing (0.145834ms)
+✔ EXPAREL blocks simultaneous non-bupivacaine agents (0.047959ms)
+✔ EXPAREL prior-local rules and the lidocaine 20-minute boundary (0.235542ms)
+✔ EXPAREL pregnancy enum required; yes or unknown blocks (0.084833ms)
+✔ EXPAREL diluent rules and the 0.89 mg/mL final-concentration floor (0.2615ms)
+✔ EXPAREL adductor canal accepts only the exact labeled regimen (0.176292ms)
+✔ mepivacaine cannot be combined with another local anesthetic (0.095709ms)
+✔ review branch cannot trigger Vercel Git deployment (0.81ms)
+✔ offline assets include dated rules and the unmodified full ASRA checklist (3.505042ms)
+✔ patient input has no persistence or outbound API path (0.82475ms)
+✔ scan-first explanations use short sentences and retain actionable cautions (1.602458ms)
+ℹ {"sampleMessages":6,"words":75,"sentences":13,"approximateGrade":3.8,"limit":"Heuristic sample only; clinical words preserved; provider testing still required."}
+✔ EXPAREL route limits propagate to displayed row and per-drug total (1.263959ms)
+✔ every EXPAREL timing choice is explicit and matches presence of HCl (0.46475ms)
+✔ given and planned statuses cannot imply impossible mixing or later anesthetic (0.811791ms)
+✔ HCl route must agree with EXPAREL context (0.094917ms)
+✔ unsupported conventional pairs keep math but never pass (0.211208ms)
+✔ unrounded dilution floor, separate HCl volume and prior-lidocaine caveat (0.139083ms)
+✔ conversion rejects impossible weights and tier precision stays continuous (0.16975ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63.359416
+{"engine":"chromium","cacheAfterCold":{"keys":["blockcalc-http%3A%2F%2F127.0.0.1%3A65220%2Fla-calculator%2F-2.1.0-review.1","unrelated-cache"],"marker":true}}
+{"engine":"chromium","markerDiagnostic":{"url":"http://127.0.0.1:65220/la-calculator/","origin":"http://127.0.0.1:65220","keys":["http://127.0.0.1:65220/la-calculator/manifest.json"],"response":{"status":200,"type":"basic","name":"BlockCalc — Adult Anesthesia Tools"}}}
+[{"engine":"chromium","passed":true,"checks":89}]

@@ -1,8 +1,8 @@
 {
-  "name": "Local Anesthetic Calculator",
-  "short_name": "LA Calc",
-  "description": "Peripheral nerve block dose calculator for local anesthetics",
-  "start_url": "/la-calculator/",
+  "name": "BlockCalc \u2014 Adult Anesthesia Tools",
+  "short_name": "BlockCalc",
+  "description": "Adult-only anesthesia calculation review tools",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
@@ -21,6 +21,12 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["medical", "health", "productivity"],
-  "screenshots": []
+  "categories": [
+    "medical",
+    "health",
+    "productivity"
+  ],
+  "screenshots": [],
+  "scope": "./",
+  "id": "./"
 }
