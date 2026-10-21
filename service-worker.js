@@ -1,7 +1,7 @@
 /* An atomic, scope-specific cache. Updates activate only after user selection. */
 const PREFIX = 'blockcalc-' + encodeURIComponent(self.registration.scope) + '-';
-const CACHE = PREFIX + '2.0.0-review.1';
-const ASSETS = ['index.html', 'styles.css', 'calculations.js', 'app.js', 'manifest.json', 'REVIEW.md'];
+const CACHE = PREFIX + '2.1.0-review.1';
+const ASSETS = ['index.html', 'styles.css', 'calculations.js', 'app.js', 'manifest.json', 'REVIEW.md', 'references.html', 'references/asra-last-2020.pdf'];
 const URLS = ASSETS.map(path => new URL(path, self.registration.scope).href);
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(URLS.map(url => new Request(url, {cache: 'reload'})))));

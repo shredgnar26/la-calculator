@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="BlockCalc">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="styles.css">
-<title>BlockCalc — Anesthesia Tools</title>
+<title>BlockCalc — Adult Anesthesia Tools</title>
 <script src="calculations.js" defer>
 </script>
 <script src="app.js" defer>
@@ -23,17 +23,17 @@
 </header>
 <nav id="app-menu" class="review-menu" aria-label="Calculators" hidden>
 <button data-page="local" aria-current="page">Local anesthetics</button>
-<button data-page="fluids">Fluids by hour</button>
-<button data-page="abl">Allowable blood loss</button>
+<button data-page="fluids">Adult fluids</button>
+<button data-page="abl">Blood-loss estimate</button>
 <button data-page="profile">Patient measurements</button>
 <button data-page="burns">Burn fluids</button>
 <button data-page="last">LAST emergency</button>
 <button data-page="settings">Settings &amp; references</button>
 </nav>
-<div class="review-banner">Review version · verify clinical rules before routine use.</div>
+<div class="review-banner">ADULTS 18+ · Review candidate. Clinician sign-off is still required.</div>
 <aside class="patient-bar" aria-label="Patient context">
 <div class="patient-heading">
-<strong>Current patient</strong>
+<strong>Adult patient</strong>
 <button id="reset-patient" class="text-button">Clear patient</button>
 </div>
 <div class="fields">
@@ -47,10 +47,10 @@
 </select>
 </div>
 </div>
-<label for="patient-age">Age (years)<input id="patient-age" type="number" min="0" max="120" step="any" placeholder="Needed for drug/body-size references">
+<label for="patient-age">Age (years)<input id="patient-age" type="number" min="18" max="120" step="any" inputmode="decimal" placeholder="18 or older">
 </label>
 </div>
-<p class="info-text" id="patient-context">The same measured weight is used across calculators. No patient data are saved.</p>
+<p class="info-text" id="patient-context">Enter age and weight. No patient data are saved.</p>
 <p class="validation" id="patient-error" role="alert" hidden>
 </p>
 </aside>
@@ -58,18 +58,28 @@
 <section class="page-panel active" id="page-local" aria-labelledby="title-local">
 <div class="container">
 <h1 id="title-local" tabindex="-1">Local anesthetics</h1>
-<p class="subtitle">Dose entered → reference limit → clinical review</p>
-<aside class="info-warn">Below a reference limit does not establish safety. Verify dosing weight, route, patient factors, and all medications already administered.</aside>
+<p class="subtitle">Enter the dose. Check the units. Review the limits.</p><p class="info-text">Use only the listed infiltration or nerve-block routes. Do not use these checks for paracervical, IV regional, spinal, epidural, or eye blocks.</p>
+<aside class="info-warn">CAUTION — A dose below a limit can still cause harm. Check the route, dosing weight, patient factors, and all doses given.</aside>
 <label class="checkbox-row">
 <input id="la-risk" type="checkbox">Patient factors require a lower dose or further review</label>
-<label class="checkbox-row">
-<input id="la-prior-exparel" type="checkbox">Exparel was administered within the previous 96 hours</label>
+<label for="la-prior-exparel">EXPAREL given in the past 96 hours?
+<select id="la-prior-exparel"><option value="">Select</option><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not known</option></select></label>
 <details>
 <summary>Which patient factors matter?</summary>
-<p>Hepatic or cardiac disease, pregnancy, renal dysfunction, acidosis, frailty and extremes of age may change the plan. No fixed percentage reduction is assumed. Enter a lower clinician-selected limit where applicable.</p>
+<p>Liver, heart, or kidney disease, pregnancy, acid buildup, and frailty may change the plan. Older adults may need less. Choose a lower limit when needed; this app does not choose one for you.</p>
 </details>
-<div id="medications">
-</div>
+<div id="medications"></div>
+<details id="exparel-checks" hidden open><summary>EXPAREL checks — required</summary>
+<p class="info-text">One dose and one site only. No epidural, spinal, IV, joint, or other block calculations.</p>
+<label for="la-pregnancy">Pregnant?<select id="la-pregnancy"><option value="">Select</option><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not known</option></select></label>
+<label for="exp-prior-local">Other local anesthetic before this EXPAREL dose?<select id="exp-prior-local"><option value="">Select</option><option value="none">None</option><option value="lidocaine">Lidocaine before EXPAREL</option><option value="other">Another local anesthetic</option><option value="unknown">Not known</option></select></label>
+<label id="exp-lidocaine-wrap" for="exp-lidocaine-minutes" hidden>Minutes since local lidocaine<input id="exp-lidocaine-minutes" type="number" min="0" step="any" inputmode="decimal"></label>
+<p class="info-text">The 20-minute rule applies to lidocaine given before EXPAREL. It does not allow mixing or later lidocaine. Record that earlier dose and review its toxicity risk separately.</p>
+<label for="exp-bupi-timing">How will bupivacaine HCl be used?<select id="exp-bupi-timing"><option value="">Select</option><option value="none">No bupivacaine HCl</option><option value="admix">Mixed in the same syringe</option><option value="immediately-before">Given right before EXPAREL</option><option value="other">Later or another plan</option></select></label>
+<label for="exp-diluent">Added dilution fluid<select id="exp-diluent"><option value="">Select</option><option value="none">None</option><option value="saline">Preservative-free 0.9% sodium chloride</option><option value="lr">Lactated Ringer’s</option><option value="other">Other fluid</option></select></label>
+<label for="exp-diluent-volume">Added fluid volume (mL)<input id="exp-diluent-volume" type="number" min="0" max="5000" step="any" inputmode="decimal" placeholder="Enter 0 if none"></label>
+<p class="info-text">Use only the two listed dilution fluids. Water and other low-salt fluids can damage EXPAREL.</p>
+</details>
 <button id="add-medication" class="btn btn-secondary">+ Add medication</button>
 <p id="la-error" class="validation" role="alert" hidden>
 </p>
@@ -82,61 +92,29 @@
 </section>
 <section class="page-panel" id="page-fluids" aria-labelledby="title-fluids" hidden>
 <div class="container">
-<h1 id="title-fluids" tabindex="-1">Fluids by hour</h1>
-<p class="subtitle">Traditional 4-2-1 maintenance + estimated fasting deficit</p>
-<div class="fields">
-<label for="fasting">Fasting time used (hours)<input id="fasting" type="number" min="0" max="168" step="any" placeholder="Enter 0 if none">
-</label>
-<label for="duration">Case duration (hours)<input id="duration" type="number" min="0" max="168" step="any" placeholder="e.g. 4">
-</label>
-</div>
-<p id="fluid-error" class="validation" role="alert" hidden>
-</p>
-<div id="fluid-results" aria-live="polite">
-</div>
-<aside class="clinical-note">
-<strong>What about blood loss?</strong>
-<p>Blood-loss replacement is not included above. It is a separate need in addition to maintenance.</p>
-<p>Notify the anesthesia clinician as bleeding occurs. Do not wait for the next hour. Follow their replacement plan, accounting for fluids already given.</p>
-<details>
-<summary>Fluid types explained</summary>
-<p>
-<strong>Crystalloid:</strong> fluids such as lactated Ringer’s replace fluid volume.</p>
-<p>
-<strong>Albumin (a colloid):</strong> expands blood volume; it does not replace red cells or clotting factors.</p>
-<p>
-<strong>Blood products:</strong> replace red cells or support clotting, depending on the product.</p>
-<p>Synthetic starch colloids are not interchangeable with albumin; they carry FDA warnings about kidney injury, bleeding and mortality.</p>
+<h1 id="title-fluids" tabindex="-1">Adult fluids</h1>
+<p class="subtitle">Historical 4-2-1 estimate · adults only</p>
+<p id="fluid-error" class="validation" role="alert" hidden></p>
+<div id="fluid-results" aria-live="polite"></div>
+<aside class="info-warn"><strong>CAUTION — This is not an IV fluid order.</strong><p>Adult needs may differ. Fasting alone does not set a fluid deficit or a replacement plan.</p></aside>
+<details><summary>Compare with NICE adult maintenance</summary>
+<p>Choose the weight for this reference. This does not change the 4-2-1 weight.</p>
+<label for="fluid-basis">Weight used<select id="fluid-basis"><option value="">Select</option><option value="measured">Measured weight above</option><option value="ideal">Clinician-confirmed ideal weight</option><option value="clinician">Other clinician-selected weight</option></select></label>
+<label id="fluid-weight-wrap" for="fluid-weight" hidden>Selected weight (kg)<input id="fluid-weight" type="number" min="0.1" max="350" step="any" inputmode="decimal"></label>
+<p id="nice-error" class="validation" role="alert" hidden></p><div id="nice-results" aria-live="polite"></div>
+<p>For obesity, NICE uses ideal weight and the lower range. Adults rarely need over 3 L/day for routine maintenance. Get expert help when BMI is over 40.</p>
+<p>Older or frail adults, kidney or heart failure, and risk of refeeding may need less. Count oral, tube, IV drug, and other fluid intake. Review fluid balance, labs, and response.</p>
+<p>Specialist conditions such as pregnancy, severe organ disease, diabetes, burns, or brain injury need a separate plan.</p><p>These water ranges do not choose fluid type, salts, or glucose. NICE CG174 is a hospital maintenance guide; it is not a surgical replacement formula.</p>
 </details>
-</aside>
-<p class="info-text">Formula estimate, not a resuscitation order. Actual fluids follow patient response and the anesthesia clinician’s plan.</p>
-<details>
-<summary>References and assumptions</summary>
-<p>Deficit = maintenance × fasting hours, allocated 50% / 25% / 25%. Partial hours use a uniform rate within each hour. No automatic blood-loss or third-space replacement is added.</p>
-<a href="https://www.nice.org.uk/guidance/cg174/chapter/Recommendations" target="_blank" rel="noopener">NICE fluid principles</a>
-<br>
-<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4675344/" target="_blank" rel="noopener">Traditional calculations and limitations</a>
-</details>
+<p class="source-note">Sources checked 2026-10-21 · <a href="references.html#fluids">Offline fluid rules and limits</a></p>
 </div>
 </section>
 <section class="page-panel" id="page-abl" aria-labelledby="title-abl" hidden>
 <div class="container">
-<h1 id="title-abl" tabindex="-1">Allowable blood loss estimate</h1>
+<h1 id="title-abl" tabindex="-1">Simple blood-loss estimate</h1>
 <p class="subtitle">Hemoglobin or hematocrit, using the same proportional-loss method.</p>
-<label for="abl-factor">Estimated blood-volume factor<select id="abl-factor">
-<option value="">Select a factor</option>
-<option value="95">95 mL/kg — preterm neonate reference</option>
-<option value="85">85 mL/kg — term neonate reference</option>
-<option value="80">80 mL/kg — infant reference</option>
-<option value="77">77 mL/kg — child 1–6 years reference</option>
-<option value="75">75 mL/kg — adult male reference</option>
-<option value="65">65 mL/kg — adult female reference</option>
-<option value="custom">Clinician-selected factor</option>
-</select>
-</label>
-<label id="abl-custom-wrap" for="abl-custom" hidden>Clinician-selected factor (mL/kg)<input id="abl-custom" type="number" min="40" max="120" step="any">
-</label>
-<p class="info-text">These are estimates, not measured blood volume. Select the factor appropriate to your protocol.</p>
+<label for="abl-factor">Clinician-selected blood-volume factor (mL/kg)<input id="abl-factor" type="number" min="40" max="120" step="any" inputmode="decimal" placeholder="Enter the protocol factor"></label>
+<p class="info-text">Use the factor in the approved adult protocol. This app does not choose a factor or measure blood volume.</p>
 <fieldset>
 <legend>Laboratory value used</legend>
 <div class="segmented">
@@ -168,7 +146,7 @@
 </aside>
 <details>
 <summary>Compare hemoglobin and hematocrit</summary>
-<p>Both use: estimated blood volume × (starting value − selected minimum) ÷ starting value.</p>
+<p>Both use a simple model: estimated blood volume × (starting value − selected minimum) ÷ starting value.</p>
 <p>With 5,250 mL estimated blood volume, 14→10 g/dL and 42→30% each give 1,500 mL because the proportional change is identical.</p>
 <p>Enter measured values in their original units. Hematocrit is not automatically set to three times hemoglobin. Switching modes preserves each mode’s entries.</p>
 <div id="abl-comparison">
@@ -176,12 +154,9 @@
 </details>
 <details>
 <summary>Method and references</summary>
-<p>Linear estimate with the starting value as denominator. Average-denominator and logarithmic methods yield different estimates. This comparison retains one method for Hb and HCT.</p>
-<a href="https://www.openanesthesia.org/keywords/maximum-allowable-blood-loss/" target="_blank" rel="noopener">Hematocrit method</a>
-<br>
+<p>This model treats lost blood as having the starting blood count. Dilution can make it underestimate loss. Other methods give different results. Do not use this number as a transfusion trigger.</p>
 <a href="https://pubmed.ncbi.nlm.nih.gov/3631499/" target="_blank" rel="noopener">Hemoglobin linear method and limitations</a>
-<br>
-<a href="https://anesthesia.utoronto.ca/sites/default/files/assets/files/anesthesia-ibook-4edition1st-revisionaugust2024.pdf" target="_blank" rel="noopener">Anesthesia for Medical Students — hemoglobin-based ABL</a>
+<p class="source-note">Checked 2026-10-21 · <a href="references.html#other">Offline model limits</a></p>
 </details>
 </div>
 </section>
@@ -204,7 +179,7 @@
 </select>
 </label>
 </div>
-<p class="info-text">Reference scope: adults ≥18 years, height 152.4–230 cm. Shorter adults and children need an appropriate alternative method.</p>
+<p class="info-text">Reference scope: adults ≥18 years, height 152.4–230 cm. Shorter adults need another method.</p>
 <p id="profile-error" class="validation" role="alert" hidden>
 </p>
 <div id="profile-results" aria-live="polite">
@@ -222,15 +197,10 @@
 <label for="burn-protocol">Protocol<select id="burn-protocol">
 <option value="">Select protocol</option>
 <option value="aba-adult">ABA adult, burns ≥20% TBSA — 2 mL/kg/%</option>
-<option value="parkland-adult">Classic Parkland, adult — 4 mL/kg/%</option>
-<option value="pediatric">Pediatric — clinician-prescribed coefficient</option>
+<option value="parkland-adult">Historical Parkland, adult — 4 mL/kg/%</option>
+
 </select>
 </label>
-<div id="burn-pediatric" hidden>
-<label for="burn-coefficient">Prescribed coefficient (mL/kg/%)<input id="burn-coefficient" type="number" min="1" max="10" step="any">
-</label>
-<p class="info-text">Use an age-appropriate Lund–Browder assessment. Pediatric maintenance and glucose requirements need the burn team’s plan; no adult default is applied.</p>
-</div>
 <div class="fields">
 <label for="burn-tbsa">Assessed burned body surface (%)<input id="burn-tbsa" type="number" min="0.1" max="100" step="any">
 </label>
@@ -239,7 +209,7 @@
 <label for="burn-prior">Resuscitation fluid already given (mL)<input id="burn-prior" type="number" min="0" max="100000" step="any" placeholder="Enter 0 if none">
 </label>
 </div>
-<p class="info-text">Count partial- and full-thickness burns, not superficial redness. Enter the assessed percentage; the former fixed pediatric chart has been removed.</p>
+<p class="info-text">Count partial- and full-thickness burns, not superficial redness. Enter the assessed percentage.</p>
 <p id="burn-error" class="validation" role="alert" hidden>
 </p>
 <div id="burn-results" aria-live="polite">
@@ -268,8 +238,8 @@
 <li>Support airway and circulation; follow the LAST checklist.</li>
 </ol>
 </aside>
-<a class="btn btn-primary link-button" href="https://asra.com/docs/default-source/guidelines-articles/local-anesthetic-systemic-toxicity-rgb.pdf" target="_blank" rel="noopener">Open official ASRA LAST checklist</a>
-<p class="info-text">The link requires connectivity unless saved separately. Keep your institution’s checklist and rescue kit immediately available.</p>
+<a class="btn btn-primary link-button" href="references/asra-last-2020.pdf" target="_blank" rel="noopener">Open official ASRA LAST checklist</a>
+<p class="info-text">The unmodified ASRA checklist and adult reference notes are bundled offline after installation. Keep your institution’s checklist and rescue kit at hand.</p>
 <h2>20% lipid emulsion</h2>
 <p id="lipid-error" class="validation" role="alert" hidden>
 </p>
@@ -290,7 +260,7 @@
 </details>
 <details>
 <summary>Reference version</summary>
-<p>ASRA checklist 2020 v1.1. Reviewed September 12, 2026. ASRA expects an update in early 2027.</p>
+<p>ASRA checklist 2020 v1.1. Reviewed October 21, 2026. ASRA expects an update in early 2027.</p>
 <a href="https://asra.com/news-publications/asra-updates/blog-landing/guidelines/2020/11/01/checklist-for-treatment-of-local-anesthetic-systemic-toxicity" target="_blank" rel="noopener">ASRA publication and update status</a>
 </details>
 </div>
@@ -309,7 +279,7 @@
 </div>
 <div class="result-row">
 <span>Reference review</span>
-<strong>September 12, 2026</strong>
+<strong>October 21, 2026</strong>
 </div>
 <p class="info-text">Review branch. Clinical sign-off remains required before routine deployment.</p>
 <h2>Offline availability</h2>
@@ -319,11 +289,12 @@
 <h2>Clinical references</h2>
 <ul id="reference-list">
 </ul>
-<a href="REVIEW.md" target="_blank" rel="noopener">Review notes and remaining clinical decisions</a>
+<a href="references.html">Dated clinical rules — available offline</a><br><a href="REVIEW.md" target="_blank" rel="noopener">Review notes and remaining clinical decisions</a>
 <p class="info-text">Educational decision support. Verify the clinical plan, source, patient context and institutional policy. No identifying patient data are requested or saved.</p>
 </div>
 </section>
 </main>
+<nav class="quick-nav" aria-label="Quick calculators"><button data-page="local">Local doses</button><button id="quick-exparel">EXPAREL</button><button data-page="fluids">4-2-1 fluids</button><button id="jump-result" aria-label="View result">Result</button></nav>
 <noscript>
 <p class="warning">Enable JavaScript to use the calculators. Keep a separate copy of your institutional emergency checklist available.</p>
 </noscript>

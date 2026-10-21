@@ -103,6 +103,7 @@ label {
   font-weight:500
 }
 input[type=number],select {
+  min-height:48px;
   display:block;
   width:100%;
   min-width:0;
@@ -444,3 +445,22 @@ input::-webkit-inner-spin-button,input::-webkit-outer-spin-button {
 
 }
 
+
+/* Keep the primary tools in thumb reach without covering the final result. */
+body { padding-bottom:calc(82px + env(safe-area-inset-bottom)); }
+button, summary, .text-button, .remove-btn { min-height:44px; }
+.hero-result { font-size:36px; line-height:1.2; font-weight:750; margin:12px 0; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.hero-result span { font-size:19px; white-space:nowrap; }
+.source-note { font-size:13px; color:#44566b; margin-top:18px; }
+.quick-nav { position:fixed; bottom:0; left:0; right:0; z-index:11; display:flex; gap:6px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); background:#0a1128; border-top:1px solid #63708e; }
+.quick-nav button { flex:1; border:1px solid #63708e; border-radius:8px; background:#17294c; color:white; font-size:14px; font-weight:650; }
+.patient-bar .fields { grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:10px; }
+.patient-bar input, .patient-bar select { padding:10px 7px; }
+.patient-bar .weight-row select { width:62px; }
+@media(min-width:700px) { .quick-nav { max-width:640px; margin:0 auto; border-radius:12px 12px 0 0; } }
+@media(max-width:360px) { .hero-result {font-size:30px;} .patient-bar {padding:12px;} .weight-row {gap:4px;} }
+
+[id$="-results"], .validation {scroll-margin-top:80px;}
+.hamburger-btn { min-width:44px; min-height:44px; flex-shrink:0; }
+
+select { height:48px; }

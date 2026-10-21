@@ -1,7 +1,7 @@
 {
-  "name": "BlockCalc \u2014 Anesthesia Tools",
+  "name": "BlockCalc \u2014 Adult Anesthesia Tools",
   "short_name": "BlockCalc",
-  "description": "Anesthesia calculation review tools",
+  "description": "Adult-only anesthesia calculation review tools",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
