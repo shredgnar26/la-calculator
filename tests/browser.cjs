@@ -41,6 +41,11 @@ const server = http.createServer((req,res) => {
         const select=(id,v)=>page.locator('#'+id).selectOption(v);
         async function nav(name){await page.locator('#menu-button').click();await page.locator(`#app-menu [data-page="${name}"]`).click();}
         async function field(key,value,index=0){const el=page.locator(`[data-key="${key}"]`).nth(index);if(await el.evaluate(e=>e.tagName)==='SELECT')await el.selectOption(value);else await el.fill(value);}
+        async function hasMarker(target) {return target.evaluate(async()=>{
+          if(!await caches.has('unrelated-cache'))return false;
+          const response=await (await caches.open('unrelated-cache')).match(new URL('manifest.json',location.href).href);
+          return !!response && (await response.json()).name==='BlockCalc — Adult Anesthesia Tools';
+        });}
         await page.goto(base);
         check('no calculation without age/weight',await page.locator('#la-results').innerText()==='');
         check('adult label visible',/ADULTS 18\+/.test(await page.locator('body').innerText()));
@@ -106,7 +111,7 @@ const server = http.createServer((req,res) => {
         await page.locator('#reset-patient').click();check('clear resets age and history',await page.locator('#patient-age').inputValue()===''&&await page.locator('#la-prior-exparel').inputValue()==='');
         check('no patient persistence',await page.evaluate(()=>localStorage.length===0&&sessionStorage.length===0));
         await page.evaluate(()=>navigator.serviceWorker.ready);await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
-        await page.evaluate(async()=>{const c=await caches.open('unrelated-cache');await c.put('/marker',new Response('keep'));});
+        await page.evaluate(async()=>{const c=await caches.open('unrelated-cache');await c.add(new URL('manifest.json',location.href).href);});
         // WebKit setOffline has upstream issue42775. Stop the actual owned origin for both engines.
         await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});
         check('origin unavailable during offline checks',await new Promise(resolve=>{const req=http.get(base,res=>{res.resume();resolve(false);});req.on('error',()=>resolve(true));}));
@@ -114,16 +119,19 @@ const server = http.createServer((req,res) => {
         await offline.goto(base+'references.html');check('offline clinical rules',/13.3 mg\/mL/.test(await offline.locator('body').innerText()));
         check('offline full LAST checklist',await offline.evaluate(async()=>{const r=await fetch('./references/asra-last-2020.pdf');return r.ok&&(await r.text()).startsWith('%PDF-');}));
         await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));if(engine==='chromium')await context.setOffline(false);await offline.goto(base);
-        const cacheAfterCold=await offline.evaluate(async()=>({keys:await caches.keys(),marker:!!await caches.match('/marker')}));
+        const cacheAfterCold={keys:await offline.evaluate(()=>caches.keys()),marker:await hasMarker(offline)};
         console.log(JSON.stringify({engine,cacheAfterCold}));
-        // Seed on this page to isolate update behavior from browser eviction when the last tab closes.
-        await offline.evaluate(async()=>{const c=await caches.open('unrelated-cache');await c.put('/marker',new Response('keep'));});
-        check('unrelated cache exists before update',await offline.evaluate(async()=>!!await caches.match('/marker')));
+        // A real asset response avoids the pinned WebKit synthetic-Response cache fixture failure.
+        // Check the exact named cache and payload; a global match could find a different cache.
+        await offline.evaluate(async()=>{const c=await caches.open('unrelated-cache');await c.add(new URL('manifest.json',location.href).href);});
+        const markerDiagnostic=await offline.evaluate(async()=>{const c=await caches.open('unrelated-cache'),r=await c.match(new URL('manifest.json',location.href).href);return {url:location.href,origin:location.origin,keys:(await c.keys()).map(r=>r.url),response:r?{status:r.status,type:r.type,name:(await r.json()).name}:null};});
+        console.log(JSON.stringify({engine,markerDiagnostic}));
+        check('unrelated cache exists before update',await hasMarker(offline));
         revision=2;
         await offline.locator('#menu-button').click();await offline.locator('#app-menu [data-page="settings"]').click();await offline.locator('#check-update').click();await offline.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration()).waiting);await offline.waitForFunction(()=>!document.getElementById('apply-update').hidden);
         check('update waits for choice',await offline.locator('#version').innerText()===C.VERSION);
         await offline.locator('#patient-weight').fill('70');await offline.locator('#apply-update').click();await offline.waitForFunction(v=>window.BlockCalc?.VERSION===v,nextVersion);
-        check('update clears entries',await offline.locator('#patient-weight').inputValue()==='');check('unrelated cache retained',await offline.evaluate(async()=>!!(await caches.match('/marker'))));
+        check('update clears entries',await offline.locator('#patient-weight').inputValue()==='');check('unrelated cache retained',await hasMarker(offline));
         assert.deepEqual(errors,[]);assert.deepEqual(external,[]);reports.push({engine,browserVersion:browser.version(),playwrightVersion:require((process.env.PLAYWRIGHT_MODULE||'playwright')+'/package.json').version,nodeVersion:process.version,passed:true,checks:checks.length,names:checks,pageErrors:errors,externalRequests:external,cacheAfterCold,offlineMode:engine==='chromium'?'Origin stopped plus browser offline emulation':'Origin stopped; setOffline emulation blocked by Playwright issue42775'});
         await context.close();
       } finally {await browser.close();}

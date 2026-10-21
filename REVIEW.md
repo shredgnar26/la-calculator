@@ -1,34 +1,31 @@
-# Review branch — BlockCalc 2.0.0-review.1
+# BlockCalc 2.1.0-review.1 — medication-safety review
 
-This branch implements the approved clarity and calculation changes while preserving the original navy/blue/white appearance. It is not merged or approved for routine clinical deployment.
+Verified 2026-10-21. **Not clinically validated. Not approved for routine use.** Software tests check implementation; independent clinician/pharmacist review must validate the rule set, representative cases and intended workflow.
 
-## Included
+## Changes from the working baseline
 
-- ABL offers hemoglobin (g/dL) and hematocrit (%) with separately preserved inputs. Both use EBV × (initial − minimum) / initial. Equal values return zero; invalid or mixed-unit-like values are rejected. No automatic 3× conversion or blood-unit estimate.
-- Four comparable hourly fluid rows, maintenance and deficit separately labeled, duration-specific totals including partial hours, and the agreed blood-loss side note.
-- Missing lidocaine/chloroprocaine label ceilings enforced. Bupivacaine, mepivacaine and ropivacaine require a clinician-selected limit within the selected product/route ceiling. No unsupported fixed age/risk reduction or universal long-acting amide pool.
-- Exparel uses 13.3 mg/mL, indication-specific references and a separate compatibility review. Bupivacaine HCl is entered as its own row and included in the full record and ratio check. No generic Exparel remaining-dose budget.
-- Medication rows distinguish administered from proposed doses. Incomplete inputs block results; repeated drugs are aggregated with the lower selected limit. Copy includes doses, reference limits, procedure, warnings and sources.
-- Adult body-size formulas have explicit age/height scope. Abbreviations are expanded, and predicted body weight is separate from ideal body weight. The universal 7 mL/kg tidal-volume target is removed.
-- Burn protocols are explicit; injury elapsed time and previous resuscitation are accounted for. No automatic catch-up rate or arbitrary prehospital volume. Pediatric protocol input is clinician-prescribed, with no static age-independent body chart or adult timing default.
-- LAST has visible initial actions, a directly linked ASRA checklist, weight-based/fixed lipid arithmetic, consistent pump-unit equivalents, persistent-instability instructions and event-specific observation wording.
-- Shared measured patient weight, lossless unit switching until the user edits a value, clear invalid states, semantic controls, scoped offline caching and deliberate update activation.
+The clean existing review branch at 9886d74 passed 19 unit tests, yet retained unsafe assumptions: an automatic fasting-deficit schedule, under 18 paths, cross-drug dose fractions, permissive route/concentration combinations, and warning-only exceeded limits. This candidate removes those assumptions while retaining the existing adult tools and offline architecture.
 
-## Clinical scope and decisions to verify before release
+Age is required for every clinical calculation. No child protocols or dose paths remain. Invalid or incomplete entries clear results. Exceeded checked limits and unsupported combinations show STOP and disable copying. A completed check says “Within the checked limits”; it never establishes safety.
 
-- Confirm local policy for dosing weight, supported procedures, patient-specific limits and combined-drug fraction comparisons. This version intentionally requires selected limits where a universal mg/kg default was not defensible.
-- Conventional local-anesthetic references are adult infiltration/peripheral-block comparisons only. Other routes and pediatric conventional-agent protocols are not supplied. Exparel pediatric infiltration is scoped to 6–<17 years; adult references begin at 18. Age 17 remains a documented unsupported boundary pending protocol clarification rather than an inferred dose.
-- Exparel compatibility still requires clinical review of timing, sites and label-specific concomitant-use instructions. Aggregate 1:2 checking is conservative and does not infer sites from a medication list.
-- Confirm the traditional fasting-deficit method is appropriate locally. Blood-loss replacement is not an automatic ratio calculation.
-- Verify ABL blood-volume factors for the actual population. No minimum Hb or HCT is preselected. The linear formula is an approximation, not a transfusion threshold.
-- Confirm burn protocol population, coefficient and bedside titration process. Pediatric timing and maintenance/glucose support remain clinician-directed.
-- Adult measurements support height ≥152.4 cm; shorter adults require an alternative method. Adjusted-weight values have no automatic medication indication.
-- ASRA 2020 v1.1 is the published checklist checked on 2026-09-12; the ASRA page expects an update in early 2027. The 70 kg boundary uses weight-based arithmetic and is labeled explicitly. Verify the complete rescue workflow with local clinicians.
+## Clinical restrictions that require sign-off
 
-## Sources
+- **EXPAREL ratio:** conservative literal HCl mg ≤ EXPAREL mg/2. Manufacturer salt-equivalence examples 150/266 and 75/133 differ. The app labels its stricter limit; clinician/pharmacist must resolve the interpretation before release.
+- **EXPAREL dilution:** exact 0.89 mg/mL floor is stricter than rounded 1:14 examples. All admixture volume counts; HCl injected separately does not. This can reject the manufacturer 300 mL example. No automatic override exists.
+- **EXPAREL scope:** one administration/site, exact approved perineural regimen, adductor 133 mg+50 mg 0.5% HCl 20 mL. Pregnancy/unknown pregnancy, prior EXPAREL within 96 hours/unknown history, unsupported routes, unknown timing, and nonbupivacaine mixtures stop. These are conservative app limits, not assertions that every excluded regimen is contraindicated. Label-specific companion analgesia needs independent assessment.
+- **Conventional drugs:** guide ceilings are not universally tolerated doses. Clinician-selected limits are required for bupivacaine, mepivacaine and ropivacaine. Lidocaine/chloroprocaine references assume the specified adult population and product. The app does not validate allergies, technique, organ function, site absorption, all unentered doses, or an appropriate dosing weight.
+- **Different drugs:** conventional combinations are outside this app’s checked scope. Positive doses of different drugs stop, except EXPAREL/HCl under its separate rules. Lidocaine, bupivacaine and mepivacaine labels warn against other local-anesthetic combinations.
+- **Cumulative doses:** all entered same-drug rows are summed against the lowest selected per-procedure limit. This is conservative across separate procedures. It does not manage repeat-dose intervals, 24-hour ledgers, continuous infusions, or clinical recovery between doses. Never interpret missing entries as no prior dose.
+- **Fluids:** 4-2-1 is historical arithmetic. NICE is a separate general hospital maintenance reference, not an automatic perioperative order; pregnancy, severe organ disease, burns, diabetes and other specialist populations need their own plans. No bolus or deficit replacement is inferred.
+- **Simple blood-loss model:** starting-denominator linear approximation, not a transfusion trigger or dilution-corrected measurement. Hb/Hct equal proportional changes yield equal arithmetic; that does not validate converting one lab to the other. The selected factor and minimum are clinician choices.
+- **Body size:** not a drug dosing decision. Devine below 152.4 cm is outside app scope. LBW study-range warnings limit extrapolation. Unsupported universal adjusted-weight and category interpretations are removed.
+- **Adult burns:** initial estimates only; current ABA 2 mL/kg/% supports adults with ≥ 20% TBSA. Historical Parkland 4 is explicit. Titrate clinically; no automatic catch-up rate.
+- **LAST:** full institutional emergency process remains required. ASRA 2020 v1.1 has under/over 70 groups; exactly 70 kg uses a disclosed weight-based app convention requiring clinician acceptance. This app cannot replace rescue readiness or the full checklist.
 
-Product labels are linked on each medication card and in Settings. The app also links the ABL method, NICE fluid principles, ABA adult burn guideline and ASRA checklist beside the relevant calculation. Formula/reference review date: 2026-09-12. External references are not bundled offline; keep an institutional emergency checklist separately.
+## Human acceptance is still open
 
-## Review workflow
+An independent licensed anesthesia clinician and pharmacist must sign `docs/CLINICIAN-REVIEW.md`. A second AI/software review is independent of the implementation author but is not a clinician review. Provider 3–5 second comprehension and real iPhone testing have not been demonstrated by automated browser checks.
 
-Run `npm test` for pure calculation checks and `npm run test:browser` with Playwright available (see README). Review this branch in a local preview before merging. Keep production on `main`. Clinical sign-off and broader device testing remain separate from software test results.
+Full source links need network access; dated adult rule summaries and the unmodified ASRA checklist work offline after installation. Clinical rules do not automatically update while offline. Verify the reference date and current product label before use. No patient entries persist after reload, reset or update.
+
+See [the evidence matrix](docs/CLINICAL-EVIDENCE.md) for source/section mapping and [validation results](docs/VALIDATION.md) for actual checks.
