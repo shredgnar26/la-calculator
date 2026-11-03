@@ -1,0 +1,16 @@
+✔ vial references and 25 mg example (0.505167ms)
+✔ exceeded and clamped remainder (0.081291ms)
+✔ each actual administration counted once, no mirrored subfield (0.097958ms)
+✔ zero HCl valid; missing, negative, excessive, nonfinite invalid (0.119375ms)
+✔ decimals and partial volume equivalence (0.086584ms)
+✔ indications, adult scope, exact nerve block dose (0.449834ms)
+✔ non-bupivacaine warnings; no non-bupivacaine remainder (0.162417ms)
+✔ conventional selection and calculations contain no EXPAREL, universal pool or safety approval (0.185292ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.449542

@@ -33,7 +33,6 @@
         .warning { background: #f8d7da; border: 2px solid #dc3545; border-radius: 8px; padding: 12px; margin: 10px 0; color: #721c24; font-size: 13px; }
         .info-warn { background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 10px 12px; margin: 10px 0; color: #856404; font-size: 13px; }
         .agent-card { background: white; border: 2px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0; }
-        .agent-card.exparel-card { border-color: #ffc107; }
         .agent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .agent-number { font-weight: 700; color: #007bff; font-size: 15px; }
         .remove-btn { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
@@ -225,6 +224,7 @@
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><line x1="8" y1="19" x2="8" y2="19"/><line x1="12" y1="19" x2="12" y2="19"/><line x1="16" y1="19" x2="16" y2="19"/></svg>
             <span>LA Calc</span>
         </div>
+        <div class="drawer-item" data-panel="panel-exparel" data-title="EXPAREL Calculator" onclick="selectDrawerPanel(this)"><span>EXPAREL Calculator</span></div>
         <div class="drawer-item" data-panel="panel-profile" data-title="Patient Profile" onclick="selectDrawerPanel(this)">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2"/></svg>
             <span>Patient Profile</span>
@@ -436,6 +436,28 @@
 </div>
 
 <!-- ==================== PATIENT PROFILE ==================== -->
+<div id="panel-exparel" class="page-panel"><div class="container">
+<h1>EXPAREL Calculator</h1><p class="subtitle">Admixture reference • ADULTS ONLY (18+)</p>
+<div class="section"><h2 class="section-title">1. Indication and patient</h2>
+<label for="ex-indication">Procedure / administration type</label><select id="ex-indication" class="native-select"><option value="">Select indication first</option><option value="infiltration">Surgical-site infiltration</option><option value="interscalene">Interscalene brachial plexus block</option><option value="sciatic">Sciatic block in popliteal fossa</option><option value="adductor">Adductor canal block</option><option value="other">Other / unsupported indication</option><option value="paracervical">Obstetrical paracervical block — contraindicated</option></select>
+<div class="input-group"><label for="ex-age">Age (years)</label><input id="ex-age" type="number" min="18" max="120" step="1"></div>
+<div class="input-group"><label for="ex-weight">Weight (kg)</label><input id="ex-weight" type="number" min="1" max="500" step="any"></div>
+<p class="info-text">Pediatric infiltration has separate labeling; this adult-only tool does not calculate pediatric doses. Weight alone does not establish dose suitability.</p></div>
+<fieldset id="ex-dose-fields" disabled style="border:0;padding:0;margin:0;min-width:0;">
+<div class="section"><h2 class="section-title">2. EXPAREL dose</h2>
+<label for="ex-dose">Dose selection</label><select id="ex-dose" class="native-select"><option value="10">133 mg / 10 mL</option><option value="20">266 mg / 20 mL</option><option value="partial">Partial volume (infiltration only)</option></select>
+<div class="input-group"><label for="ex-volume">Undiluted EXPAREL volume (mL)</label><input id="ex-volume" type="number" min="0" max="20" step="any" value="10" readonly></div><p id="ex-mg" class="result-value"></p>
+<p class="info-text">Single administration only. Nerve blocks require 133 mg; adductor canal labeling specifies 50 mg (10 mL) of 0.5% bupivacaine HCl in the admixture.</p></div>
+<div class="section"><h2 class="section-title">3. Bupivacaine HCl administrations</h2><p>Enter each actual administration once. Do not repeat the primary entry below.</p><div id="ex-entries"></div><button type="button" id="ex-add" class="close-btn">Add another administration</button></div>
+</fieldset>
+<div class="section" id="ex-output" aria-live="polite"></div>
+<div class="section"><h2 class="section-title">6. Cumulative toxicity precautions</h2><div class="info-warn">Toxic effects are additive. Other-site or other-time bupivacaine entries are shown separately and do not reduce the admixture reference. They still require cumulative exposure review. Review hepatic and cardiovascular disease, patient factors, site, and all prior doses. Monitor neurologic and cardiovascular status with emergency treatment available.</div></div>
+<div class="section"><h2 class="section-title">7. Other local anesthetics</h2><label for="ex-other">Other agent reported</label><select id="ex-other" class="native-select"><option value="none">None reported</option><option>Lidocaine</option><option>Ropivacaine</option><option>Mepivacaine</option><option>Chloroprocaine</option><option>Other non-bupivacaine local anesthetic</option></select>
+<div id="ex-other-warning" class="warning hidden"><strong>EXTREME CAUTION — OTHER LOCAL ANESTHETICS</strong><p>Do not admix EXPAREL with non-bupivacaine local anesthetics. Local coadministration can disrupt the liposomal formulation and cause premature bupivacaine release. Systemic local anesthetic toxicity is additive.</p></div>
+<p>Lidocaine: EXPAREL may follow local lidocaine administration after a delay of at least 20 minutes.</p><p>Other non-bupivacaine agents: Do not assume the lidocaine 20-minute interval establishes compatibility. The label does not establish the same sequential administration guidance.</p><div class="warning">Following EXPAREL: Avoid additional use of local anesthetics within 96 hours following administration of EXPAREL. Review indication-specific additional analgesia with the prescribing clinician; this tool does not clear subsequent doses.</div></div>
+<div class="section"><h2 class="section-title">8. Sources and interpretation</h2><p><a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bb5a9e59-0f51-11df-8a39-0800200c9a66" target="_blank" rel="noopener">FDA prescribing information via DailyMed</a>: revised November 2023; listing updated December 12, 2025. <a href="https://www.exparelpro.com/dosing-and-administration" target="_blank" rel="noopener">Manufacturer dosing and administration guidance</a>: undated web page, verified November 3, 2026.</p><p>The label states a 1:2 milligram ratio. Manufacturer examples use HCl equivalence: 266 mg nominal EXPAREL (free-base bupivacaine) corresponds to 300 mg bupivacaine HCl for this admixture comparison; 133 mg corresponds to 150 mg. The resulting references are 150 mg and 75 mg HCl. Partial infiltration volumes use proportional manufacturer equivalence: 7.5 mg HCl per mL of undiluted EXPAREL. This is an interpretation of the equivalence, not a separately studied partial-dose regimen or dose interchangeability.</p><p>These calculations require clinician/pharmacist review. They do not approve a dose or establish clinical safety.</p></div>
+</div></div>
+
 <div id="panel-profile" class="page-panel">
     <div class="container">
         <h1>Patient Measurements</h1>
@@ -733,6 +755,64 @@ document.getElementById('highRiskInfo').addEventListener('click', e => {
     ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
 });
 
+// ==================== SEPARATE EXPAREL ====================
+function assessExparel({indication, age, weight, volume, entries, other = 'none'}) {
+    const number = v => v !== '' && v !== null && v !== undefined && Number.isFinite(Number(v));
+    const stop = message => ({message, blocked:true});
+    if (!['infiltration','interscalene','sciatic','adductor'].includes(indication)) return stop('STOP — unsupported or contraindicated indication. No dose assessment.');
+    if (!number(age) || !Number.isInteger(Number(age)) || age < 18 || age > 120) return stop('STOP — enter adult age 18–120. Pediatric dosing is outside this tool.');
+    if (!number(weight) || weight <= 0 || weight > 500) return stop('STOP — enter valid weight (over 0 to 500 kg); outside tool range requires review.');
+    if (!number(volume) || volume <= 0 || volume > 20) return stop('STOP — EXPAREL volume must be over 0 and no more than 20 mL.');
+    if (indication !== 'infiltration' && Number(volume) !== 10) return stop('STOP — labeled nerve-block dose is 133 mg / 10 mL.');
+    if (!Array.isArray(entries) || !entries.length) return stop('STOP — enter bupivacaine HCl volume, including zero if none.');
+    let total = 0, separate = 0;
+    for (const e of entries) {
+        if (!number(e.volume) || e.volume < 0 || e.volume > 1000 || ![0.25,0.5,0.75].includes(Number(e.concentration)) || !['combination','before','separate'].includes(e.scope)) return stop('STOP — correct every HCl entry (0–1000 mL tool range). Missing entries are not treated as zero.');
+        const mg = Number(e.concentration) * 10 * Number(e.volume);
+        if (e.scope !== 'separate') total += mg; else separate += mg;
+    }
+    // Manufacturer HCl equivalence, not nominal EXPAREL mg × 0.5.
+    const limit = Number(volume) * 7.5;
+    const exceeded = total > limit + 1e-9;
+    const regimen = indication !== 'adductor' || (Math.abs(total - 50) < 1e-9 && entries.filter(e => e.scope !== 'separate' && Number(e.volume) > 0).every(e => e.scope === 'combination' && Number(e.concentration) === 0.5));
+    return {blocked:false, total, separate, limit, remaining:Math.max(0, limit-total), exceeded, regimen,
+        message:exceeded ? 'ADMIXTURE LIMIT EXCEEDED' : !regimen ? 'STOP — adductor canal regimen does not match labeling' : other !== 'none' ? 'EXTREME CAUTION — OTHER LOCAL ANESTHETICS' : 'WITHIN ADMIXTURE REFERENCE ONLY — NOT A DOSE APPROVAL'};
+}
+function addExparelEntry() {
+    const row = document.createElement('div'); row.className = 'agent-card';
+    const n = document.querySelectorAll('#ex-entries .agent-card').length + 1;
+    row.innerHTML = `<h3>Administration ${n}</h3><label>HCl concentration<select class="native-select ex-conc"><option value="0.25">0.25% (2.5 mg/mL)</option><option value="0.5" selected>0.5% (5 mg/mL)</option><option value="0.75">0.75% (7.5 mg/mL)</option></select></label><label>HCl volume (mL)<input class="ex-hcl-volume" type="number" min="0" max="1000" step="any" placeholder="Enter 0 if none"></label><label>Where / when<select class="native-select ex-scope"><option value="combination">Admixed with EXPAREL (same combination)</option><option value="before">Immediately before EXPAREL (same combination)</option><option value="separate">Other site or time — cumulative review only</option></select></label><button type="button" class="remove-btn">Remove entry</button>`;
+    row.querySelector('button').onclick = () => {row.remove(); updateExparel();};
+    document.getElementById('ex-entries').appendChild(row); updateExparel();
+}
+function updateExparel() {
+    const get = id => document.getElementById(id).value;
+    document.getElementById('ex-dose-fields').disabled = !get('ex-indication');
+    const entries = [...document.querySelectorAll('#ex-entries .agent-card')].map(r => ({concentration:r.querySelector('.ex-conc').value,volume:r.querySelector('.ex-hcl-volume').value,scope:r.querySelector('.ex-scope').value}));
+    const r = assessExparel({indication:get('ex-indication'),age:get('ex-age'),weight:get('ex-weight'),volume:get('ex-volume'),entries,other:get('ex-other')});
+    document.getElementById('ex-other-warning').classList.toggle('hidden', get('ex-other') === 'none');
+    const v = Number(get('ex-volume'));
+    document.getElementById('ex-mg').textContent = Number.isFinite(v) && v > 0 && v <= 20 ? `${(v*13.3).toFixed(2)} mg / ${v} mL` : 'Enter valid EXPAREL volume';
+    let html = `<h2 class="section-title">4. Admixture limit status</h2><div class="${r.blocked || r.exceeded || !r.regimen ? 'warning' : 'info-warn'}"><strong>${r.message}</strong></div>`;
+    if (!r.blocked) {
+        html += `<p>Manufacturer admixture reference: <strong>${r.limit.toFixed(2)} mg HCl</strong><br>Same combination entered: <strong>${r.total.toFixed(2)} mg HCl</strong><br>Other site/time: <strong>${r.separate.toFixed(2)} mg HCl — separate cumulative review required</strong></p><h2 class="section-title">5. Remaining bupivacaine HCl</h2>`;
+        if (r.regimen) {
+            html += `<p class="result-value">${r.remaining.toFixed(2)} mg remaining admixture reference</p><p>Alternative concentration equivalents — not additive allowances. Volumes rounded down to 0.1 mL.</p><table><thead><tr><th>Concentration</th><th>Remaining equivalent</th></tr></thead><tbody>${[0.25,0.5,0.75].map(c => `<tr><td>${c}%</td><td>${(Math.floor((r.remaining/(c*10)+1e-10)*10)/10).toFixed(1)} mL</td></tr>`).join('')}</tbody></table>`;
+            html += '<div class="info-warn">These values describe the remaining EXPAREL admixture allowance only. They do not establish a safe additional local anesthetic dose. Consider cumulative toxicity, indication, administration site, patient factors, and clinical judgment.</div>';
+            if (get('ex-indication') === 'adductor') html += '<p class="warning">The labeled adductor canal regimen is 50 mg HCl at 0.5%. Remaining compatibility reference is not a recommendation to add to that regimen.</p>';
+        } else html += '<p>No remaining-volume result: the labeled adductor canal regimen requires 50 mg of 0.5% HCl admixed with 133 mg EXPAREL.</p>';
+    }
+    document.getElementById('ex-output').innerHTML = html;
+}
+document.getElementById('panel-exparel').addEventListener('input', updateExparel);
+document.getElementById('panel-exparel').addEventListener('change', updateExparel);
+document.getElementById('ex-dose').addEventListener('change', e => {
+    const v = document.getElementById('ex-volume'); v.readOnly = e.target.value !== 'partial';
+    v.value = e.target.value === 'partial' ? '' : e.target.value; updateExparel();
+});
+document.getElementById('ex-add').onclick = addExparelEntry;
+addExparelEntry();
+
 // ==================== DRUGS ====================
 const DRUGS = {
     lidocaine:      { name: 'Lidocaine (Xylocaine)',           plainMgKg: 4.5, epiMgKg: 7,  advisory: { plain: 300, epi: 500 }, commonConc: [0.5, 1, 1.5, 2] },
@@ -740,13 +820,7 @@ const DRUGS = {
     bupivacaine:    { name: 'Bupivacaine (Marcaine)',           plainMgKg: 2.5, epiMgKg: 3,  hardCap: { plain: 175, epi: 225 }, commonConc: [0.25, 0.5, 0.75] },
     ropivacaine:    { name: 'Ropivacaine (Naropin)',            plainMgKg: 3,   epiMgKg: 3,  commonConc: [0.2, 0.5, 0.75, 1] },
     chloroprocaine: { name: 'Chloroprocaine (Nesacaine)',       plainMgKg: 11,  epiMgKg: 14, commonConc: [2, 3] },
-    exparel:        { name: 'Exparel (Liposomal Bupivacaine)',  plainMgKg: 2,   epiMgKg: 3,  hardCap: { plain: 266, epi: 266 }, commonConc: [1.3], isExparel: true }
 };
-
-// Drugs that are non-bupivacaine — Exparel must wait 20 min after these
-const NON_BUPI = ['lidocaine', 'mepivacaine', 'ropivacaine', 'chloroprocaine'];
-// Amide agents for cumulative toxicity tracking
-const AMIDES = ['bupivacaine', 'ropivacaine', 'exparel'];
 
 let agents = [];
 
@@ -772,7 +846,7 @@ function onWeightChange() {
 function getPatientData() {
     const kg = getWeightKg();
     const proceed = document.getElementById('proceedAnyway').checked;
-    if (!kg || isNaN(kg)) return null;
+    if (!Number.isFinite(kg) || kg <= 0) return null;
     if ((kg < 20 || kg > 250) && !proceed) return null;
     return {
         weight: kg,
@@ -817,13 +891,12 @@ function renderAgents() {
         container.innerHTML = '<p style="color:#999;text-align:center;padding:12px 0;">No agents added yet.</p>';
     }
     agents.forEach((agent, idx) => {
-        const isExp = agent.drug === 'exparel';
         const card = document.createElement('div');
-        card.className = 'agent-card' + (isExp ? ' exparel-card' : '');
+        card.className = 'agent-card';
 
         // Header
         const hdr = document.createElement('div'); hdr.className = 'agent-header';
-        hdr.innerHTML = `<span class="agent-number">Agent ${idx + 1}${isExp ? ' — Exparel' : ''}</span>` +
+        hdr.innerHTML = `<span class="agent-number">Agent ${idx + 1}</span>` +
             (agents.length > 1 ? `<button class="remove-btn" onclick="removeAgent(${agent.id})">Remove</button>` : '');
         card.appendChild(hdr);
 
@@ -835,9 +908,7 @@ function renderAgents() {
             Object.keys(DRUGS).map(k => `<option value="${k}" ${k === agent.drug ? 'selected' : ''}>${DRUGS[k].name}</option>`).join('');
         dsel.addEventListener('change', () => {
             agent.drug = dsel.value;
-            // Auto-lock concentration for Exparel
-            if (agent.drug === 'exparel') agent.conc = '1.3';
-            else agent.conc = '';
+            agent.conc = '';
             renderAgents(); calculate();
         });
         dg.appendChild(dsel); card.appendChild(dg);
@@ -845,13 +916,6 @@ function renderAgents() {
         // Concentration
         const cg = document.createElement('div'); cg.className = 'input-group';
         cg.innerHTML = '<label>Concentration (%)</label>';
-        if (isExp) {
-            // Locked display
-            const locked = document.createElement('div');
-            locked.style.cssText = 'padding:14px;background:#fff8e1;border:2px solid #ffc107;border-radius:8px;font-weight:600;color:#856404;';
-            locked.textContent = '1.3% (13.3 mg/mL) — Fixed';
-            cg.appendChild(locked);
-        } else {
             const csel = document.createElement('select'); csel.className = 'native-select';
             const concs = agent.drug ? DRUGS[agent.drug].commonConc : [];
             csel.innerHTML = '<option value="">Select conc...</option>' +
@@ -859,60 +923,16 @@ function renderAgents() {
             csel.disabled = !agent.drug;
             csel.addEventListener('change', () => { agent.conc = csel.value; calculate(); });
             cg.appendChild(csel);
-        }
         card.appendChild(cg);
 
         // Volume
         const vg = document.createElement('div'); vg.className = 'input-group';
         vg.innerHTML = '<label>Volume (mL)</label>';
         const vi = document.createElement('input'); vi.type = 'number'; vi.min = '0'; vi.step = '0.1';
-        vi.placeholder = isExp ? 'Max 20 mL (266 mg)' : 'Volume in mL';
+        vi.placeholder = 'Volume in mL';
         vi.value = agent.volume;
-        if (isExp) vi.setAttribute('max', '20');
         vi.addEventListener('input', e => { agent.volume = e.target.value; calculate(); });
         vg.appendChild(vi); card.appendChild(vg);
-
-        // Exparel: Bupi HCl sub-inputs + warnings
-        if (isExp) {
-            // Divider
-            const div0 = document.createElement('hr'); div0.className = 'result-divider'; div0.style.margin = '16px 0'; card.appendChild(div0);
-
-            // Bupi HCl sub-section label
-            const subLabel = document.createElement('div');
-            subLabel.style.cssText = 'font-size:14px;font-weight:700;color:#2c3e50;margin-bottom:4px;';
-            subLabel.textContent = 'Bupivacaine HCl (optional co-admin)';
-            card.appendChild(subLabel);
-
-            const subNote = document.createElement('div');
-            subNote.className = 'info-text'; subNote.style.marginBottom = '10px';
-            subNote.textContent = 'May be admixed with Exparel only. Ratio must not exceed 1:2 (bupi HCl mg : Exparel mg).';
-            card.appendChild(subNote);
-
-            // Bupi HCl concentration
-            const bcg = document.createElement('div'); bcg.className = 'input-group';
-            bcg.innerHTML = '<label>Bupi HCl Concentration (%)</label>';
-            const bcsel = document.createElement('select'); bcsel.className = 'native-select';
-            bcsel.innerHTML = '<option value="">None (not using)</option>' +
-                [0.25, 0.5, 0.75].map(c => `<option value="${c}" ${String(c) === String(agent.bupiConc) ? 'selected' : ''}>${c}%</option>`).join('');
-            bcsel.addEventListener('change', () => { agent.bupiConc = bcsel.value; calculate(); });
-            bcg.appendChild(bcsel); card.appendChild(bcg);
-
-            // Bupi HCl volume
-            const bvg = document.createElement('div'); bvg.className = 'input-group';
-            bvg.innerHTML = '<label>Bupi HCl Volume (mL)</label>';
-            const bvi = document.createElement('input'); bvi.type = 'number'; bvi.min = '0'; bvi.step = '0.1';
-            bvi.placeholder = 'Volume in mL'; bvi.value = agent.bupiVol || '';
-            bvi.addEventListener('input', e => { agent.bupiVol = e.target.value; calculate(); });
-            bvg.appendChild(bvi); card.appendChild(bvg);
-
-            // Static warning block
-            const warnDiv = document.createElement('div'); warnDiv.className = 'warning'; warnDiv.style.marginTop = '12px';
-            warnDiv.innerHTML = `<strong>⛔ EXPAREL — DO NOT ADMIX</strong> with any non-bupivacaine LA in the same syringe.<br>
-                Lidocaine, ropivacaine, mepivacaine, and chloroprocaine cause <em>immediate</em> free bupivacaine release from liposomes.<br><br>
-                <strong>20-Min Rule:</strong> Administer Exparel ≥20 min AFTER any non-bupivacaine LA in the same field.<br>
-                <strong>96-Hr Rule:</strong> Avoid additional bupivacaine products for 96 hr post-Exparel.`;
-            card.appendChild(warnDiv);
-        }
 
         container.appendChild(card);
     });
@@ -926,45 +946,10 @@ function calculate() {
     const rc = document.getElementById('resultsContent');
     if (!patient || agents.length === 0) { rd.classList.add('hidden'); return; }
 
-    const valid = agents.filter(a => a.drug && a.conc && parseFloat(a.volume) >= 0);
-    if (valid.length === 0) { rd.classList.add('hidden'); return; }
-
-    const hasExparel = valid.some(a => a.drug === 'exparel');
-    const hasNonBupi = valid.some(a => NON_BUPI.includes(a.drug));
-
-    let warnings = '';
-
-    // 20-min rule
-    if (hasExparel && hasNonBupi) {
-        warnings += `<div class="warning"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> 20-MINUTE RULE</strong><br>Exparel is listed alongside a non-bupivacaine LA. These agents must NOT be admixed in the same syringe. Exparel must be administered ≥20 min AFTER the other agent(s). Sequential, not simultaneous.</div>`;
-    }
-    // 96-hr rule
-    if (hasExparel) {
-        warnings += `<div class="info-warn"><strong>⏱ 96-HOUR RULE</strong><br>No additional bupivacaine products (plain bupi, levobupivacaine, or additional Exparel) within 96 hours of Exparel administration.</div>`;
-    }
-    // Bupi HCl ratio check — pulled from Exparel card's own sub-inputs
-    if (hasExparel) {
-        const exAgent = valid.find(a => a.drug === 'exparel');
-        if (exAgent && exAgent.bupiConc && exAgent.bupiVol) {
-            const exMg = parseFloat(exAgent.volume) * 13.3;
-            const bupiMg = parseFloat(exAgent.bupiConc) * 10 * parseFloat(exAgent.bupiVol);
-            if (exMg > 0 && bupiMg > 0) {
-                const ratio = bupiMg / exMg;
-                const maxBupi = exMg * 0.5;
-                if (ratio > 0.5) {
-                    warnings += `<div class="warning"><strong>⛔ BUPI HCl RATIO EXCEEDED</strong><br>
-                        Bupi HCl: ${bupiMg.toFixed(1)} mg | Exparel: ${exMg.toFixed(1)} mg | Ratio: ${(ratio * 100).toFixed(0)}%<br>
-                        Max allowed: ${maxBupi.toFixed(1)} mg bupi HCl (50% of Exparel dose). Reduce dose.</div>`;
-                } else {
-                    warnings += `<div class="info-warn"><strong>✓ Bupi HCl ratio OK</strong> — ${bupiMg.toFixed(1)} mg bupi HCl / ${exMg.toFixed(1)} mg Exparel = ${(ratio * 100).toFixed(0)}% (max 50% ✓)<br>
-                        Note: combined bupivacaine toxicity is additive — monitor CNS/CV status.</div>`;
-                }
-            }
-        }
-    }
+    const valid = agents.filter(a => DRUGS[a.drug] && DRUGS[a.drug].commonConc.includes(Number(a.conc)) && a.volume !== '' && Number.isFinite(Number(a.volume)) && Number(a.volume) >= 0 && Number(a.volume) <= 1000);
+    if (valid.length !== agents.length) { rc.textContent = 'STOP — complete or correct every agent entry (volume 0–1000 mL).'; rd.classList.remove('hidden'); return; }
 
     // Per-agent calcs
-    let totalFraction = 0, totalAmideMgKg = 0;
     const calcs = [];
 
     for (const agent of valid) {
@@ -975,32 +960,10 @@ function calculate() {
         const mgPerMl = conc * 10;
         const usedMg = mgPerMl * volume;
         const fraction = usedMg / finalMg;
-        totalFraction += fraction;
-        if (AMIDES.includes(agent.drug)) totalAmideMgKg += usedMg / patient.weight;
-        // If Exparel card has bupi HCl sub-input, add that to cumulative amide too
-        if (agent.drug === 'exparel' && agent.bupiConc && agent.bupiVol) {
-            const bupiSubMg = parseFloat(agent.bupiConc) * 10 * parseFloat(agent.bupiVol);
-            if (bupiSubMg > 0) totalAmideMgKg += bupiSubMg / patient.weight;
-        }
-        const remainingMl = Math.max(0, (finalMg - usedMg) / mgPerMl);
-        calcs.push({ agent, drug: DRUGS[agent.drug], conc, mgPerMl, volume, usedMg, baseMg, finalMg, mgPerKg, fraction, remainingMl });
+        calcs.push({ agent, drug: DRUGS[agent.drug], conc, mgPerMl, volume, usedMg, baseMg, finalMg, mgPerKg, fraction });
     }
 
-    // Amide budget constraint: how much MORE total amide (mg), across bupivacaine /
-    // ropivacaine / Exparel combined, remains before hitting the shared 3.0 mg/kg ceiling.
-    const remainingAmideMg = Math.max(0, 3.0 - totalAmideMgKg) * patient.weight;
-
-    // Overall status
-    const amideOver = totalAmideMgKg > 3;
-    const amideWarn = totalAmideMgKg > 2.5 && !amideOver;
-    const fracOver = totalFraction > 1.0;
-    const fracWarn = totalFraction >= 0.8 && !fracOver;
-
-    let statusClass = 'status-green', statusText = 'GREEN — SAFE';
-    if (fracOver || amideOver) { statusClass = 'status-red'; statusText = 'RED — UNSAFE'; }
-    else if (fracWarn || amideWarn) { statusClass = 'status-yellow'; statusText = 'YELLOW — CAUTION'; }
-
-    let html = warnings + `<div class="status-badge ${statusClass}">${statusText}</div>`;
+    let html = '<div class="status-badge"></div>';
 
     // Per-agent breakdown table
     html += `<div style="overflow-x:auto;"><table><thead><tr>
@@ -1021,7 +984,6 @@ function calculate() {
             <td class="max-ml-cell" style="${fracColor}">${fracPct}%</td>
         </tr>`;
         if (c.volume > 60) html += `<tr><td colspan="7" style="color:#856404;font-size:12px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Volume >60 mL — verify appropriate</td></tr>`;
-        if (c.agent.drug === 'exparel' && c.usedMg > 266) html += `<tr><td colspan="7" class="warning" style="font-size:12px;">⛔ Exparel exceeds 266 mg hard cap</td></tr>`;
     }
     html += `</tbody></table></div>`;
 
@@ -1035,83 +997,14 @@ function calculate() {
         </div>`;
     }
 
-    // ===== GOVERNING NUMBER: additive fraction-of-max across all agents =====
-    // Total capacity used = sum of (mg given / that drug's own final max). This is the
-    // conventional mixture rule and includes EVERY agent given. Remaining capacity is
-    // whatever is left of that single shared pool.
-    const capacityUsedPct = totalFraction * 100;
-    const remainingCapacity = Math.max(0, 1.0 - totalFraction);
-
-    html += `<div class="result-card" style="border-left-color:#004085;">
-        <div class="result-row highlight-row">
-            <span class="result-label">Total capacity used:</span>
-            <span class="result-value" style="${fracOver ? 'color:#dc3545' : fracWarn ? 'color:#856404' : ''};font-size:17px;">${capacityUsedPct.toFixed(0)}%</span>
-        </div>
-        <div class="result-row">
-            <span class="result-label">Capacity remaining:</span>
-            <span class="result-value">${(remainingCapacity * 100).toFixed(0)}%</span>
-        </div>
-        <div class="info-text" style="margin-top:6px;">Sum of each agent's dose as a fraction of its own max for this patient. Covers all agents given.</div>
-    </div>`;
-
-    // ===== REMAINING CAPACITY TABLE — "what can I still give" =====
-    // Converts the remaining shared capacity into mL of each drug at each of its common
-    // concentrations. These are ALTERNATIVES: the capacity is one pool, so giving any
-    // one row consumes it. Giving two rows exceeds the limit.
-    html += `<div class="cap-wrap">
-        <div class="cap-title">What you can still give</div>`;
-
-    if (remainingCapacity <= 0) {
-        html += `<div class="cap-none">NO CAPACITY REMAINING — 0 mL of any agent</div>`;
-    } else {
-        html += `<div class="cap-sub">CHOOSE ONE ROW — these are alternatives, not additive. Any single row uses up all remaining capacity.</div>
-        <table class="cap-table"><thead><tr>
-            <th>Drug</th><th>Conc</th><th class="num">Volume</th><th class="num">Dose</th>
-        </tr></thead><tbody>`;
-
-        let grpIdx = 0;
-        for (const key of Object.keys(DRUGS)) {
-            const d = DRUGS[key];
-            const { finalMg } = calcMaxMg(key, patient);
-            const allowedMg = remainingCapacity * finalMg;
-            const grpClass = (grpIdx % 2 === 0) ? 'grp-a' : 'grp-b';
-            let firstRow = true;
-            for (const conc of d.commonConc) {
-                const mgPerMl = conc * 10;
-                const ml = allowedMg / mgPerMl;
-                html += `<tr class="${grpClass}${firstRow ? ' drug-start' : ''}${ml < 0.05 ? ' zero' : ''}">
-                    <td class="drugname">${firstRow ? d.name : ''}</td>
-                    <td class="conc">${conc}%</td>
-                    <td class="num vol">${ml.toFixed(1)} mL</td>
-                    <td class="num mg">${allowedMg.toFixed(0)} mg</td>
-                </tr>`;
-                firstRow = false;
-            }
-            grpIdx++;
-        }
-        html += `</tbody></table>
-        <div class="cap-foot">Exparel has separate admixture rules (20-min / 96-hr) — see warnings above before using that row.</div>`;
-    }
-    html += `</div>`;
-
-    // ===== Long-acting amide pool — secondary check, collapsed by default =====
-    if (totalAmideMgKg > 0) {
-        const remainingAmideMgKg = Math.max(0, 3.0 - totalAmideMgKg);
-        const amideDot = amideOver ? '#dc3545' : amideWarn ? '#fd7e14' : '#28a745';
-        html += `<div class="accordion-card" onclick="toggleAccordion('acc-amide-pool')">
-            <div class="accordion-header">
-                <span class="accordion-dot" style="background:${amideDot};"></span>
-                <span>Long-acting amide pool — ${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span>
-                <span class="accordion-chevron" id="chev-acc-amide-pool">&#9660;</span>
-            </div>
-            <div class="accordion-body hidden" id="acc-amide-pool">
-                <div class="result-row"><span class="result-label">Used:</span><span class="result-value" style="${amideOver ? 'color:#dc3545' : amideWarn ? 'color:#856404' : ''}">${totalAmideMgKg.toFixed(2)} of 3.0 mg/kg</span></div>
-                <div class="result-row"><span class="result-label">Room left:</span><span class="result-value">${remainingAmideMgKg.toFixed(2)} mg/kg (${remainingAmideMg.toFixed(0)} mg)</span></div>
-                <div class="info-text" style="margin-top:6px;">Secondary check covering bupivacaine + ropivacaine + Exparel only. Lidocaine and mepivacaine are not counted in this pool. The governing limit for this case is total capacity used, above.</div>`;
-        if (amideOver) html += `<div class="warning" style="margin-top:8px;"><strong>&#9940; CUMULATIVE AMIDE TOXICITY</strong><br>Long-acting amide total exceeds 3 mg/kg. Reassess dosing.</div>`;
-        else if (amideWarn) html += `<div class="info-warn" style="margin-top:8px;"><strong style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Approaching amide limit</strong> — ${totalAmideMgKg.toFixed(2)} mg/kg of 3.0 mg/kg.</div>`;
-        html += `</div></div>`;
-    }
+    // Repeated entries for one drug share that drug's maximum; mixtures require review.
+    const totals = {};
+    calcs.forEach(c => { totals[c.agent.drug] = (totals[c.agent.drug] || 0) + c.usedMg; });
+    const exceeded = Object.keys(totals).some(k => totals[k] > calcMaxMg(k, patient).finalMg);
+    const mixed = Object.keys(totals).length > 1;
+    const badge = exceeded ? 'CALCULATED LIMIT EXCEEDED' : mixed ? 'COMBINED DOSES — CLINICAL REVIEW REQUIRED' : 'WITHIN CALCULATED LIMITS';
+    html = html.replace(/<div class="status-badge[^>]*>.*?<\/div>/, `<div class="status-badge ${exceeded ? 'status-red' : 'status-yellow'}">${badge}</div>`);
+    html += '<div class="info-warn">Local anesthetic toxicity is additive. Individual calculated limits do not establish safety of a combination. No additional-dose allowance is calculated for mixtures. Review all administrations, sites, times, and patient factors.</div>';
 
     rc.innerHTML = html;
     rd.classList.remove('hidden');
