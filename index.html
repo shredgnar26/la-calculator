@@ -437,7 +437,23 @@
 
 <!-- ==================== PATIENT PROFILE ==================== -->
 <div id="panel-exparel" class="page-panel"><div class="container">
-<h1>EXPAREL Calculator</h1><p class="subtitle">Admixture reference • ADULTS ONLY (18+)</p>
+<h1>EXPAREL Calculator</h1>
+<aside id="ex-safety-disclaimer" class="disclaimer" aria-labelledby="ex-safety-title">
+<h2 id="ex-safety-title" style="font-size:16px;margin-bottom:12px;">⚠️ EXPAREL -- Important Safety Disclaimer</h2>
+<p>For licensed healthcare professionals only. Educational reference, not a prescribing or administration recommendation.</p>
+<p>This calculator provides EXPAREL dosing references and bupivacaine HCl admixture calculations based on manufacturer and FDA labeling.</p>
+<p>A calculated dose or remaining admixture allowance does NOT establish clinical safety. Local anesthetic toxicity is additive, and this calculator cannot account for all patient-specific risks, administration techniques, or prior local anesthetic exposure.</p>
+<p>Always verify:</p>
+<ul style="padding-left:20px;margin:12px 0;">
+<li>Current FDA prescribing information and institutional policy.</li>
+<li>Approved indication, patient-specific dose, and administration route.</li>
+<li>Bupivacaine HCl admixture limits and compatibility.</li>
+<li>Timing restrictions and additional local anesthetic exposure.</li>
+</ul>
+<p>The administering clinician retains responsibility for all medication decisions. Do not rely on this calculator as the sole basis for administering EXPAREL or another local anesthetic.</p>
+<p style="margin-top:12px;"><a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bb5a9e59-0f51-11df-8a39-0800200c9a66" target="_blank" rel="noopener">Current FDA prescribing information (DailyMed)</a></p>
+</aside>
+<p class="subtitle">Admixture reference • ADULTS ONLY (18+)</p>
 <div class="section"><h2 class="section-title">1. Indication and patient</h2>
 <label for="ex-indication">Procedure / administration type</label><select id="ex-indication" class="native-select"><option value="">Select indication first</option><option value="infiltration">Surgical-site infiltration</option><option value="interscalene">Interscalene brachial plexus block</option><option value="sciatic">Sciatic block in popliteal fossa</option><option value="adductor">Adductor canal block</option><option value="other">Other / unsupported indication</option><option value="paracervical">Obstetrical paracervical block — contraindicated</option></select>
 <div class="input-group"><label for="ex-age">Age (years)</label><input id="ex-age" type="number" min="18" max="120" step="1"></div>

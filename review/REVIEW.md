@@ -39,3 +39,6 @@ git diff --check
 ```
 8/8 calculation groups pass. Chromium browser checks pass with zero page errors. No horizontal overflow at 390, 768 and 1440 px. Within and exceeded mobile screenshots visually inspected.
 No physical mobile device, Safari/WebKit, offline/update acceptance or clinician/pharmacist sign-off performed. No new dependency installed. Temporary test browser and HTTP server closed. No worker resources launched. Main and the earlier clinical-validation worktree remain unchanged.
+
+## Persistent disclaimer follow-up
+Added the user's exact safety disclaimer immediately after the EXPAREL h1, using the existing amber disclaimer panel and supplied warning icon, with a current DailyMed FDA prescribing-information link. Static, non-dismissible markup; no acknowledgment state or calculation changes. First-launch disclaimer unchanged. Browser checks verify visibility on reopening and reload, placement before inputs, amber color, absence of dismiss controls, source URL, and preservation of the first-launch acknowledgment behavior. All eight calculation groups and responsive browser checks pass again. Updated within/exceeded mobile captures and added mobile-disclaimer.png; visually inspected the disclaimer render. No physical-device or clinical validation performed.
